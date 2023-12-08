@@ -7,6 +7,7 @@
 body{
   background-color: var(--bg) !important;
   overflow: hidden;
+  transition: .5s ease;
 }
 .sidebar{
   height: 700px;
