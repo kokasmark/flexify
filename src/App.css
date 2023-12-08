@@ -1,38 +1,124 @@
-.App {
-  text-align: center;
+:root {
+  --main: #1F1F1F;
+  --contrast: #3C6FAA;
+  --bg: #1F2229;
+  --shadow:rgb(20, 20, 20);
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body{
+  background-color: var(--bg) !important;
+  overflow: hidden;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.sidebar{
+  height: 700px;
+  width: 245px;
+  background-color: var(--contrast);
+  position: fixed;
+  right: -200px;
+  top: 12vh;
+  border-radius: 10px 0px 0px 10px;
+  transition: .5s ease;
+  box-shadow: -5px 5px 5px var(--shadow);
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.card{
+  border: none !important;
+  background-color: transparent !important;
+}
+.card-body{
+  background-color: var(--contrast);
+  border-radius: 10px !important;
+  color: white !important;
+  transition: .5s ease;
+}
+.sidebar:hover{
+  position: fixed;
+  right: -50px;
+}
+.userbar{
+  height: 50px;
+  width: 245px;
+  background-color: var(--contrast);
+  position: fixed;
+  right: -200px;
+  top: 0;
+  border-radius: 0px 0px 0px 10px;
+  transition: .5s ease;
+}
+.userbar:hover{
+  position: fixed;
+  right: -50px;
+}
+.interactable{
+  cursor: pointer;
+}
+.interactable:hover{
+  transform: scale(1.025);
+}
+.muscles{
+  margin: auto;
+  width: 1028px;
+  height: 1024px;
+}
+.muscle{
+  cursor: pointer; 
+}
+.timePeriod{
+  width: 500px;
+  height: 30px;
+  background-color: var(--contrast);
+  border-radius: 10px;
+  margin: auto;
+  position: relative;
+  top: 150px;
+  box-shadow: 0px 5px 5px var(--shadow);
+  transition: .5s ease;
+}
+.navBar{
+  position: fixed;
+  left: 10%;
+  top: 0;
+  width: 80%;
+  height: 50px;
+  background-color: var(--contrast);
+  border-radius: 0px 0px 10px 10px;
+  box-shadow: 0px 5px 5px var(--shadow);
+  transition: .5s ease;
+} 
+.react-calendar{
+  border-radius: 10px;
+  background: var(--contrast) !important;
+  color: white;
+  border: none !important;
+  box-shadow: 5px 5px 5px var(--shadow);
+  transition: .5s ease;
+}
+.react-calendar__month-view__days__day--weekend {
+  color: #2158be !important;
+}
+.react-calendar__tile--now {
+  background: #178daa !important;
+}
+.react-calendar button{
   color: white;
 }
-
-.App-link {
-  color: #61dafb;
+.sign-in-panel input{
+  background: var(--bg);
+  border: none;
+  box-shadow: 5px 5px 5px var(--shadow);
+  border-radius: 5px;
+  color: white;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.sign-in-panel{
+  justify-content: center;
+  text-align: center;
+  background-color: var(--contrast);
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px var(--shadow);
+  transition: .5s ease;
+}
+.chart text{
+  font-size: 10px;
+  fill: white;  
+}
+.chart path{
+  cursor: pointer;
 }
