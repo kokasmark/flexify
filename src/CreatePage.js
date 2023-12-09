@@ -4,6 +4,7 @@ import { Component } from 'react';
 import { ReactComponent as Muscles } from './assets/muscles.svg';
 import Sidebar from './Sidebar';
 import Navbar from './NavBar';
+import MusclesView from './MusclesView';
 
 export default class CreatePage extends Component {
   render() {
@@ -11,8 +12,8 @@ export default class CreatePage extends Component {
       <div>
         <Navbar />
         <Sidebar />
-        <div className='muscles'>
-          <Muscles />
+        <div>
+          <MusclesView/>
         </div>
       </div>
     );

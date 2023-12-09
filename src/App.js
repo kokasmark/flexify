@@ -10,7 +10,7 @@ export default class App extends Component {
     return (
       <div>
        
-        <div style={{position: 'relative', top: 50}}>
+        <div style={{position: 'relative'}}>
         <div className='timePeriod'>
           <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 45px 4px 25px", fontWeight: 'bold'}}>Weekly</p>
           <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 45px 4px 4px"}}>Monthly</p>
