@@ -3,8 +3,10 @@ import './App.css';
 import { Component } from 'react';
 import { ReactComponent as Muscles } from './assets/muscles.svg';
 import { Card } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import Navbar from './NavBar';
+import MusclesView from './MusclesView';
 
 export default class BrowsePage extends Component {
 
@@ -13,8 +15,8 @@ export default class BrowsePage extends Component {
         return (
             <div>
                 <div style={{position: 'relative', left: 250}}>
-                    <div className='muscles' style={{ position: 'absolute' }}>
-                        <Muscles />
+                    <div style={{ position: 'absolute' }}>
+                        <MusclesView/>
                     </div>
                     <div className='workouts' style={{ position: 'relative', left: 800, top: 250 }}>
                         <Card style={{ width: '15rem' }}>
@@ -41,6 +43,7 @@ export default class BrowsePage extends Component {
                                 </Card.Text>
                             </Card.Body>
                         </Card>
+                        <Button className='anim' style={{backgroundColor: 'var(--contrast)', border: 'none',margin: 30}}>Suggest me Workouts</Button>
                     </div>
                 </div>
 

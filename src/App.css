@@ -3,10 +3,18 @@
   --contrast: #3C6FAA;
   --bg: #1F2229;
   --shadow:rgb(20, 20, 20);
+
+  --heat-yellow: rgb(251, 176, 33);
+  --heat-red: rgb(238, 62, 50);
+  --heat-orange: rgb(246, 136, 56);
+  --heat-blue: rgb(29, 72, 119);
 }
 body{
   background-color: var(--bg) !important;
   overflow: hidden;
+  transition: .5s ease;
+}
+.anim{
   transition: .5s ease;
 }
 .sidebar{
@@ -59,8 +67,9 @@ body{
   width: 1028px;
   height: 1024px;
 }
-.muscle{
-  cursor: pointer; 
+.muscles path{
+  cursor: pointer;
+  fill: var(--heat-blue);
 }
 .timePeriod{
   width: 500px;
@@ -122,4 +131,19 @@ body{
 }
 .chart path{
   cursor: pointer;
+}
+.add-calorie{
+  position: absolute; 
+  top:50px; 
+  left: -500px;
+  width:300px; 
+  height: 300px;
+  background-color: var(--contrast); 
+  border-radius: 10px;
+  justify-content: center;
+  text-align: center;
+}
+.add-calorie input{
+  border: none;
+  border-radius: 5px;
 }

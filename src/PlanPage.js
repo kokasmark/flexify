@@ -15,12 +15,13 @@ export default class PlanPage extends Component {
   render() {
     return (
       <div>
-        <Navbar/>
-        <Sidebar />
         <div style={{position: 'absolute', left: 500, top: 300}}>
           <Calendar onChange={(e) => this.setState({selectedDate: e.toLocaleString('en-us',{month:'long', day: 'numeric'})})}/>
         </div>
         <h1 style={{position: 'relative', color: 'white', top: 300, left: 880}}>Add Workout to {this.state.selectedDate}</h1>
+
+        <Navbar/>
+        <Sidebar />
       </div>
     );
   }
