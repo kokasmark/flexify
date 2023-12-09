@@ -33,7 +33,7 @@ export default class Navbar extends Component {
               {this.state.theme == 'dark' && <Icon_light className='interactable' onClick={this.changeTheme}/>}
             </div>
             <div style={{position: 'relative', left: '40%', top: -50}}>
-              <Icon_streak />
+              <Icon_streak className='anim-heartbeat'/>
               <p style={{display: 'inline-block', color: 'white', margin: 5}}>You are on a 0 day workout streak</p>
 
               <Link to="/signIn" style={{width:50,height:50,position: 'relative', left: '30vw'}}><Icon_signIn className='interactable'/></Link>

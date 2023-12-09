@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import { Component } from 'react';
-import { ReactComponent as Muscles } from './assets/muscles.svg';
+import { ReactComponent as Icon_save } from './assets/icon-bookmark.svg';
 import { Card } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
 import Sidebar from './Sidebar';
@@ -35,25 +35,28 @@ export default class BrowsePage extends Component {
                     </div>
                     {this.state.choosenGroup != '' ?<div key={this.state.choosenGroup} className='workouts anim' style={{ position: 'relative', left: 800, top: 250 }}>
                     <h1 style={{marginBottom: 20, color: 'white'}}>{this.state.choosenGroup.charAt(0).toUpperCase() + this.state.choosenGroup.slice(1)}  workouts</h1>
-                        <Card  className="animated-card" style={{ width: '15rem', marginTop: 10 }}>
+                        <Card  className="animated-card" style={{ maxWidth: 240, marginTop: -20 }}>
+                        <Icon_save className='interactable' style={{position: 'relative', height: 30, width:30, top: 35, left: '85%'}}/>
                             <Card.Body>
-                                <Card.Title>Card Title</Card.Title>                            <Card.Text>
+                                <Card.Title>{this.state.choosenGroup} workout</Card.Title>                            <Card.Text>
                                     Some quick example text to build on the card title and make up the
                                     bulk of the card's content.
                                 </Card.Text>
                             </Card.Body>
                         </Card>
-                        <Card  className="animated-card" style={{ width: '15rem', marginTop: 10 }}>
+                        <Card  className="animated-card" style={{ maxWidth: 240, marginTop: -20 }}>
+                        <Icon_save className='interactable' style={{position: 'relative', height: 30, width:30, top: 35, left: '85%'}}/>
                             <Card.Body>
-                                <Card.Title>Card Title</Card.Title>                            <Card.Text>
+                                <Card.Title>{this.state.choosenGroup} workout</Card.Title>                            <Card.Text>
                                     Some quick example text to build on the card title and make up the
                                     bulk of the card's content.
                                 </Card.Text>
                             </Card.Body>
                         </Card>
-                        <Card  className="animated-card" style={{ width: '15rem', marginTop: 10 }}>
+                        <Card  className="animated-card" style={{ maxWidth: 240, marginTop: -20 }}>
+                        <Icon_save className='interactable' style={{position: 'relative', height: 30, width:30, top: 35, left: '85%'}}/>
                             <Card.Body>
-                                <Card.Title>Card Title</Card.Title>                            <Card.Text>
+                                <Card.Title>{this.state.choosenGroup} workout</Card.Title>                            <Card.Text>
                                     Some quick example text to build on the card title and make up the
                                     bulk of the card's content.
                                 </Card.Text>

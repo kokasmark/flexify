@@ -81,7 +81,6 @@ export default class MusclesView extends Component {
         data.groupName = d.name;
         data.group = d.group;
       }
-      console.log(data);
       try{this.props.chooseCallback({name: data.groupName, group:data.group})}catch{}//for Create Page
     }catch{
 

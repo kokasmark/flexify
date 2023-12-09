@@ -3,6 +3,7 @@ import './App.css';
 import React, { Component } from 'react';
 import { ReactComponent as Icon_add } from './assets/icon-add.svg';
 import { ReactComponent as Icon_remove } from './assets/icon-remove.svg';
+import { ReactComponent as Icon_save } from './assets/icon-bookmark.svg';
 import Sidebar from './Sidebar';
 import Navbar from './NavBar';
 import MusclesView from './MusclesView';
@@ -65,8 +66,10 @@ export default class CreatePage extends Component {
           <div style={{ color: 'white', position: 'relative', top: -800, left: '55%' }}>
             {this.state.choosenGroup == '' ? <h1 >Choose a muscle group to train</h1> :
 
-              <div className='create-workout anim' ref={this.containerRef} style={{ position: 'relative', left: 50 }}>
+              <div className='create-workout anim' ref={this.containerRef} style={{ position: 'relative', left: 50, textAlign: 'center'}}>
                 <h1>{this.state.choosenGroup.charAt(0).toUpperCase() + this.state.choosenGroup.slice(1)}  workout</h1>
+                <input id='create-name'style={{display: 'inline-block'}} placeholder='Name'></input>
+                <Icon_save className='interactable' title='Save Workout'/>
 
                 <div className="card-container">
                   {exerciseCards.map((card, index) => (
