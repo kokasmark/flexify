@@ -9,59 +9,108 @@ export default class MusclesView extends Component {
   state= {
     front: true,
     groups: {
-      trapezius: [],
-      deltoid: [],
-      pectoralisMajor: [],
+      trapezius: [146,147,148,149],
+      shoulder: [26,27,29,30,150,151],
+      chest: [25,28,31,32],
       biceps: [33,34],
-      triceps: [],
-      latissimusDorsi: [],
-      abdominals: [37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,57,58,61,62,66,68],
-      obliques: [],
-      quadriceps: [],
-      hamstrings: [],
-      calves: [],
-      glutes: [],
-      hipAdductors: [],
-      hipAbductors: []
+      triceps: [154,155,159,160,155,158,161],
+      back: [156,157],
+      abs: [45,46,51,52,57,58,66,68],
+      obliques: [37,38,39,40,41,42,44,43,44, 47,49,48,50,61,62],
+      thigh: [71,73,91,104,72,74,92,103,75,77,198,202,200,204,192,193,201,205,203,199],
+      calves: [206,207,208,209],
+      leg: [105,113,117,107,115,119,106,114,118,108,116,120,212,210,211,213],
+      forearm: [55,59,65,69,63,56,60,67,64,70,164,162,167,168,163,169,166,165],
+      gluteus: [174,175]
     },
-    muscleData:[]
+    muscleData:[],
+    frontLastKey: 138
   }
-  giveKeyToEachMuscle=()=>{
-    var mData = []
-    var muscleContainer = document.getElementById('muscle-container');
-    var svgContainer = muscleContainer.children[0];
-    var muscles = svgContainer.children;
-    for(var i = 0; i < muscles.length; i++){
-        var muscle = muscles[i];
-        muscle.setAttribute("key", i);
-       mData.push({"key":i, "val": 0});
+  findMuscleGroup = (index) =>{
+    const groups = this.state.groups;
+
+    for (const groupName in groups) {
+      for(var i = 0; i < groups[groupName].length; i++){
+        if (groups[groupName][i] == (index)) {   
+            return {name:groupName,group:groups[groupName]};
+        }
+      }
     }
-    this.setState({muscleData: mData})
+}
+  createMuscleData(){
+    var mData = []
+    for(var i = 0; i < 220; i++){
+      mData.push({"key":i, "val":0});
+    }
+    this.setState({muscleData: mData});
+  }
+  setColor=()=>{
+    const colors = ['var(--heat-blue)','var(--heat-yellow)','var(--heat-orange)','var(--heat-red)'];
+    if(this.state.front){
+      for(var i = 0; i < this.state.muscleData.length; i++){
+        var muscle = document.getElementById(i);
+        var color = colors[parseInt(this.state.muscleData[i].val)];
+        muscle.style.fill = color;
+      }
+    }
   }
   updateMuscleGroup(group,value){
     //group: pl.: 'biceps' value: 0-3
     var muscleContainer = document.getElementById('muscle-container');
-    var svgContainer = muscleContainer.children[0];
+    var svgContainer = this.state.front == true? muscleContainer.children[0]: muscleContainer.children[0].children[0].children[0];
     var muscles = svgContainer.children;
     const colors = ['var(--heat-blue)','var(--heat-yellow)','var(--heat-orange)','var(--heat-red)'];
     for(var i = 0; i < this.state.groups[group].length; i++){
-        var muscle = muscles[this.state.groups[group][i]];
-        var key = parseInt(muscle.getAttribute("key"));
+      try{
+        var muscle = muscles[this.state.front == true? this.state.groups[group][i]:this.state.groups[group][i]-138];
+        var key = parseInt(muscle.id);
         this.state.muscleData[key].val = value;
         var color = colors[parseInt(this.state.muscleData[key].val)];
         muscle.style.fill = color;
+      }catch{
+        continue;
+      }
     }
   }
+  muscleClicked(e){
+    var data = {"id": 0, "groupName": "", group:[]}
+    try{
+      if(e.target.tagName == 'path'){
+        data.id = e.target.id;
+        var d = this.findMuscleGroup(e.target.id);
+        data.groupName = d.name;
+        data.group = d.group;
+      }
+      console.log(data);
+      try{this.props.chooseCallback({name: data.groupName, group:data.group})}catch{}//for Create Page
+    }catch{
+
+    }
+      return data;
+  }
   componentDidMount(){
-    this.giveKeyToEachMuscle();
+    this.createMuscleData();
+  }
+  componentWillUnmount(){
+    //this.setColor();
   }
   render() {
     return (
       <div>
-        <div className='muscles anim' id='muscle-container'>
+        <div className='muscles anim' id='muscle-container' onClick={(e)=>this.muscleClicked(e)}>
           {this.state.front == true ?  <Muscles/> :  <div style={{width: 1024, height:1028}}><MusclesBack style={{position: 'relative', left: 265, top:40,transform: 'scale(0.7)'}}/></div>}
           <Icon_rotate className='interactable' style={{transform: 'scale(2)', position: 'relative', top:-175,left:500,fill:'#fff !important'}} onClick={()=> this.setState({front: !this.state.front})}/>
         </div>
+
+        {/*CSAK TESZTELÉSHEZ
+        
+        <div style={{position: 'absolute',top: 200,width:200, height:200, backgroundColor: 'var(--contrast)'}}>
+          <input id='test-group' placeholder='Muscle group name for testing'></input>
+          <input id='test-value' placeholder='value'></input>
+          <button onClick={()=> this.updateMuscleGroup(document.getElementById('test-group').value, document.getElementById('test-value').value)}>Set value</button>
+        </div>
+        
+        */}
         
       </div>
     );

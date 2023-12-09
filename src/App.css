@@ -147,3 +147,61 @@ body{
   border: none;
   border-radius: 5px;
 }
+.create-workout input{
+  border: none;
+  border-radius: 5px;
+}
+.create-workout select{
+  border: none;
+  border-radius: 5px;
+  margin-left: 5px;
+  width: 75px;
+}
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(3, 200px); /* Set each column to 200px width */
+  gap: 20px; /* Adjust the gap between cards to 20px */
+}
+
+.create-workout-card {
+  margin-bottom: 10px; /* Adjust the margin-bottom value to control spacing between rows */
+  box-sizing: border-box;
+  animation: grow 0.2s ease-in;
+}
+
+.create-workout-card:nth-child(4n) {
+  margin-right: 0;
+}
+.create-workout::-webkit-scrollbar {
+  width: 10px; /* Set the width of the scrollbar */
+}
+
+.create-workout::-webkit-scrollbar-thumb {
+  background-color: #808080; /* Set the color of the scrollbar thumb (the draggable part) */
+}
+
+.create-workout::-webkit-scrollbar-track {
+  background-color: #f0f0f0; /* Set the color of the scrollbar track (the non-draggable part) */
+}
+.create-workout{
+  background-color: var(--contrast);
+  border-radius: 10px;
+  max-width: 650px;
+  position: relative;
+  left: 100px !important;
+  overflow: auto;
+  max-height: 625px;
+  box-shadow: 5px 5px 5px var(--shadow);
+}
+.workouts .animated-card {
+  animation: grow 0.2s ease-in;
+}
+
+@keyframes grow {
+  0% {
+    transform: scale(0.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
