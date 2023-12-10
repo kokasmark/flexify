@@ -33,7 +33,7 @@ export default class BrowsePage extends Component {
                     <div style={{ position: 'absolute' }}>
                         <MusclesView chooseCallback={this.chooseMuscleGroup} />
                     </div>
-                    {this.state.choosenGroup != '' ?<div key={this.state.choosenGroup} className='workouts anim' style={{ position: 'relative', left: 800, top: 250 }}>
+                    {this.state.choosenGroup != '' ?<div key={this.state.choosenGroup} className='workouts anim' style={{ position: 'relative', left: 800, top: 175 }}>
                     <h1 style={{marginBottom: 20, color: 'white'}}>{this.state.choosenGroup.charAt(0).toUpperCase() + this.state.choosenGroup.slice(1)}  workouts</h1>
                         <Card  className="animated-card" style={{ maxWidth: 240, marginTop: -20 }}>
                         <Icon_save className='interactable' style={{position: 'relative', height: 30, width:30, top: 35, left: '85%'}}/>

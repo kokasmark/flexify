@@ -97,7 +97,7 @@ export default class MusclesView extends Component {
     return (
       <div>
         <div className='muscles anim' id='muscle-container' onClick={(e)=>this.muscleClicked(e)}>
-          {this.state.front == true ?  <Muscles/> :  <div style={{width: 1024, height:1028}}><MusclesBack style={{position: 'relative', left: 265, top:40,transform: 'scale(0.7)'}}/></div>}
+          {this.state.front == true ?  <Muscles/> :  <div style={{width: 1024, height:1028}}><MusclesBack style={{position: 'relative', left: 265, top:35,transform: 'scale(0.7)'}}/></div>}
           <Icon_rotate className='interactable' style={{transform: 'scale(2)', position: 'relative', top:-175,left:500,fill:'#fff !important'}} onClick={()=> this.setState({front: !this.state.front})}/>
         </div>
 
