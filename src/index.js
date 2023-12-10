@@ -7,10 +7,10 @@ import { BrowserRouter, Route, Routes} from 'react-router-dom';
 import history from './history';
 import BrowsePage from './BrowsePage';
 import PlanPage from './PlanPage';
-import SignInPage from './SignInPage';
 import CreatePage from './CreatePage';
 import DietPage from './DietPage';
-
+import SignUpWrapper from './SignUpPage';
+import SignInWrapper from './SignInPage';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter history={history}>
@@ -21,7 +21,8 @@ root.render(
     <Route exact={true} path="/create" element={<CreatePage />} />
     <Route exact={true} path="/diet" element={<DietPage />} />
 
-    <Route exact={true} path="/signIn" element={<SignInPage />} />
+    <Route exact={true} path="/signIn" element={<SignInWrapper />} />
+    <Route exact={true} path="/signUp" element={<SignUpWrapper />} />
   </Routes>
 </BrowserRouter>
 );
