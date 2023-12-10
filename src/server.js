@@ -15,6 +15,18 @@ const connection = mysql.createConnection({
   database: 'flexify',
 });
 
+function validatePostRequest(fields, required, strict=false){
+  // fields => keys sent by the POST request
+  // required => keys required to be in the POST
+  // strict => return false if there are any other fields
+
+  if (strict && fields.length != required.length) return false;
+  for (let search in required){
+    if (!(search in fields)) return false;
+  }
+  return true
+}
+
 connection.connect((err) => {
   if (err) {
     console.error('Error connecting to MySQL:', err);
