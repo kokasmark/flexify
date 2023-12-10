@@ -53,7 +53,7 @@ export default class CreatePage extends Component {
               <option>Minutes</option>
             </select>
             <p style={{ marginTop: 10, marginBottom: 1 }}>Description</p>
-            <textarea></textarea>
+            <textarea style={{resize:'none', border: 'none', borderRadius: 5}}></textarea>
           </Card.Body>
           <Icon_remove style={{width: 30,height:30, position:'relative', top:-180, left: 165}} className='interactable' onClick={()=>this.setState({exerciseNum: this.state.exerciseNum-1})}/>
         </Card>
