@@ -9,10 +9,10 @@ app.use(cors());
 app.use(express.json());
 
 const connection = mysql.createConnection({
-  host: 'your-mysql-host',
-  user: 'your-mysql-username',
-  password: 'your-mysql-password',
-  database: 'your-mysql-database',
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'flexify',
 });
 
 connection.connect((err) => {
@@ -25,27 +25,27 @@ connection.connect((err) => {
 
 // Define API endpoints
 app.get('/api/data', (req, res) => {
-  connection.query('SELECT * FROM your_table', (err, results) => {
+  connection.query('SELECT * FROM user', (err, results) => {
     if (err) {
       console.error('Error querying MySQL:', err);
-      res.status(500).send('Internal Server Error');
+      res.status(500).send('Internal Server Error ' + err);
     } else {
       res.json(results);
     }
   });
 });
 
-app.post('/api/data', (req, res) => {
-  const { name, value } = req.body;
-  connection.query('INSERT INTO your_table (name, value) VALUES (?, ?)', [name, value], (err, result) => {
-    if (err) {
-      console.error('Error inserting into MySQL:', err);
-      res.status(500).send('Internal Server Error');
-    } else {
-      res.json({ success: true });
-    }
-  });
-});
+// app.post('/api/data', (req, res) => {
+//   const { name, value } = req.body;
+//   connection.query('INSERT INTO your_table (name, value) VALUES (?, ?)', [name, value], (err, result) => {
+//     if (err) {
+//       console.error('Error inserting into MySQL:', err);
+//       res.status(500).send('Internal Server Error');
+//     } else {
+//       res.json({ success: true });
+//     }
+//   });
+// });
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

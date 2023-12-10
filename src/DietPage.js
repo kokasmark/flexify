@@ -15,6 +15,7 @@ export default class DietPage extends Component {
     calories: 0
   }
 
+
   addCaloriesManually = () =>{
     var c = document.getElementById('add-carbs').value == "" ? 0:parseInt(document.getElementById('add-carbs').value);
     var f =document.getElementById('add-fat').value == "" ? 0: parseInt(document.getElementById('add-fat').value);
