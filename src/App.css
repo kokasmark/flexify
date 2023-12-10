@@ -177,11 +177,12 @@ body{
 }
 
 .create-workout::-webkit-scrollbar-thumb {
-  background-color: #f0f0f0; /* Set the color of the scrollbar thumb (the draggable part) */
+  background-color: #f0f0f0;
+  border-radius: 10px; 
 }
 
 .create-workout::-webkit-scrollbar-track {
-  background-color: var(--bg); /* Set the color of the scrollbar track (the non-draggable part) */
+  background-color: var(--contrast); /* Set the color of the scrollbar track (the non-draggable part) */
 }
 .create-workout{
   background-color: var(--contrast);
