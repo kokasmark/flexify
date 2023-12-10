@@ -50,8 +50,8 @@ export default class Sidebar extends Component {
                     <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>Saved Workouts</p></Link>
                 </li>
                 <li className='interactable' style={{ marginLeft: -33 }}>
-                    <Link to="/my"><Icon_user style={{width: 48, height: 48}}/>
-                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>My Workouts</p></Link>
+                    <Link to="/account"><Icon_user style={{width: 48, height: 48}}/>
+                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>My Account</p></Link>
                 </li>
             </ul>
           </div>

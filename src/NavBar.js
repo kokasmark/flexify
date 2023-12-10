@@ -27,13 +27,13 @@ export default class Navbar extends Component {
       return (
         <div>
           <div className='navBar'>
-          <Link to="/"><img className='interactable' src={logo} style={{position: 'fixed', top: -15, left: -110, transform: 'scale(0.3)'}}/></Link> 
+          <Link to="/" draggable='false'><img className='interactable' src={logo} style={{position: 'fixed', top: -15, left: -110, transform: 'scale(0.3)'}} draggable='false'/></Link> 
             <div>
               {this.state.theme == 'light' && <Icon_dark className='interactable' onClick={this.changeTheme}/>}
               {this.state.theme == 'dark' && <Icon_light className='interactable' onClick={this.changeTheme}/>}
             </div>
             <div style={{position: 'relative', left: '40%', top: -50}}>
-              <Icon_streak />
+              <Icon_streak className='anim-heartbeat'/>
               <p style={{display: 'inline-block', color: 'white', margin: 5}}>You are on a 0 day workout streak</p>
 
               <Link to="/signIn" style={{width:50,height:50,position: 'relative', left: '30vw'}}><Icon_signIn className='interactable'/></Link>

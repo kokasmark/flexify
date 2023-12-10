@@ -21,7 +21,7 @@ export default class PlanPage extends Component {
         <h1 style={{position: 'relative', color: 'white', top: 300, left: 880}}>Add Workout to {this.state.selectedDate}</h1>
 
         <Navbar/>
-        <Sidebar />
+        <Sidebar/>
       </div>
     );
   }
