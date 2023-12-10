@@ -50,6 +50,7 @@ export default class CreatePage extends Component {
             <select>
               <option>Reps</option>
               <option>Seconds</option>
+              <option>Minutes</option>
             </select>
             <p style={{ marginTop: 10, marginBottom: 1 }}>Description</p>
             <textarea></textarea>
