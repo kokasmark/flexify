@@ -20,10 +20,32 @@ class SignInPage extends Component {
     hidePassword: true
   }
   validate = () =>{
-    //fetch api a responsetol fugg mi kovetkezik jelenleg csak a home pagere dob át
-    console.log('Validating');
-    const { navigate } = this.props;
-    navigate('/');
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({"email": document.getElementById('email').value,
+    "password": document.getElementById('password').value });
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/login", requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        var r = response.json();
+        if(r['success']){
+          console.log('Validating');
+          const { navigate } = this.props;
+          navigate('/');
+        }else{
+          alert('Error with credentials')
+        }
+      })
+      .catch(error => console.log('error', error));
     }
   render() {
     return (
