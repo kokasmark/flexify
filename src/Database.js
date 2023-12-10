@@ -6,11 +6,14 @@ var con = mysql.createConnection({
   password: ""
 });
 
-con.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-    con.query("SELECT * FROM user", function (err, result) {
-      if (err) throw err;
-      console.log("Database created");
-    });
-  });
+con.connect();
+
+function getCalories(date){
+    con.connect(function(err) {
+        if (err) throw err;
+        con.query("SELECT diet.calories FROM diet INNER JOIN user ON diet.user_id = user.id WHERE user.username = 'gipsz_jakab'", function (err, result, fields) {
+          if (err) throw err;
+          return result;
+        });
+      });
+}
