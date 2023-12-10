@@ -37,7 +37,7 @@ class SignInPage extends Component {
       .then(response => response.text())
       .then((response) => {
         var r = response.json();
-        if(r['success']){
+        if(r.success){
           console.log('Validating');
           const { navigate } = this.props;
           navigate('/');
