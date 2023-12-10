@@ -5,7 +5,6 @@ import { ReactComponent as Icon_add } from './assets/icon-add.svg';
 import Sidebar from './Sidebar';
 import Navbar from './NavBar';
 import { PieChart } from 'react-minimal-pie-chart';
-import getCalories from './Database.js';
 
 
 export default class DietPage extends Component {
