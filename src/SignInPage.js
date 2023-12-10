@@ -36,7 +36,7 @@ class SignInPage extends Component {
           <br/>
           <Icon_key style={{width: 40, height: 40, marginRight: 10, position: 'relative', left: 5}}/>
           <input placeholder='Password' type={this.state.hidePassword == true ? 'password':'text'}></input>
-          <div style={{width: 20, height: 20, position: 'relative', top: -40, left: 340}} className='interactable'  onClick={() => this.setState({hidePassword: !this.state.hidePassword})}>
+          <div style={{width: 20, height: 20, position: 'relative', top: -35, left: 340}} className='interactable'  onClick={() => this.setState({hidePassword: !this.state.hidePassword})}>
             {this.state.hidePassword == false ? <Icon_view style={{width: 30, height: 30}} /> : <Icon_hide style={{width: 30, height: 30}}/>}
           </div>
           <Button style={{width: '80%', position: 'relative', left: 5}} onClick={this.validate}>Sign In</Button>
