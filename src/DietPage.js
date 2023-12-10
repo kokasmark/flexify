@@ -11,7 +11,8 @@ export default class DietPage extends Component {
   state = {
     carbs: 0,
     fat: 0,
-    proteins: 0
+    proteins: 0,
+    calories: 0
   }
 
   addCaloriesManually = () =>{
@@ -20,6 +21,8 @@ export default class DietPage extends Component {
     var p = document.getElementById('add-proteins').value == "" ? 0:parseInt(document.getElementById('add-proteins').value);
     console.log(c, f, p)
     this.setState({carbs: this.state.carbs + c,fat: this.state.fat + f,proteins: this.state.proteins + p})
+
+    this.setState({calories: ((this.state.carbs+c) * 4)+((this.state.fat+f) * 9)+((this.state.proteins+p) * 4)})
   }
 
   render() {
@@ -27,7 +30,7 @@ export default class DietPage extends Component {
       <div>
         <div style={{ position: 'relative', left: '39vw', top: 250 }} className='chart'>
         {(this.state.carbs > 0 || this.state.fat > 0 || this.state.proteins > 0) ? <div>
-            <h1 style={{ margin: 0, position: 'relative', left: 100, top: 220, color: 'white', textAlign: 'center', width: 200 }}>2000 kcal</h1>
+            <h1 style={{ margin: 0, position: 'relative', left: 100, top: 220, color: 'white', textAlign: 'center', width: 200 }}>{this.state.calories} kcal</h1>
             <div style={{position: 'absolute', top: -50, left: 400}}>
               <ul style={{color:'white', listStyle: 'none'}}>
                 <li style={{marginBottom: -30}}>

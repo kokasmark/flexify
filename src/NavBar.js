@@ -27,7 +27,7 @@ export default class Navbar extends Component {
       return (
         <div>
           <div className='navBar'>
-          <Link to="/"><img className='interactable' src={logo} style={{position: 'fixed', top: -15, left: -110, transform: 'scale(0.3)'}}/></Link> 
+          <Link to="/" draggable='false'><img className='interactable' src={logo} style={{position: 'fixed', top: -15, left: -110, transform: 'scale(0.3)'}} draggable='false'/></Link> 
             <div>
               {this.state.theme == 'light' && <Icon_dark className='interactable' onClick={this.changeTheme}/>}
               {this.state.theme == 'dark' && <Icon_light className='interactable' onClick={this.changeTheme}/>}

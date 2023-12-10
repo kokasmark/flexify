@@ -7,12 +7,13 @@
   --heat-yellow: rgb(251, 176, 33);
   --heat-red: rgb(238, 62, 50);
   --heat-orange: rgb(246, 136, 56);
-  --heat-blue: rgb(29, 72, 119);
+  --heat-blue:  var(--contrast);
 }
 body{
   background-color: var(--bg) !important;
   overflow: hidden;
   transition: .5s ease;
+  user-select: none;
 }
 .anim{
   transition: .5s ease;
@@ -67,7 +68,7 @@ body{
   width: 1028px;
   height: 1024px;
 }
-.muscles path{
+.muscles path:not(.rotate){
   cursor: pointer;
   fill: var(--heat-blue);
 }
@@ -177,11 +178,11 @@ body{
 }
 
 .create-workout::-webkit-scrollbar-thumb {
-  background-color: #808080; /* Set the color of the scrollbar thumb (the draggable part) */
+  background-color: #f0f0f0; /* Set the color of the scrollbar thumb (the draggable part) */
 }
 
 .create-workout::-webkit-scrollbar-track {
-  background-color: #f0f0f0; /* Set the color of the scrollbar track (the non-draggable part) */
+  background-color: var(--bg); /* Set the color of the scrollbar track (the non-draggable part) */
 }
 .create-workout{
   background-color: var(--contrast);
