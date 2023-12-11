@@ -26,7 +26,7 @@ class SignUpPage extends Component {
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({ "username": document.getElementById('username').value, "email": document.getElementById('email').value,
-    "passwordString": document.getElementById('password').value });
+    "password": document.getElementById('password').value });
 
     var requestOptions = {
       method: 'POST',
@@ -35,11 +35,12 @@ class SignUpPage extends Component {
       redirect: 'follow'
     };
 
-    fetch("http://127.0.0.1:5000/singUp", requestOptions)
+    fetch("http://localhost:3001/api/login", requestOptions)
       .then(response => response.text())
       .then((response) => {
-        var r = response.json();
-        if(r['valid']){
+        console.log(response)
+        var r = JSON.parse(response);
+        if(r.success){
           console.log('Validating');
           const { navigate } = this.props;
           navigate('/');
