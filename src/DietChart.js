@@ -39,9 +39,10 @@ export default class DietChart extends Component {
       })
       .catch(error => console.log('error', error));
   }
-
-  render() {
+  componentDidMount(){
     this.getUserDiet();
+  }
+  render() {
     return (
       <div>
         <div style={{ position: 'relative', left: '39vw', top: 250 }} className='chart'>
