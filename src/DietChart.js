@@ -47,7 +47,7 @@ export default class DietChart extends Component {
         <div style={{ position: 'relative', left: '39vw', top: 250 }} className='chart'>
         {(this.state.carbs > 0 || this.state.fat > 0 || this.state.proteins > 0) ? <div>
             <h1 style={{ margin: 0, position: 'relative', left: 100, top: 220, color: 'white', textAlign: 'center', width: 200 }}>{this.state.calories} kcal</h1>
-            {this.props.hideInfo == null &&<div style={{position: 'absolute', top: -50, left: 400}}>
+            {this.props.hideInfo == null &&<div style={{position: 'absolute', top: 300, left: 400}}>
               <ul style={{color:'white', listStyle: 'none'}}>
                 <li style={{marginBottom: -30}}>
                   <div style={{width:30,height:30, borderRadius: 10, backgroundColor: '#1C1533'}}></div>
@@ -73,17 +73,17 @@ export default class DietChart extends Component {
                 data={[
                   {
                     color: "#1C1533",
-                    title: "Carbs",
+                    title: "Carbs: "+this.state.carbs+" g",
                     value: this.state.carbs,
                   },
                   {
                     color: "#3C6FAA",
-                    title: "Fat",
+                    title: "Fat: "+this.state.fat+" g",
                     value: this.state.fat,
                   },
                   {
                     color: "#10D8B8",
-                    title: "Proteins",
+                    title: "Proteins: "+this.state.protein+" g",
                     value: this.state.protein,
                   },
                 ]}
@@ -95,6 +95,7 @@ export default class DietChart extends Component {
                 startAngle={0}
                 viewBoxSize={[200, 200]}
                 style={{ width: 800, height: 800 }}
+                className='anim'
               />
             </div>
           </div> : <div style={{position: 'relative', top: 200, right: 400}}><h1 style={{color: 'white'}}>There is no data for today.</h1></div>}
