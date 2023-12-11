@@ -43,6 +43,24 @@ function throwDBError(res, err){
   res.status(500).send(msg);
 }
 
+function generateUserToken(){
+  return require('crypto').randomBytes(64).toString('hex');
+}
+
+function getNewUserToken(uid, location){
+  let token = generateUserToken();
+  let success = false;
+
+  connection.query('DELETE FROM login WHERE user_id = ? AND location = ?', [uid, location])
+  connection.query('INSERT INTO login (user_id, token, location) VALUES (?, ?, ?)', [uid, token, location], (err, result) => {
+    if (err) {
+      throwDBError(res, err);
+      return
+    }
+  });
+  return token;
+}
+
 function dbPostUserLogin(req, res){
   required_fields = ["email", "password"]
 
@@ -55,8 +73,12 @@ function dbPostUserLogin(req, res){
     if (err) {
       throwDBError(res, err);
     } else {
+      
       if (result.length > 0){
-        res.json({ success: true });
+        let uid = result[0].id
+        var new_token = getNewUserToken(uid, "web");
+        console.log(new_token);
+        res.json({ success: true, token: new_token});
       }
       else{
         res.json({ success: false })
