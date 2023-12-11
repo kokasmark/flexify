@@ -94,12 +94,14 @@ export default class MusclesView extends Component {
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.front !== this.state.front) {
+      if(this.props.muscles != null){
       var muscles = this.props.muscles;
       for(var i = 0; i < muscles.length; i++){
         var muscle = muscles[i];
         var name = JSON.parse(muscle).muscle;
         this.updateMuscleGroup(name, 1);
       }
+    }
     }
   }
   componentDidMount(){
