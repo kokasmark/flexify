@@ -8,14 +8,40 @@ import { PieChart } from 'react-minimal-pie-chart';
 
 export default class DietChart extends Component {
   state = {
-    carbs: 10,
-    fat: 20,
-    proteins: 20,
-    calories: 220
+    carbs: 0,
+    fat: 0,
+    protein: 0,
+    calories: 0
   }
 
+  getUserDiet(){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({token: localStorage.getItem('loginToken')});
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/diet", requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        console.log(response)
+        var r = JSON.parse(response);
+        if(r.success){
+          this.setState({carbs: r.carbs, fat: r.fat, protein: r.protein, calories: r.calories});
+        }else{
+          
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
 
   render() {
+    this.getUserDiet();
     return (
       <div>
         <div style={{ position: 'relative', left: '39vw', top: 250 }} className='chart'>
@@ -58,7 +84,7 @@ export default class DietChart extends Component {
                   {
                     color: "#10D8B8",
                     title: "Proteins",
-                    value: this.state.proteins,
+                    value: this.state.protein,
                   },
                 ]}
                 labelPosition={110}
@@ -71,7 +97,7 @@ export default class DietChart extends Component {
                 style={{ width: 800, height: 800 }}
               />
             </div>
-          </div> : <div style={{position: 'relative', top: 200}}><h1 style={{color: 'white'}}>There is no data for today.</h1></div>}
+          </div> : <div style={{position: 'relative', top: 200, right: 400}}><h1 style={{color: 'white'}}>There is no data for today.</h1></div>}
         </div>
         <Navbar />
         <Sidebar />
