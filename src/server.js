@@ -30,37 +30,6 @@ function generatePasswordHash(password){
 function compareHash(password, hash){
   return bcrypt.compare(password, hash)
 }
-function testEncrypt(req, res){
-  required_fields = ["password"]
-
-  data = req.body;
-  fields = Object.keys(data)
-
-  if (throwErrorOnMissingPostFields(fields)) return
-
-  let password = data.password
-  console.log(password)
-  generatePasswordHash(password).then(hash =>{
-    console.log(hash)
-    res.json({hash: hash})
-  }
-  )
-}
-  function testDecrypt(req, res){
-    required_fields = ["password", "hash"]
-    data = req.body;
-    fields = Object.keys(data)
-
-    if (throwErrorOnMissingPostFields(fields)) return
-
-    let password = data.password
-    let hash = data.hash
-
-    compareHash(password, hash).then(result => {
-      console.log(result)
-      res.json({success: result})
-    })
-  }
 
 function validatePostRequest(fields, required, strict=false){
   // fields => keys sent by the POST request
@@ -262,8 +231,6 @@ app.post('/api/home/muscles', (req, res) => {
   });
 });
 app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
-app.post('/api/encrypt', (req, res) => testEncrypt(req, res))
-app.post('/api/decrypt', (req, res) => testDecrypt(req, res))
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
