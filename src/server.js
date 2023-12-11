@@ -147,7 +147,7 @@ function dbPostUserRegister(req, res){
   fields = Object.keys(data)
 
   if (throwErrorOnMissingPostFields(fields)) return
-  generatePasswordHash(password).then(password_hash =>{
+  generatePasswordHash(data.password).then(password_hash =>{
     connection.query('INSERT INTO user (username, email, password) VALUES (?, ?, ?)', [data.username, data.email, password_hash], (err, result) => {
       if (err) {
         throwDBError(res, err);
