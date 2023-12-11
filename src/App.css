@@ -71,6 +71,7 @@ body{
 .muscles path:not(.rotate){
   cursor: pointer;
   fill: var(--heat-blue);
+  transition: .5s ease;
 }
 .timePeriod{
   width: 500px;

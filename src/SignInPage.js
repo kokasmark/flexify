@@ -1,7 +1,7 @@
 import './App.css';
 import { Component } from 'react';
 import logo from './assets/logo.webp';
-import { ReactComponent as Icon_email } from './assets/icon-email.svg';
+import { ReactComponent as Icon_user } from './assets/icon-user.svg';
 import { ReactComponent as Icon_key } from './assets/icon-key.svg';
 import { ReactComponent as Icon_view } from './assets/icon-view.svg';
 import { ReactComponent as Icon_hide } from './assets/icon-view-hide.svg';
@@ -23,7 +23,7 @@ class SignInPage extends Component {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
-    var raw = JSON.stringify({"email": document.getElementById('email').value,
+    var raw = JSON.stringify({"username": document.getElementById('username').value,
     "password": document.getElementById('password').value });
 
     var requestOptions = {
@@ -55,8 +55,8 @@ class SignInPage extends Component {
         
         <div className='sign-in-panel' style={{width: 400, height: 500, margin: 'auto', position: 'relative', top: 400}}>
         <img src={logo} style={{position: 'absolute', marginLeft:-20,marginTop: -100}}/>
-          <Icon_email style={{ width: 40, height: 40, marginRight: 10, position: 'relative', left: 5 }}/>
-          <input id='email' placeholder='Email'></input>
+          <Icon_user style={{ width: 40, height: 40, marginRight: 10, position: 'relative', left: 5 }}/>
+          <input id='username' placeholder='Username'></input>
           <br/>
           <Icon_key style={{width: 40, height: 40, marginRight: 10, position: 'relative', left: 5}}/>
           <input id='password' placeholder='Password' type={this.state.hidePassword == true ? 'password':'text'}></input>
