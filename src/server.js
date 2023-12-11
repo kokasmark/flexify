@@ -44,7 +44,7 @@ function throwDBError(res, err){
 }
 
 function generateUserToken(){
-  return require('crypto').randomBytes(64).toString('hex');
+  return require('crypto').randomBytes(32).toString('hex');
 }
 
 function getNewUserToken(uid, location){
