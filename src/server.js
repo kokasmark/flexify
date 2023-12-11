@@ -30,6 +30,13 @@ function validatePostRequest(fields, required, strict=false){
   return true
 }
 
+function throwErrorOnMissingPostFields(fields, required, res, strict=false){
+  if (validatePostRequest(fields, required, res, strict)) return false;
+
+  throwDBError(res, "Missing POST field(s)");
+  return true;
+}
+
 function throwDBError(res, err){
   let msg = 'Internal Server Error';
   if (debugMode) msg += ': ' + err;
@@ -37,11 +44,13 @@ function throwDBError(res, err){
 }
 
 function dbPostUserLogin(req, res){
+  required_fields = ["email", "password"]
+
   data = req.body;
-  keys = Object.keys(data)
-  if (!validatePostRequest(keys, ["email", "password"])){
-    throwDBError(res, "Missing POST field(s)");
-  }
+  fields = Object.keys(data)
+
+  if (throwErrorOnMissingPostFields(fields)) return
+
   connection.query('SELECT * FROM user WHERE email = ? AND password = ?;', [data.email, data.password], (err, result) => {
     if (err) {
       throwDBError(res, err);
@@ -56,6 +65,23 @@ function dbPostUserLogin(req, res){
   });
 }
 
+function dbPostUserRegister(req, res){
+  required_fields = ["username", "email", "password"]
+
+  data = req.body;
+  fields = Object.keys(data)
+
+  if (throwErrorOnMissingPostFields(fields)) return
+
+  connection.query('INSERT INTO user (username, email, password) VALUES (?, ?, ?)', [data.username, data.email, data.password], (err, result) => {
+    if (err) {
+      throwDBError(res, err);
+    } else {
+      res.json({ success: true });
+    }
+  });
+}
+
 connection.connect((err) => {
   if (err) {
     console.error('Error connecting to MySQL:', err);
@@ -64,23 +90,9 @@ connection.connect((err) => {
   }
 });
 
-// Define API endpoints
-app.get('/api/data', (req, res) => {
-  connection.query('SELECT * FROM user', (err, results) => {
-    if (err) {
-      console.error('Error querying MySQL:', err);
-      res.status(500).send('Internal Server Error ' + err);
-    } else {
-      res.json(results);
-    }
-  });
-});
-
-app.post('/api/data', (req, res) => {
-  
-});
 
 app.post('/api/login', (req, res) => dbPostUserLogin(req, res));
+app.post('/api/signup', (req, res) => dbPostUserRegister(req, res));
 
 
 app.listen(PORT, () => {
