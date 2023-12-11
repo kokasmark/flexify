@@ -106,6 +106,7 @@ function getNewUserToken(uid, location){
 }
 
 function dbPostUserLogin(req, res){
+  // TODO: cleanup
   required_fields = ["username", "password"]
 
   data = req.body;
@@ -113,15 +114,24 @@ function dbPostUserLogin(req, res){
 
   if (throwErrorOnMissingPostFields(fields)) return
 
-  connection.query('SELECT * FROM user WHERE username = ? AND password = ?;', [data.username, data.password], (err, result) => {
+  connection.query('SELECT id, password FROM user WHERE username = ?;', [data.username], (err, result) => {
     if (err) {
       throwDBError(res, err);
     } else {
       
       if (result.length > 0){
         let uid = result[0].id
-        var token = getNewUserToken(uid, "web");
-        res.json({ success: true, token: token});
+        let password_hash = result[0].password
+        compareHash(data.password, password_hash).then(match => {
+          if (match){
+            var token = getNewUserToken(uid, "web");
+            res.json({ success: true, token: token});
+          }
+          else{
+            res.json({ success: false })
+          }
+        })
+
       }
       else{
         res.json({ success: false })
