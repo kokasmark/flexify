@@ -76,8 +76,7 @@ function dbPostUserLogin(req, res){
       
       if (result.length > 0){
         let uid = result[0].id
-        var new_token = getNewUserToken(uid, "web");
-        console.log(new_token);
+        var new_token = getNewUserToken(uid, "web");        
         res.json({ success: true, token: new_token});
       }
       else{
@@ -104,6 +103,29 @@ function dbPostUserRegister(req, res){
   });
 }
 
+function dbPostUserDetails(req, res){
+  required_fields = ["token"]
+  data = req.body;
+  fields = Object.keys(data)
+
+  if (throwErrorOnMissingPostFields(fields)) return
+
+  connection.query('SELECT user.username, user.email FROM login INNER JOIN user ON login.user_id = user.id WHERE login.token = ?', [data.token], (err, result) => {
+    if (err) {
+      throwDBError(res, err);
+    } else {
+      
+      if (result.length > 0){
+        let userInfo = result[0];
+        res.json({ success: true, username: userInfo.username, email: userInfo.email});
+      }
+      else{
+        res.json({ success: false })
+      }
+    }
+  });
+}
+
 connection.connect((err) => {
   if (err) {
     console.error('Error connecting to MySQL:', err);
@@ -115,6 +137,7 @@ connection.connect((err) => {
 
 app.post('/api/login', (req, res) => dbPostUserLogin(req, res));
 app.post('/api/signup', (req, res) => dbPostUserRegister(req, res));
+app.post('/api/user', (req, res) => dbPostUserDetails(req, res));
 
 
 app.listen(PORT, () => {
