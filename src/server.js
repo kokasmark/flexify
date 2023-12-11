@@ -62,14 +62,14 @@ function getNewUserToken(uid, location){
 }
 
 function dbPostUserLogin(req, res){
-  required_fields = ["email", "password"]
+  required_fields = ["username", "password"]
 
   data = req.body;
   fields = Object.keys(data)
 
   if (throwErrorOnMissingPostFields(fields)) return
 
-  connection.query('SELECT * FROM user WHERE email = ? AND password = ?;', [data.email, data.password], (err, result) => {
+  connection.query('SELECT * FROM user WHERE username = ? AND password = ?;', [data.username, data.password], (err, result) => {
     if (err) {
       throwDBError(res, err);
     } else {
