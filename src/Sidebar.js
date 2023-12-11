@@ -10,16 +10,22 @@ import { ReactComponent as Icon_chart } from './assets/icon-chart.svg';
 import { ReactComponent as Icon_saved } from './assets/icon-bookmark.svg';
 import { ReactComponent as Icon_user } from './assets/icon-user.svg';
 
+import { ReactComponent as Icon_sign_out } from './assets/icon-sign-out.svg';
+
 import {Link} from 'react-router-dom';
 export default class Sidebar extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      
+      signOut: false
     };
   }
 
+  signOut(){
+    localStorage.removeItem('loginToken');
+    this.setState({signOut: true})
+  }
     render() {
       return (
         <div>
@@ -52,6 +58,10 @@ export default class Sidebar extends Component {
                 <li className='interactable' style={{ marginLeft: -33 }}>
                     <Link to="/account"><Icon_user style={{width: 48, height: 48}}/>
                     <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>My Account</p></Link>
+                </li>
+                <li className='interactable' style={{ marginLeft: -33, marginTop: 300 }}>
+                    <Link to="/" onClick={this.signOut}><Icon_sign_out style={{width: 40, height: 40, marginRight: 10}}/>
+                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>Sign out</p></Link>
                 </li>
             </ul>
           </div>

@@ -39,6 +39,7 @@ class SignInPage extends Component {
         console.log(response)
         var r = JSON.parse(response);
         if(r.success){
+          localStorage.setItem('loginToken', r.token);
           console.log('Validating');
           const { navigate } = this.props;
           navigate('/');
