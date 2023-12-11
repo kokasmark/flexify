@@ -36,7 +36,8 @@ class SignInPage extends Component {
     fetch("http://localhost:3001/api/login", requestOptions)
       .then(response => response.text())
       .then((response) => {
-        var r = response.json();
+        console.log(response)
+        var r = JSON.parse(response);
         if(r.success){
           console.log('Validating');
           const { navigate } = this.props;
