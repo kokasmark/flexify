@@ -71,7 +71,7 @@ class SignUpPage extends Component {
           <Button style={{ width: '80%', position: 'relative', left: 5 }} onClick={this.validate}>Sign Up</Button>
 
         </div>
-        <Link to='/signIn' style={{ position: 'relative', left: 875, top: 100 }}>Already have an account?</Link>
+        <Link to='/login' style={{ position: 'relative', left: 875, top: 100 }}>Already have an account?</Link>
       </div>
     );
   }

@@ -7,8 +7,9 @@ import { Button } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import Navbar from './NavBar';
 import MusclesView from './MusclesView';
+import AuthRedirect from './authRedirect';
 
-export default class BrowsePage extends Component {
+class BrowsePage extends Component {
     state = {
         choosenGroup: ''
     }
@@ -75,3 +76,4 @@ export default class BrowsePage extends Component {
         );
     }
 }
+export default AuthRedirect(BrowsePage);

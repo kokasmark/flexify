@@ -5,9 +5,9 @@ import { ReactComponent as Icon_add } from './assets/icon-add.svg';
 import Sidebar from './Sidebar';
 import Navbar from './NavBar';
 import { PieChart } from 'react-minimal-pie-chart';
+import AuthRedirect from './authRedirect';
 
-
-export default class DietPage extends Component {
+class DietPage extends Component {
   state = {
     carbs: 0,
     fat: 0,
@@ -108,3 +108,4 @@ export default class DietPage extends Component {
     );
   }
 }
+export default AuthRedirect(DietPage);

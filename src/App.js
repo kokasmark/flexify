@@ -5,9 +5,11 @@ import Sidebar from './Sidebar';
 import Navbar from './NavBar';
 import Calendar from 'react-calendar';
 import { PieChart } from 'react-minimal-pie-chart';
+import AuthRedirect from './authRedirect';
+
+class App extends Component {
 
 
-export default class App extends Component {
   render() {
     return (
       <div>
@@ -67,3 +69,4 @@ export default class App extends Component {
     );
   }
 }
+export default AuthRedirect(App);

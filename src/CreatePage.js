@@ -8,8 +8,9 @@ import Sidebar from './Sidebar';
 import Navbar from './NavBar';
 import MusclesView from './MusclesView';
 import { Card } from 'react-bootstrap';
+import AuthRedirect from './authRedirect';
 
-export default class CreatePage extends Component {
+class CreatePage extends Component {
   constructor(props) {
     super(props);
     this.containerRef = React.createRef();
@@ -91,3 +92,4 @@ export default class CreatePage extends Component {
     );
   }
 }
+export default AuthRedirect(CreatePage);

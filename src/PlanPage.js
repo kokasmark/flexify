@@ -8,7 +8,9 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import Navbar from './NavBar';
 
-export default class PlanPage extends Component {
+import AuthRedirect from './authRedirect';
+
+class PlanPage extends Component {
   state = {
     selectedDate: new Date().toLocaleString('en-us',{month:'long', day: 'numeric'})
   }
@@ -26,3 +28,4 @@ export default class PlanPage extends Component {
     );
   }
 }
+export default AuthRedirect(PlanPage);
