@@ -6,6 +6,7 @@ import Navbar from './NavBar';
 import Calendar from 'react-calendar';
 import { PieChart } from 'react-minimal-pie-chart';
 import AuthRedirect from './authRedirect';
+import DietChart from './DietChart';
 
 class App extends Component {
   muscleViewRef = React.createRef();
@@ -65,45 +66,12 @@ componentDidMount(){
         <div style={{position: 'absolute', left: 200, top: 400}}>
           <Calendar/>
         </div>
-        <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles}/>
-        <div style={{position: 'absolute', right: -200, top: 300}} className='home-chart'>
-            <h1 style={{ margin: 0, position: 'relative',left: 100, top: 220, color: 'white', textAlign: 'center', width: 200 }}>200 kcal</h1>
-            <div style={{ position: 'relative', left: -200, top: -200 }}>
-             <PieChart
-                label={(props) => { return props.dataEntry.title; }}
-                animate='true'
-                animationDuration={1000}
-                animationEasing="ease"
-                center={[100, 100]}
-                data={[
-                  {
-                    color: "#1C1533",
-                    title: "Carbs",
-                    value: 20,
-                  },
-                  {
-                    color: "#3C6FAA",
-                    title: "Fat",
-                    value: 10,
-                  },
-                  {
-                    color: "#10D8B8",
-                    title: "Proteins",
-                    value: 10,
-                  },
-                ]}
-                labelPosition={100}
-                lengthAngle={360}
-                lineWidth={50}
-                paddingAngle={0}
-                radius={50}
-                startAngle={0}
-                viewBoxSize={[200, 200]}
-                style={{ width: 800, height: 800 }}
-              />
-            </div>
+        
+        <div style={{position: 'absolute', right: 550, top: 50}} className='home-chart'>
+            <DietChart hideInfo/>
           </div> 
         </div>
+        <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles}/>
         <Navbar />
         <Sidebar />
       </div>

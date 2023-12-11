@@ -197,6 +197,42 @@ function dbGetUserMuscles(token, callback) {
     }
   });
 }
+function dbPostUserDiet(req, res){
+  required_fields = ["token"]
+  data = req.body;
+  fields = Object.keys(data)
+
+  if (throwErrorOnMissingPostFields(fields)) return
+
+  connection.query(`
+  SELECT
+  diet.calories,
+  diet.protein,
+  diet.carbs,
+  diet.fat
+FROM diet
+  INNER JOIN user
+    ON diet.user_id = user.id    
+WHERE user_id = (
+      SELECT user_id
+      FROM login
+      WHERE token = ?
+    )`, [data.token], (err, result) => {
+    if (err) {
+      throwDBError(res, err);
+    } else {
+      
+      if (result.length > 0){
+        let userDiet = result[0];
+        res.json({ success: true, calories: userDiet.calories, protein: userDiet.protein, carbs: userDiet.carbs, fat: userDiet.fat});
+      }
+      else{
+        res.json({ success: false })
+      }
+    }
+  });
+}
+
 connection.connect((err) => {
   if (err) {
     console.error('Error connecting to MySQL:', err);
@@ -215,6 +251,7 @@ app.post('/api/home/muscles', (req, res) => {
     res.json(result);
   });
 });
+app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
 app.post('/api/encrypt', (req, res) => testEncrypt(req, res))
 app.post('/api/decrypt', (req, res) => testDecrypt(req, res))
 
