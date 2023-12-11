@@ -11,7 +11,7 @@ import CreatePage from './CreatePage';
 import DietPage from './DietPage';
 import SignUpWrapper from './SignUpPage';
 import SignInWrapper from './SignInPage';
-import AppWrapper from './App';
+import AccountPage from './AccountPage';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter history={history}>
@@ -21,6 +21,7 @@ root.render(
     <Route exact={true} path="/plan" element={<PlanPage />} />
     <Route exact={true} path="/create" element={<CreatePage />} />
     <Route exact={true} path="/diet" element={<DietPage />} />
+    <Route exact={true} path="/account" element={<AccountPage />} />
 
     <Route exact={true} path="/login" element={<SignInWrapper />} />
     <Route exact={true} path="/signup" element={<SignUpWrapper />} />
