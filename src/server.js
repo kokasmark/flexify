@@ -76,8 +76,8 @@ function dbPostUserLogin(req, res){
       
       if (result.length > 0){
         let uid = result[0].id
-        var new_token = getNewUserToken(uid, "web");        
-        res.json({ success: true, token: new_token});
+        var token = getNewUserToken(uid, "web");
+        res.json({ success: true, token: token});
       }
       else{
         res.json({ success: false })
@@ -98,7 +98,9 @@ function dbPostUserRegister(req, res){
     if (err) {
       throwDBError(res, err);
     } else {
-      res.json({ success: true });
+      let uid = result.insertId
+      var token = getNewUserToken(uid, "web");
+      res.json({ success: true, token: token });
     }
   });
 }
