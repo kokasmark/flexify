@@ -35,13 +35,14 @@ class SignUpPage extends Component {
       redirect: 'follow'
     };
 
-    fetch("http://localhost:3001/api/login", requestOptions)
+    fetch("http://localhost:3001/api/signup", requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)
         var r = JSON.parse(response);
         if(r.success){
           console.log('Validating');
+          localStorage.setItem('loginToken', r.token);
           const { navigate } = this.props;
           navigate('/');
         }else{
