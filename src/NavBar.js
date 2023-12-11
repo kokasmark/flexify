@@ -36,7 +36,7 @@ export default class Navbar extends Component {
               <Icon_streak className='anim-heartbeat'/>
               <p style={{display: 'inline-block', color: 'white', margin: 5}}>You are on a 0 day workout streak</p>
 
-              <Link to="/signIn" style={{width:50,height:50,position: 'relative', left: '30vw'}}><Icon_signIn className='interactable'/></Link>
+              <Link to="/login" style={{width:50,height:50,position: 'relative', left: '30vw'}}><Icon_signIn className='interactable'/></Link>
             </div>
           </div>
         </div>
