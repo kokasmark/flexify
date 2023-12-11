@@ -66,11 +66,12 @@ componentDidMount(){
         <div style={{position: 'absolute', left: 200, top: 400}}>
           <Calendar/>
         </div>
-        <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles}/>
+        
         <div style={{position: 'absolute', right: 550, top: 50}} className='home-chart'>
             <DietChart hideInfo/>
           </div> 
         </div>
+        <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles}/>
         <Navbar />
         <Sidebar />
       </div>
