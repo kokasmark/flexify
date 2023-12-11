@@ -127,7 +127,30 @@ function dbPostUserDetails(req, res){
     }
   });
 }
+function dbGetUserMuscles(token, callback) {
+  const query = `
+    SELECT muscles
+    FROM exercise_template
+    WHERE user_id = (
+      SELECT user_id
+      FROM login
+      WHERE token = ?
+    );
+  `;
 
+  connection.query(query, [token], (err, result) => {
+    if (err) {
+      throwDBError(callback, err);
+    } else {
+      if (result.length > 0) {
+        const muscles = result.map(entry => entry.muscles);
+        callback({ success: true, muscles });
+      } else {
+        callback({ success: false });
+      }
+    }
+  });
+}
 connection.connect((err) => {
   if (err) {
     console.error('Error connecting to MySQL:', err);
@@ -140,7 +163,12 @@ connection.connect((err) => {
 app.post('/api/login', (req, res) => dbPostUserLogin(req, res));
 app.post('/api/signup', (req, res) => dbPostUserRegister(req, res));
 app.post('/api/user', (req, res) => dbPostUserDetails(req, res));
-
+app.post('/api/home/muscles', (req, res) => {
+  const token = req.body.token;
+  dbGetUserMuscles(token, (result) => {
+    res.json(result);
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

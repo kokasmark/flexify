@@ -17,7 +17,7 @@ export default class MusclesView extends Component {
       lats: [156,157],
       abs: [45,46,51,52,57,58,66,68],
       obliques: [37,38,39,40,41,42,44,43,44, 47,49,48,50,61,62],
-      thigh: [71,73,91,104,72,74,92,103,75,77,198,202,200,204,192,193,201,205,203,199],
+      quadriceps: [71,73,91,104,72,74,92,103,75,77,198,202,200,204,192,193,201,205,203,199],
       calves: [206,207,208,209],
       leg: [105,113,117,107,115,119,106,114,118,108,116,120,212,210,211,213],
       forearm: [55,59,65,69,63,56,60,67,64,70,164,162,167,168,163,169,166,165],
@@ -87,6 +87,21 @@ export default class MusclesView extends Component {
     }
       return data;
   }
+  rotate(){
+    this.setState({front: !this.state.front});
+    
+   
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.front !== this.state.front) {
+      var muscles = this.props.muscles;
+      for(var i = 0; i < muscles.length; i++){
+        var muscle = muscles[i];
+        var name = JSON.parse(muscle).muscle;
+        this.updateMuscleGroup(name, 1);
+      }
+    }
+  }
   componentDidMount(){
     this.createMuscleData();
   }
@@ -97,8 +112,8 @@ export default class MusclesView extends Component {
     return (
       <div>
         <div className='muscles anim' id='muscle-container' onClick={(e)=>this.muscleClicked(e)}>
-          {this.state.front == true ?  <Muscles/> :  <div style={{width: 1024, height:1028}}><MusclesBack style={{position: 'relative', left: 265, top:35,transform: 'scale(0.7)'}}/></div>}
-          <Icon_rotate className='interactable' style={{transform: 'scale(2)', position: 'relative', top:-175,left:500,fill:'#fff !important'}} onClick={()=> this.setState({front: !this.state.front})}/>
+          {this.state.front == true ?  <Muscles onLoad={()=> console.log('+')}/> :  <div style={{width: 1024, height:1028}}><MusclesBack style={{position: 'relative', left: 265, top:35,transform: 'scale(0.7)'}}/></div>}
+          <Icon_rotate className='interactable' style={{transform: 'scale(2)', position: 'relative', top:-175,left:500,fill:'#fff !important'}} onClick={()=>this.rotate()}/>
         </div>
 
         {/*CSAK TESZTELÉSHEZ
