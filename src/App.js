@@ -67,7 +67,7 @@ componentDidMount(){
           <Calendar/>
         </div>
         
-        <div style={{position: 'absolute', right: 550, top: 50}} className='home-chart'>
+        <div style={{position: 'absolute', right: 550, top: 50, zIndex:-1}} className='home-chart'>
             <DietChart hideInfo/>
           </div> 
         </div>
