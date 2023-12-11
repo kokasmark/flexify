@@ -1,9 +1,13 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
+const bcrypt = require("bcrypt");
+const { dataIndexOf } = require('react-widgets/cjs/Accessors');
 
 const app = express();
 const PORT = 3001;
+
+
 
 app.use(cors());
 app.use(express.json());
@@ -17,6 +21,46 @@ const connection = mysql.createConnection({
   password: '',
   database: 'flexify',
 });
+
+function generatePasswordHash(password){
+  const saltRounds = 10
+  return bcrypt.hash(password, saltRounds).catch(err => console.log(err))
+}
+
+function compareHash(password, hash){
+  return bcrypt.compare(password, hash)
+}
+function testEncrypt(req, res){
+  required_fields = ["password"]
+
+  data = req.body;
+  fields = Object.keys(data)
+
+  if (throwErrorOnMissingPostFields(fields)) return
+
+  let password = data.password
+  console.log(password)
+  generatePasswordHash(password).then(hash =>{
+    console.log(hash)
+    res.json({hash: hash})
+  }
+  )
+}
+  function testDecrypt(req, res){
+    required_fields = ["password", "hash"]
+    data = req.body;
+    fields = Object.keys(data)
+
+    if (throwErrorOnMissingPostFields(fields)) return
+
+    let password = data.password
+    let hash = data.hash
+
+    compareHash(password, hash).then(result => {
+      console.log(result)
+      res.json({success: result})
+    })
+  }
 
 function validatePostRequest(fields, required, strict=false){
   // fields => keys sent by the POST request
@@ -93,16 +137,18 @@ function dbPostUserRegister(req, res){
   fields = Object.keys(data)
 
   if (throwErrorOnMissingPostFields(fields)) return
-
-  connection.query('INSERT INTO user (username, email, password) VALUES (?, ?, ?)', [data.username, data.email, data.password], (err, result) => {
-    if (err) {
-      throwDBError(res, err);
-    } else {
-      let uid = result.insertId
-      var token = getNewUserToken(uid, "web");
-      res.json({ success: true, token: token });
-    }
-  });
+  generatePasswordHash(password).then(password_hash =>{
+    connection.query('INSERT INTO user (username, email, password) VALUES (?, ?, ?)', [data.username, data.email, password_hash], (err, result) => {
+      if (err) {
+        throwDBError(res, err);
+      } else {
+        let uid = result.insertId
+        var token = getNewUserToken(uid, "web");
+        res.json({ success: true, token: token });
+      }
+    });
+  })
+  
 }
 
 function dbPostUserDetails(req, res){
@@ -169,6 +215,8 @@ app.post('/api/home/muscles', (req, res) => {
     res.json(result);
   });
 });
+app.post('/api/encrypt', (req, res) => testEncrypt(req, res))
+app.post('/api/decrypt', (req, res) => testDecrypt(req, res))
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
