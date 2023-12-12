@@ -24,11 +24,12 @@ const connection = mysql.createConnection({
 
 function generatePasswordHash(password){
   const saltRounds = 10
-  return bcrypt.hash(password, saltRounds).then(hash => {return hash}).catch(err => console.log(err))
+  return bcrypt.hash(password, saltRounds).catch(err => console.log(err))
 }
 
-function compareHash(password, hash){
-  return bcrypt.compare(password, hash).then(result => {return result})
+ function compareHash(password, hash){
+  let result = (bcrypt.compare(password, hash).catch(err => console.log(err)))
+  return result
 }
 
 function validatePostRequest(fields, required, strict=false){
@@ -62,7 +63,6 @@ function generateUserToken(){
 
 function getNewUserToken(uid, location){
   let token = generateUserToken();
-  let success = false;
 
   connection.query('DELETE FROM login WHERE user_id = ? AND location = ?', [uid, location])
   connection.query('INSERT INTO login (user_id, token, location) VALUES (?, ?, ?)', [uid, token, location], (err, result) => {
@@ -75,15 +75,14 @@ function getNewUserToken(uid, location){
 }
 
 function dbPostUserLogin(req, res){
-  // TODO: cleanup
-  required_fields = ["username", "password"]
+  let required_fields = ["username", "password"]
+  let data = req.body;
+  let fields = Object.keys(data)
+  let query = 'SELECT id, password FROM user WHERE username = ?;'
 
-  data = req.body;
-  fields = Object.keys(data)
+  if (throwErrorOnMissingPostFields(fields, required_fields, res)) return
 
-  if (throwErrorOnMissingPostFields(fields)) return
-
-  connection.query('SELECT id, password FROM user WHERE username = ?;', [data.username], (err, result) => {
+  connection.query(query, [data.username], (err, result) => {
     if (err) {
       throwDBError(res, err);
     } else {
@@ -91,13 +90,16 @@ function dbPostUserLogin(req, res){
       if (result.length > 0){
         let uid = result[0].id
         let password_hash = result[0].password
-        if (compareHash(data.password, password_hash)){
-          var token = getNewUserToken(uid, "web");
-          res.json({ success: true, token: token});
-        }
-        else{
-          res.json({ success: false })
-        }
+        compareHash(data.password, password_hash).then(match =>{
+          if (match ){
+            var token = getNewUserToken(uid, "web");
+            res.json({ success: true, token: token});
+          }
+          else{
+            res.json({ success: false })
+          }
+        })
+        
       }
       else{
         res.json({ success: false })
@@ -107,33 +109,38 @@ function dbPostUserLogin(req, res){
 }
 
 function dbPostUserRegister(req, res){
-  required_fields = ["username", "email", "password"]
+  // TODO: signupot engedi, ha az összes field üres. kérdés a következő: MIÉRT????
+  let required_fields = ["username", "email", "password"]
+  let data = req.body;
+  let fields = Object.keys(data)
+  let query = 'INSERT INTO user (username, email, password) VALUES (?, ?, ?)'
 
-  data = req.body;
-  fields = Object.keys(data)
+  if (throwErrorOnMissingPostFields(fields, required_fields, res)) return
 
-  if (throwErrorOnMissingPostFields(fields)) return
-    let password_hash = generatePasswordHash(data.password)
-    connection.query('INSERT INTO user (username, email, password) VALUES (?, ?, ?)', [data.username, data.email, password_hash], (err, result) => {
-    if (err) {
-      throwDBError(res, err);
-    } else {
-      let uid = result.insertId
-      var token = getNewUserToken(uid, "web");
-      res.json({ success: true, token: token });
-    }
+  generatePasswordHash(data.password).then(password_hash => {
+    connection.query(query, [data.username, data.email, password_hash], (err, result) => {
+      if (err) {
+        throwDBError(res, err);
+      } else {
+        let uid = result.insertId
+        var token = getNewUserToken(uid, "web");
+        res.json({ success: true, token: token });
+      }
   })
+  
+})
   
 }
 
 function dbPostUserDetails(req, res){
-  required_fields = ["token"]
-  data = req.body;
-  fields = Object.keys(data)
+  let required_fields = ["token"]
+  let data = req.body;
+  let fields = Object.keys(data)
+  let query = 'SELECT user.username, user.email FROM login INNER JOIN user ON login.user_id = user.id WHERE login.token = ?'
 
-  if (throwErrorOnMissingPostFields(fields)) return
+  if (throwErrorOnMissingPostFields(fields, required_fields, res)) return
 
-  connection.query('SELECT user.username, user.email FROM login INNER JOIN user ON login.user_id = user.id WHERE login.token = ?', [data.token], (err, result) => {
+  connection.query(query, [data.token], (err, result) => {
     if (err) {
       throwDBError(res, err);
     } else {
@@ -149,21 +156,14 @@ function dbPostUserDetails(req, res){
   });
 }
 function dbPostUserMuscles(req, res){
-  required_fields = ["token"]
-  data = req.body;
-  fields = Object.keys(data)
+  let required_fields = ["token"]
+  let data = req.body;
+  let fields = Object.keys(data)
+  let query = 'SELECT muscles FROM exercise_template WHERE user_id = (SELECT user_id FROM login WHERE token = ?);'
 
-  if (throwErrorOnMissingPostFields(fields)) return
+  if (throwErrorOnMissingPostFields(fields, required_fields, res)) return
 
-  connection.query(`
-  SELECT muscles
-    FROM exercise_template
-    WHERE user_id = (
-      SELECT user_id
-      FROM login
-      WHERE token = ?
-    );
-  `, [data.token], (err, result) => {
+  connection.query(query, [data.token], (err, result) => {
     if (err) {
       throwDBError(res, err);
     } else {
@@ -179,26 +179,14 @@ function dbPostUserMuscles(req, res){
   });
 }
 function dbPostUserDiet(req, res){
-  required_fields = ["token"]
-  data = req.body;
-  fields = Object.keys(data)
+  let required_fields = ["token"]
+  let data = req.body;
+  let fields = Object.keys(data)
+  let query = `SELECT diet.calories, diet.protein, diet.carbs, diet.fat FROM diet INNER JOIN user ON diet.user_id = user.id WHERE user_id = (SELECT user_id FROM login WHERE token = ?)`
 
-  if (throwErrorOnMissingPostFields(fields)) return
+  if (throwErrorOnMissingPostFields(fields, required_fields, res)) return
 
-  connection.query(`
-  SELECT
-  diet.calories,
-  diet.protein,
-  diet.carbs,
-  diet.fat
-FROM diet
-  INNER JOIN user
-    ON diet.user_id = user.id    
-WHERE user_id = (
-      SELECT user_id
-      FROM login
-      WHERE token = ?
-    )`, [data.token], (err, result) => {
+  connection.query(query, [data.token], (err, result) => {
     if (err) {
       throwDBError(res, err);
     } else {
