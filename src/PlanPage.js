@@ -18,10 +18,10 @@ class PlanPage extends Component {
   render() {
     return (
       <div className='page'>
-        <div style={{position: 'absolute', left: 500, top: 300}}>
+        <div style={{position: 'absolute', left: 500, top: 300}} className='load-anim'>
             <WorkoutCalendar onChange={(e) => this.setState({selectedDate: e.toLocaleString('en-us',{month:'long', day: 'numeric'})})}/>
         </div>
-        <h1 style={{position: 'relative', color: 'white', top: 300, left: 880}}>Add Workout to {this.state.selectedDate}</h1>
+        <h1 className='load-anim' style={{position: 'relative', color: 'white', top: 300, left: 880}}>Add Workout to {this.state.selectedDate}</h1>
 
         <Navbar/>
         <Sidebar/>

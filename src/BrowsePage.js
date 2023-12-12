@@ -30,7 +30,7 @@ class BrowsePage extends Component {
     render() {
         return (
             <div className='page'>
-                <div style={{position: 'relative', left: 250}}>
+                <div style={{position: 'relative', left: 250}} className='load-anim'>
                     <div style={{ position: 'absolute' }}>
                         <MusclesView chooseCallback={this.chooseMuscleGroup} />
                     </div>

@@ -9,8 +9,9 @@
   --heat-orange: rgb(246, 136, 56);
   --heat-blue:  var(--contrast);
 }
-.page{
+.load-anim{
   animation: page-transition .6s; 
+  transition: .5s ease;
 }
 body{
   background-color: var(--bg) !important;

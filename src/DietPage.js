@@ -35,7 +35,7 @@ class DietPage extends Component {
             <DietChart/>
           </div>
         
-          <div className='anim add-calorie'>
+          <div className='anim add-calorie load-anim'>
             <h1 style={{color: 'white', fontSize: 25, width:'100%', margin: 0}}>Add Calories Manually</h1>
             <ul style={{listStyle: 'none'}}>
               <li style={{marginBottom: 10, marginLeft: -25, marginTop: 40}}>

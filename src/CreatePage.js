@@ -63,7 +63,7 @@ class CreatePage extends Component {
     return (
       <div className='page'>
 
-        <div>
+        <div className='load-anim'>
           <MusclesView chooseCallback={this.chooseMuscleGroup} />
           <div style={{ color: 'white', position: 'relative', top: -800, left: '55%' }}>
             {this.state.choosenGroup == '' ? <h1 >Choose a muscle group to train</h1> :

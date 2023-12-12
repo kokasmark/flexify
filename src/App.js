@@ -56,8 +56,8 @@ componentDidMount(){
     this.colorMuscles(this.state.muscles);
     return (
       <div className='page'>
-        <div style={{position: 'relative'}}>
-        <div className='timePeriod'>
+        <div style={{position: 'relative'}} >
+        <div className='timePeriod load-anim'>
           <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 45px 4px 25px", fontWeight: 'bold'}}>Weekly</p>
           <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 45px 4px 4px"}}>Monthly</p>
           <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 45px 4px 4px"}}>6 Months</p>
@@ -71,7 +71,7 @@ componentDidMount(){
           </div> 
         </div>
         <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles}/>
-        <div style={{position: 'absolute', left: 200, top: 400}}>
+        <div className='load-anim' style={{position: 'absolute', left: 200, top: 400}}>
           <WorkoutCalendar />
         </div>
         <Navbar />
