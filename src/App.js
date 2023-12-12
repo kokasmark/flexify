@@ -7,6 +7,7 @@ import Calendar from 'react-calendar';
 import { PieChart } from 'react-minimal-pie-chart';
 import AuthRedirect from './authRedirect';
 import DietChart from './DietChart';
+import WorkoutCalendar from './WorkoutCalendar';
 
 class App extends Component {
   muscleViewRef = React.createRef();
@@ -63,15 +64,16 @@ componentDidMount(){
           <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 45px 4px 4px"}}>1 Year</p>
           <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 25px 4px 4px"}}>All</p>
         </div>
-        <div style={{position: 'absolute', left: 200, top: 400}}>
-          <Calendar/>
-        </div>
+        
         
         <div style={{position: 'absolute', right: 550, top: 50, zIndex:-1}} className='home-chart'>
             <DietChart hideInfo/>
           </div> 
         </div>
         <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles}/>
+        <div style={{position: 'absolute', left: 200, top: 400}}>
+          <WorkoutCalendar />
+        </div>
         <Navbar />
         <Sidebar />
       </div>

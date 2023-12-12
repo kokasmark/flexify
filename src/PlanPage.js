@@ -9,6 +9,7 @@ import 'react-calendar/dist/Calendar.css';
 import Navbar from './NavBar';
 
 import AuthRedirect from './authRedirect';
+import WorkoutCalendar from './WorkoutCalendar';
 
 class PlanPage extends Component {
   state = {
@@ -18,7 +19,7 @@ class PlanPage extends Component {
     return (
       <div>
         <div style={{position: 'absolute', left: 500, top: 300}}>
-          <Calendar onChange={(e) => this.setState({selectedDate: e.toLocaleString('en-us',{month:'long', day: 'numeric'})})}/>
+            <WorkoutCalendar onChange={(e) => this.setState({selectedDate: e.toLocaleString('en-us',{month:'long', day: 'numeric'})})}/>
         </div>
         <h1 style={{position: 'relative', color: 'white', top: 300, left: 880}}>Add Workout to {this.state.selectedDate}</h1>
 
