@@ -10,7 +10,7 @@
   --heat-blue:  var(--contrast);
 }
 .page{
-  animation: page-transition 1s; 
+  animation: page-transition .6s; 
 }
 body{
   background-color: var(--bg) !important;
@@ -222,7 +222,7 @@ body{
 }
 @keyframes page-transition {
   0% {
-    transform: scale(.8);
+    transform: scale(.98);
   }
   100% {
     transform: scale(1);
