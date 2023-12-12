@@ -120,6 +120,11 @@ body{
   padding: 5px;
   animation: grow 0.2s ease-in;
 }
+.calendar-detail-close{
+  color: white;
+  padding: 5px;
+  animation: shrink 0.2s ease-in;
+}
 .sign-in-panel input{
   width: 300px;
   background: var(--shadow);
@@ -218,6 +223,14 @@ body{
   }
   100% {
     transform: scale(1);
+  }
+}
+@keyframes shrink {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
   }
 }
 @keyframes beat {

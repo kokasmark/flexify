@@ -13,7 +13,8 @@ export default class WorkoutCalendar extends Component {
     selectedDateNumeric: this.formatDate(new Date()),
     dateForApi: new Date().getFullYear() + '-' + (new Date().getMonth()+1),
     workouts: [],
-    panelExtended: false
+    panelExtended: false,
+    animationState: ''
   }
   getWorkouts(){
     var myHeaders = new Headers();
@@ -47,7 +48,7 @@ export default class WorkoutCalendar extends Component {
     this.setState({selectedDate: e.toLocaleString('en-us',{month:'long', day: 'numeric'})})
     this.setState({selectedDateNumeric: this.formatDate(e)})
     this.setState({dateForApi:e.getFullYear() + '-' +(e.getMonth()+1)})
-
+    this.setState({animationState: ''})
    
   }
   componentDidUpdate(oldProps, oldState){
@@ -83,6 +84,15 @@ export default class WorkoutCalendar extends Component {
   componentDidMount(){
     this.getWorkouts();
   }
+  hide = async (ms) => {
+
+    this.setState({animationState: '-close'})
+
+    await new Promise(r => setTimeout(r, ms))
+
+    this.setState({panelExtended: false})
+
+}
   render() {
     return (
       <div>
@@ -91,9 +101,9 @@ export default class WorkoutCalendar extends Component {
         return  'highlight-date'
       }
     }}/>
-        {this.state.panelExtended && <div  className='anim interactable calendar-detail' style={{width: 350, height: 280, borderRadius: 10,backgroundColor: 'var(--contrast)', position: 'relative', 
+        {this.state.panelExtended && <div  className={`anim interactable calendar-detail${this.state.animationState}`} style={{width: 350, height: 280, borderRadius: 10,backgroundColor: 'var(--contrast)', position: 'relative', 
         left: 0
-        , top: -280, zIndex:1}} onClick={()=>this.setState({panelExtended: false})}>
+        , top: -280, zIndex:1}} onClick={()=>this.hide(190)}>
           
           <h2>{this.state.selectedDate}</h2>
           {this.getWorkoutToDate() == true ? <div></div> : <div><p>There are no workouts for this date</p></div>}
