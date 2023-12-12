@@ -55,7 +55,7 @@ componentDidMount(){
   render() {
     this.colorMuscles(this.state.muscles);
     return (
-      <div>
+      <div className='page'>
         <div style={{position: 'relative'}}>
         <div className='timePeriod'>
           <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 45px 4px 25px", fontWeight: 'bold'}}>Weekly</p>

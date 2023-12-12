@@ -17,7 +17,7 @@ class PlanPage extends Component {
   }
   render() {
     return (
-      <div>
+      <div className='page'>
         <div style={{position: 'absolute', left: 500, top: 300}}>
             <WorkoutCalendar onChange={(e) => this.setState({selectedDate: e.toLocaleString('en-us',{month:'long', day: 'numeric'})})}/>
         </div>

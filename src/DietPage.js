@@ -29,7 +29,7 @@ class DietPage extends Component {
 
   render() {
     return (
-      <div>
+      <div className='page'>
         <div style={{ position: 'relative', left: '39vw', top: 250 }} className='chart'>
           <div style={{position:'relative', left:-500, top: -250}}>
             <DietChart/>

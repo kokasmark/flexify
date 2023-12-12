@@ -47,7 +47,7 @@ class AccountPage extends Component {
   }
   render() {
     return (
-      <div>
+      <div className='page'>
         <div style={{color: 'white', textAlign: 'center', position: 'relative', top: 400}}>
           <p>Username: {this.state.username}</p>
           <p>Email: {this.state.email}</p>

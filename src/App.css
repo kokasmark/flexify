@@ -9,6 +9,9 @@
   --heat-orange: rgb(246, 136, 56);
   --heat-blue:  var(--contrast);
 }
+.page{
+  animation: page-transition 1s; 
+}
 body{
   background-color: var(--bg) !important;
   overflow: hidden;
@@ -216,6 +219,14 @@ body{
 }
 .home-chart text{
   display: none;
+}
+@keyframes page-transition {
+  0% {
+    transform: scale(.8);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 @keyframes grow {
   0% {

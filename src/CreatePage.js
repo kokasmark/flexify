@@ -61,7 +61,7 @@ class CreatePage extends Component {
       </div>
     ));
     return (
-      <div>
+      <div className='page'>
 
         <div>
           <MusclesView chooseCallback={this.chooseMuscleGroup} />
