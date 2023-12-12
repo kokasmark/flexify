@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const app = express();
 const PORT = 3001;
 
+const print = console.log
 
 
 app.use(cors());
@@ -21,9 +22,6 @@ const connection = mysql.createConnection({
   database: 'flexify',
 });
 
-function print(x){
-  console.log(x)
-}
 
 function generatePasswordHash(password){
   const saltRounds = 10
