@@ -38,7 +38,7 @@ class AccountPage extends Component {
         if(r.success){
          this.setState({username: r.username, email: r.email});
         }else{
-          alert('Error!')
+          
         }
       })
       .catch(error => console.log('error', error));
