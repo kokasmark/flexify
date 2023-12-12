@@ -4,7 +4,7 @@ import './App.css';
 
 import { ReactComponent as Icon_streak } from './assets/icon-streak.svg';
 import { ReactComponent as Icon_signIn } from './assets/icon-sign-in.svg';
-import { ReactComponent as Icon_signOut } from './assets/icon-sign-out.svg';
+import { ReactComponent as Icon_user } from './assets/icon-user.svg';
 import { ReactComponent as Icon_light } from './assets/icon-light.svg';
 import { ReactComponent as Icon_dark } from './assets/icon-dark.svg';
 import logo from './assets/logo.webp';
@@ -15,13 +15,44 @@ export default class Navbar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-     theme: 'light'
+     theme: 'light',
+     username: '',
+     email: ''
     };
   }
   changeTheme = ()=>{
       this.setState({theme: this.state.theme == 'light' ? 'dark' : 'light'})
       document.documentElement.style.setProperty('--contrast',this.state.theme == 'dark'? '#3C6FAA':'#1C1533');
       document.documentElement.style.setProperty('--bg',this.state.theme == 'dark'? '#1F2229':'#101218');
+  }
+  getUserInformation(){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({"token": localStorage.getItem('loginToken')});
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/user", requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        console.log(response)
+        var r = JSON.parse(response);
+        if(r.success){
+         this.setState({username: r.username, email: r.email});
+        }else{
+          alert('Error!')
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
+  componentDidMount(){
+    this.getUserInformation();
   }
     render() {
       return (
@@ -36,7 +67,11 @@ export default class Navbar extends Component {
               <Icon_streak className='anim-heartbeat'/>
               <p style={{display: 'inline-block', color: 'white', margin: 5}}>You are on a 0 day workout streak</p>
 
-              <Link to="/login" style={{width:50,height:50,position: 'relative', left: '30vw'}}><Icon_signIn className='interactable'/></Link>
+              <div style={{color: 'white', position: 'relative', top: -50, left: '43%'}}>
+              
+              <Link to='/account'><Icon_user style={{position: 'relative', left: 200, width: 40, height: 40, margin: 5, paddingLeft: 10}} className='interactable'/></Link>
+              <p style={{display: 'inline-block'}}>Welcome, <b>{this.state.username}</b></p>
+              </div>
             </div>
           </div>
         </div>
