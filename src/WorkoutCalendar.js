@@ -91,13 +91,13 @@ export default class WorkoutCalendar extends Component {
         return  'highlight-date'
       }
     }}/>
-        <div  className='anim interactable calendar-detail' style={{width: 200, height: 200, borderRadius: 10,backgroundColor: 'var(--contrast)', position: 'relative', 
-        left: this.state.panelExtended == true ? 360 : 150
-        , top: -235, zIndex:-1}}>
+        {this.state.panelExtended && <div  className='anim interactable calendar-detail' style={{width: 350, height: 280, borderRadius: 10,backgroundColor: 'var(--contrast)', position: 'relative', 
+        left: 0
+        , top: -280, zIndex:1}} onClick={()=>this.setState({panelExtended: false})}>
           
           <h2>{this.state.selectedDate}</h2>
           {this.getWorkoutToDate() == true ? <div></div> : <div><p>There are no workouts for this date</p></div>}
-        </div>
+        </div>}
       </div>
     );
   }

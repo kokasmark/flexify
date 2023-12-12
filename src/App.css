@@ -118,6 +118,7 @@ body{
 .calendar-detail{
   color: white;
   padding: 5px;
+  animation: grow 0.2s ease-in;
 }
 .sign-in-panel input{
   width: 300px;
