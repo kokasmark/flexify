@@ -24,11 +24,11 @@ const connection = mysql.createConnection({
 
 function generatePasswordHash(password){
   const saltRounds = 10
-  return bcrypt.hash(password, saltRounds).catch(err => console.log(err))
+  return bcrypt.hash(password, saltRounds).then(hash => {return hash}).catch(err => console.log(err))
 }
 
 function compareHash(password, hash){
-  return bcrypt.compare(password, hash)
+  return bcrypt.compare(password, hash).then(result => {return result})
 }
 
 function validatePostRequest(fields, required, strict=false){
@@ -91,16 +91,13 @@ function dbPostUserLogin(req, res){
       if (result.length > 0){
         let uid = result[0].id
         let password_hash = result[0].password
-        compareHash(data.password, password_hash).then(match => {
-          if (match){
-            var token = getNewUserToken(uid, "web");
-            res.json({ success: true, token: token});
-          }
-          else{
-            res.json({ success: false })
-          }
-        })
-
+        if (compareHash(data.password, password_hash)){
+          var token = getNewUserToken(uid, "web");
+          res.json({ success: true, token: token});
+        }
+        else{
+          res.json({ success: false })
+        }
       }
       else{
         res.json({ success: false })
@@ -116,16 +113,15 @@ function dbPostUserRegister(req, res){
   fields = Object.keys(data)
 
   if (throwErrorOnMissingPostFields(fields)) return
-  generatePasswordHash(data.password).then(password_hash =>{
+    let password_hash = generatePasswordHash(data.password)
     connection.query('INSERT INTO user (username, email, password) VALUES (?, ?, ?)', [data.username, data.email, password_hash], (err, result) => {
-      if (err) {
-        throwDBError(res, err);
-      } else {
-        let uid = result.insertId
-        var token = getNewUserToken(uid, "web");
-        res.json({ success: true, token: token });
-      }
-    });
+    if (err) {
+      throwDBError(res, err);
+    } else {
+      let uid = result.insertId
+      var token = getNewUserToken(uid, "web");
+      res.json({ success: true, token: token });
+    }
   })
   
 }
