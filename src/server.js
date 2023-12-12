@@ -2,7 +2,6 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const bcrypt = require("bcrypt");
-const { dataIndexOf } = require('react-widgets/cjs/Accessors');
 
 const app = express();
 const PORT = 3001;
@@ -22,6 +21,10 @@ const connection = mysql.createConnection({
   database: 'flexify',
 });
 
+function print(x){
+  console.log(x)
+}
+
 function generatePasswordHash(password){
   const saltRounds = 10
   return bcrypt.hash(password, saltRounds).catch(err => console.log(err))
@@ -32,20 +35,20 @@ function generatePasswordHash(password){
   return result
 }
 
-function validatePostRequest(fields, required, strict=false){
-  // fields => keys sent by the POST request
-  // required => keys required to be in the POST
-  // strict => return false if there are any other fields
+function validatePostRequest(data, required, strict=false){
+  let fields = Object.keys(data)
+  if (strict && fields.length !== required.length) return false;
 
-  if (strict && fields.length != required.length) return false;
-  for (let search in required){
-    if (!(search in fields)) return false;
+  for (let search of required){
+    if (!(data.hasOwnProperty(search))) return false
+    if (data[search] === '') return false
+
   }
   return true
 }
 
-function throwErrorOnMissingPostFields(fields, required, res, strict=false){
-  if (validatePostRequest(fields, required, res, strict)) return false;
+function throwErrorOnMissingPostFields(data, required, res, strict=false){
+  if (validatePostRequest(data, required, res, strict)) return false;
 
   throwDBError(res, "Missing POST field(s)");
   return true;
@@ -54,14 +57,14 @@ function throwErrorOnMissingPostFields(fields, required, res, strict=false){
 function throwDBError(res, err){
   let msg = 'Internal Server Error';
   if (debugMode) msg += ': ' + err;
-  res.status(500).send(msg);
+  res.json({success: false, message: msg});
 }
 
 function generateUserToken(){
   return require('crypto').randomBytes(32).toString('hex');
 }
 
-function getNewUserToken(uid, location){
+function getNewUserToken(uid, location, res){
   let token = generateUserToken();
 
   connection.query('DELETE FROM login WHERE user_id = ? AND location = ?', [uid, location])
@@ -77,12 +80,11 @@ function getNewUserToken(uid, location){
 function dbPostUserLogin(req, res){
   let required_fields = ["username", "password"]
   let data = req.body;
-  let fields = Object.keys(data)
   let query = 'SELECT id, password FROM user WHERE username = ?;'
 
-  if (throwErrorOnMissingPostFields(fields, required_fields, res)) return
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
 
-  connection.query(query, [data.username], (err, result) => {
+  connection.query(query, [data["username"]], (err, result) => {
     if (err) {
       throwDBError(res, err);
     } else {
@@ -92,7 +94,7 @@ function dbPostUserLogin(req, res){
         let password_hash = result[0].password
         compareHash(data.password, password_hash).then(match =>{
           if (match ){
-            var token = getNewUserToken(uid, "web");
+            var token = getNewUserToken(uid, "web", res);
             res.json({ success: true, token: token});
           }
           else{
@@ -109,13 +111,11 @@ function dbPostUserLogin(req, res){
 }
 
 function dbPostUserRegister(req, res){
-  // TODO: signupot engedi, ha az összes field üres. kérdés a következő: MIÉRT????
   let required_fields = ["username", "email", "password"]
   let data = req.body;
-  let fields = Object.keys(data)
   let query = 'INSERT INTO user (username, email, password) VALUES (?, ?, ?)'
 
-  if (throwErrorOnMissingPostFields(fields, required_fields, res)) return
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
 
   generatePasswordHash(data.password).then(password_hash => {
     connection.query(query, [data.username, data.email, password_hash], (err, result) => {
@@ -123,7 +123,7 @@ function dbPostUserRegister(req, res){
         throwDBError(res, err);
       } else {
         let uid = result.insertId
-        var token = getNewUserToken(uid, "web");
+        var token = getNewUserToken(uid, "web", res);
         res.json({ success: true, token: token });
       }
   })
@@ -135,10 +135,9 @@ function dbPostUserRegister(req, res){
 function dbPostUserDetails(req, res){
   let required_fields = ["token"]
   let data = req.body;
-  let fields = Object.keys(data)
   let query = 'SELECT user.username, user.email FROM login INNER JOIN user ON login.user_id = user.id WHERE login.token = ?'
 
-  if (throwErrorOnMissingPostFields(fields, required_fields, res)) return
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
 
   connection.query(query, [data.token], (err, result) => {
     if (err) {
@@ -158,10 +157,9 @@ function dbPostUserDetails(req, res){
 function dbPostUserMuscles(req, res){
   let required_fields = ["token"]
   let data = req.body;
-  let fields = Object.keys(data)
   let query = 'SELECT muscles FROM exercise_template WHERE user_id = (SELECT user_id FROM login WHERE token = ?);'
 
-  if (throwErrorOnMissingPostFields(fields, required_fields, res)) return
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
 
   connection.query(query, [data.token], (err, result) => {
     if (err) {
@@ -181,10 +179,9 @@ function dbPostUserMuscles(req, res){
 function dbPostUserDiet(req, res){
   let required_fields = ["token"]
   let data = req.body;
-  let fields = Object.keys(data)
   let query = `SELECT diet.calories, diet.protein, diet.carbs, diet.fat FROM diet INNER JOIN user ON diet.user_id = user.id WHERE user_id = (SELECT user_id FROM login WHERE token = ?)`
 
-  if (throwErrorOnMissingPostFields(fields, required_fields, res)) return
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
 
   connection.query(query, [data.token], (err, result) => {
     if (err) {
