@@ -196,6 +196,41 @@ function dbPostUserDiet(req, res){
     }
   });
 }
+function dbPostUserWorkouts(req, res){
+  let required_fields = ["token", "date"]
+  let data = req.body;
+  let query = `
+  SELECT
+DATE_FORMAT( workout.date, "%Y-%m-%d") as date
+FROM login
+  INNER JOIN user
+    ON login.user_id = user.id
+  INNER JOIN workout
+    ON workout.user_id = user.id
+WHERE login.token = ?
+AND YEAR(workout.date) = ?
+AND MONTH(workout.date) = ?
+  `
+
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
+  
+  let year = data.date.split('-')[0];
+  let month = data.date.split('-')[1];
+  var c = connection.query(query, [data.token, year, month], (err, result) => {
+    if (err) {
+      throwDBError(res, err);
+    } else {
+      console.log(c.sql)
+      if (result.length > 0){
+        let userWorkouts = result[0];
+        res.json({ success: true, dates: result});
+      }
+      else{
+        res.json({ success: false })
+      }
+    }
+  });
+}
 
 connection.connect((err) => {
   if (err) {
@@ -211,6 +246,7 @@ app.post('/api/signup', (req, res) => dbPostUserRegister(req, res));
 app.post('/api/user', (req, res) => dbPostUserDetails(req, res));
 app.post('/api/home/muscles', (req, res) => dbPostUserMuscles(req, res));
 app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
+app.post('/api/workouts/date', (req, res) => dbPostUserWorkouts(req, res));
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
