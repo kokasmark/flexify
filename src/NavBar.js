@@ -22,8 +22,8 @@ export default class Navbar extends Component {
   }
   changeTheme = ()=>{
       this.setState({theme: this.state.theme == 'light' ? 'dark' : 'light'})
-      document.documentElement.style.setProperty('--contrast',this.state.theme == 'dark'? '#3C6FAA':'#1C1533');
-      document.documentElement.style.setProperty('--bg',this.state.theme == 'dark'? '#1F2229':'#101218');
+      document.documentElement.style.setProperty('--contrast',this.state.theme == 'dark'? '#3C6FAA':'#163457');
+      //document.documentElement.style.setProperty('--bg',this.state.theme == 'dark'? '#1F2229':'#101218');
   }
   getUserInformation(){
     var myHeaders = new Headers();
@@ -53,6 +53,8 @@ export default class Navbar extends Component {
   }
   componentDidMount(){
     this.getUserInformation();
+    var c = document.documentElement.style.getPropertyValue('--contrast');
+    this.setState({theme: c == '#3C6FAA' ? 'light':'dark'})
   }
     render() {
       return (
