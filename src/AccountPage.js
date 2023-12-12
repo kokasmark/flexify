@@ -1,7 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
 import { Component } from 'react';
-import { ReactComponent as Muscles } from './assets/muscles.svg';
+import { ReactComponent as Icon_user } from './assets/icon-user.svg';
+import { ReactComponent as Icon_email } from './assets/icon-email.svg';
 import Sidebar from './Sidebar';
 import Calendar from 'react-calendar';
 
@@ -48,9 +49,13 @@ class AccountPage extends Component {
   render() {
     return (
       <div className='page'>
-        <div style={{color: 'white', textAlign: 'center', position: 'relative', top: 400}}>
-          <p>Username: {this.state.username}</p>
-          <p>Email: {this.state.email}</p>
+        <div style={{color: 'white', textAlign: 'start', paddingTop: 140, paddingLeft: 50, 
+        position: 'relative', top: 300, background: 'var(--contrast)',width: 300, height: 400, borderRadius: 10, left: '42%',boxShadow: '5px 5px 5px var(--shadow)'}}>
+          <Icon_user/>
+          <p style={{display: 'inline-block', fontWeight: 'bold'}}>{this.state.username}</p>
+          <br/>
+          <Icon_email/>
+          <p style={{display: 'inline-block', fontWeight: 'bold'}}>{this.state.email}</p>
         </div>
         <Navbar/>
         <Sidebar/>
