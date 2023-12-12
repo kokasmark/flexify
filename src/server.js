@@ -152,26 +152,32 @@ function dbPostUserDetails(req, res){
     }
   });
 }
-function dbGetUserMuscles(token, callback) {
-  const query = `
-    SELECT muscles
+function dbPostUserMuscles(req, res){
+  required_fields = ["token"]
+  data = req.body;
+  fields = Object.keys(data)
+
+  if (throwErrorOnMissingPostFields(fields)) return
+
+  connection.query(`
+  SELECT muscles
     FROM exercise_template
     WHERE user_id = (
       SELECT user_id
       FROM login
       WHERE token = ?
     );
-  `;
-
-  connection.query(query, [token], (err, result) => {
+  `, [data.token], (err, result) => {
     if (err) {
-      throwDBError(callback, err);
+      throwDBError(res, err);
     } else {
-      if (result.length > 0) {
+      
+      if (result.length > 0){
         const muscles = result.map(entry => entry.muscles);
-        callback({ success: true, muscles });
-      } else {
-        callback({ success: false });
+        res.json({ success: true, muscles});
+      }
+      else{
+        res.json({ success: false })
       }
     }
   });
@@ -224,12 +230,7 @@ connection.connect((err) => {
 app.post('/api/login', (req, res) => dbPostUserLogin(req, res));
 app.post('/api/signup', (req, res) => dbPostUserRegister(req, res));
 app.post('/api/user', (req, res) => dbPostUserDetails(req, res));
-app.post('/api/home/muscles', (req, res) => {
-  const token = req.body.token;
-  dbGetUserMuscles(token, (result) => {
-    res.json(result);
-  });
-});
+app.post('/api/home/muscles', (req, res) => dbPostUserMuscles(req, res));
 app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
 
 app.listen(PORT, () => {
