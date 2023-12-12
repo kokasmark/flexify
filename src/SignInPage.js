@@ -59,7 +59,7 @@ class SignInPage extends Component {
     return (
       <div>
 
-        <div className='sign-in-panel' style={{ width: 400, height: 500, margin: 'auto', position: 'relative', top: 400 }}>
+        <div className='sign-in-panel' style={{ width: 400, height: 500, margin: 'auto', position: 'relative', top: 400, zIndex:10 }}>
           <img src={logo} style={{ position: 'absolute', marginLeft: -20, marginTop: -100 }} />
           <Icon_user style={{ width: 40, height: 40, marginRight: 10, position: 'relative', left: 5 }} />
           <input id='username' placeholder='Username'></input>
@@ -71,7 +71,7 @@ class SignInPage extends Component {
           </div>
           <Button style={{ width: '80%', position: 'relative', left: 5 }} onClick={this.validate}>Sign In</Button>
         </div>
-        <Link to='/signup' style={{ position: 'relative', left: 880, top: 100 }}>Don't have an account?</Link>
+        <Link to='/signup' style={{ position: 'relative', left: 880, top: 100, zIndex:10 }}>Don't have an account?</Link>
         <div style={{ transform: 'rotate3d(1, -1, 1, 45deg)' }}>
           <img src={screenshot1} style={{ transform: 'scale(0.25)', position: 'relative', top: -850, left: 300, boxShadow: '30px 30px 15px var(--shadow)', filter: 'brightness(1.1)' }} />
         </div>
