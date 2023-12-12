@@ -43,7 +43,7 @@ export default class WorkoutCalendar extends Component {
     if(this.props.onChange != null){
     this.props.onChange(e);
     }
-    this.setState({panelExtended: this.state.selectedDateNumeric == this.formatDate(e) ? false:true})
+    this.setState({panelExtended: this.state.selectedDateNumeric == this.formatDate(e) ? !this.state.panelExtended:true})
     this.setState({selectedDate: e.toLocaleString('en-us',{month:'long', day: 'numeric'})})
     this.setState({selectedDateNumeric: this.formatDate(e)})
     this.setState({dateForApi:e.getFullYear() + '-' +(e.getMonth()+1)})
@@ -82,10 +82,6 @@ export default class WorkoutCalendar extends Component {
   }
   componentDidMount(){
     this.getWorkouts();
-  }
-  extendPanel(t){
-    t.setState({panelExtended: !t.state.panelExtended})
-    console.log('!')
   }
   render() {
     return (
