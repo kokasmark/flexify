@@ -14,8 +14,10 @@ export default class WorkoutCalendar extends Component {
     selectedDateNumeric: this.formatDate(new Date()),
     dateForApi: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
     workouts: [],
+    workoutsData: [],
     panelExtended: false,
-    animationState: ''
+    animationState: '',
+    workoutsParsed: ""
   }
   getWorkouts() {
     var myHeaders = new Headers();
@@ -41,6 +43,31 @@ export default class WorkoutCalendar extends Component {
       })
       .catch(error => console.log('error', error));
   }
+  getWorkoutsData() {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), date: this.state.selectedDateNumeric });
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    fetch("http://localhost:3001/api/workouts/data", requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        console.log(response)
+        var r = JSON.parse(response);
+        if (r.success) {
+          console.log(r.data)
+          this.setState({ workoutsData: r.data });
+        } else {
+
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
   change(e) {
     if (this.props.onChange != null) {
       this.props.onChange(e);
@@ -55,6 +82,11 @@ export default class WorkoutCalendar extends Component {
   componentDidUpdate(oldProps, oldState) {
     if (oldState.selectedDate != this.state.selectedDate) {
       this.getWorkouts()
+      this.getWorkoutsData()
+      this.parseWorkouts()
+    }
+    if (oldState.workoutsData != this.state.workoutsData) {
+      this.parseWorkouts()
     }
   }
   formatDate(d) {
@@ -84,6 +116,7 @@ export default class WorkoutCalendar extends Component {
   }
   componentDidMount() {
     this.getWorkouts();
+    this.getWorkoutsData();
   }
   hide = async (ms) => {
 
@@ -93,6 +126,23 @@ export default class WorkoutCalendar extends Component {
 
     this.setState({ panelExtended: false })
 
+  }
+  parseWorkouts(){
+    var prevId=-1
+    var parsed = []
+    this.state.workoutsData.map((workout, index) => (
+      
+      parsed.push(<div key={index}>
+        
+        {prevId != workout["id"]&&<div><h2>{workout["workout_name"]}</h2>
+        <p>Duration: <b>{workout["duration"]}</b></p></div>}
+        
+        <p>Name: <b>{workout["name"]}</b></p>
+        <p>{workout["data"]}</p>
+      </div>),prevId = workout["id"]
+      
+    ))
+    this.setState({workoutsParsed: parsed})
   }
   render() {
     return (
@@ -109,7 +159,11 @@ export default class WorkoutCalendar extends Component {
         }} onClick={() => this.hide(190)}>
 
           <h2>{this.state.selectedDate}</h2>
-          {this.getWorkoutToDate() == true ? <div></div> :
+          {this.getWorkoutToDate() == true ? 
+            <div>
+              {this.state.workoutsParsed}
+             
+            </div> :
             <div>
               <p>There are no workouts for this date</p>
               <Link to='/plan' className='interactable' style={{color: 'white', textDecoration: 'none', backgroundColor: 'var(--heat-orange)', borderRadius: 5, padding: 10}}>Add workouts</Link>

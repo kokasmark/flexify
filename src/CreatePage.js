@@ -45,7 +45,7 @@ class CreatePage extends Component {
     // Create an array of the specified length (exerciseNum)
     const exerciseCards = Array.from({ length: this.state.exerciseNum }).map((_, index) => (
       <div className='create-workout-card-parent'>
-        <Card key={index} style={{ width: 200,border: 'white'}} className='create-workout-card'>
+        <Card key={index} style={{ width: 200,border: 'white', boxShadow: '2px 2px 5px var(--shadow)'}} className='create-workout-card'>
           <Card.Body>
             <Card.Title>Exercise</Card.Title>
             <input style={{ width: 50 }} placeholder=''></input>
