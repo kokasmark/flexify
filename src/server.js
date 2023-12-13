@@ -239,7 +239,26 @@ function dbPostUserWorkouts(req, res){
     }
   });
 }
+function dbGetExerciseTemplatesByMuscle(req, res) {
+  let required_field = "muscle";
+  let data = req.body;
+  let query = 'SELECT name FROM exercise_template WHERE JSON_CONTAINS(muscles, ?);';
 
+  if (throwErrorOnMissingPostFields(data, [required_field], res)) return;
+
+  connection.query(query, [`{"muscle": "${data[required_field]}"}`], (err, result) => {
+    if (err) {
+      throwDBError(res, err);
+    } else {
+      if (result.length > 0) {
+        let exerciseTemplateNames = result.map((row) => row.name);
+        res.json({ success: true, exerciseTemplateNames });
+      } else {
+        res.json({ success: false, exerciseTemplateNames: [] });
+      }
+    }
+  });
+}
 connection.connect((err) => {
   if (err) {
     console.error('Error connecting to MySQL:', err);
@@ -255,6 +274,7 @@ app.post('/api/home/muscles', (req, res) => dbPostUserMuscles(req, res));
 app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
 app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
 app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
+app.post('/api/browse', (req, res) => dbGetExerciseTemplatesByMuscle(req,res));
 
 const root = require('path').join(__dirname, 'build')
 console.log(root);
