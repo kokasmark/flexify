@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 import screenshot1 from './assets/screenshot1.png';
 import screenshot2 from './assets/screenshot2.png';
-import screenshot3 from './assets/screenshot3.png';
+import swal from 'sweetalert';
 
 const SignInWrapper = () => {
   const navigate = useNavigate();
@@ -49,8 +49,9 @@ class SignInPage extends Component {
           console.log('Validating');
           const { navigate } = this.props;
           navigate('/');
+          swal("Succesful login!",`Welcome ${document.getElementById('username').value}!`,'success');
         } else {
-          alert('Error with credentials')
+          swal("Oops!", "The credentials doesn't match!", "error");
         }
       })
       .catch(error => console.log('error', error));

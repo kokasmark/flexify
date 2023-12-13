@@ -46,7 +46,7 @@ class SignUpPage extends Component {
           const { navigate } = this.props;
           navigate('/');
         }else{
-          alert('Error with credentials')
+          
         }
       })
       .catch(error => console.log('error', error));
