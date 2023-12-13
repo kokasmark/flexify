@@ -1,4 +1,5 @@
 import logo from './logo.svg';
+import 'react-calendar/dist/Calendar.css';
 import './App.css';
 import React, { Component } from 'react';
 import Calendar from 'react-calendar';
@@ -6,7 +7,7 @@ import { ReactComponent as Icon_duration } from './assets/icon-duration.svg';
 import { ReactComponent as Icon_reps } from './assets/icon-reps.svg';
 import { ReactComponent as Icon_weight } from './assets/icon-weight.svg';
 
-import 'react-calendar/dist/Calendar.css';
+
 
 import { Link } from 'react-router-dom';
 
@@ -137,7 +138,8 @@ export default class WorkoutCalendar extends Component {
       parsed.push(<div key={index} style={{backgroundColor: 'var(--darker-contrast)', borderRadius: 5, padding: 10, margin: 5,animation: 'grow 0.4s ease-in'}}>
         
         {prevId != workout["id"]&&<div ><h2>{workout["workout_name"]}</h2>
-        <p><Icon_duration/> <b>{workout["duration"]}</b></p></div>}
+        <p><Icon_duration/> <b>{workout["duration"]}</b></p>
+        </div>}
         
         <p><b>{workout["name"]}</b></p>
         <ul>
@@ -163,7 +165,7 @@ export default class WorkoutCalendar extends Component {
           }
         }} />
         {this.state.panelExtended && <div className={`anim interactable calendar-detail${this.state.animationState}`} style={{
-          width: 350, height: 280, borderRadius: 10, backgroundColor: 'var(--contrast)', position: 'relative',
+          width: 350, height: 500, borderRadius: 10, backgroundColor: 'var(--contrast)', position: 'relative',
           left: 0
           , top: -280, zIndex: 1, borderWidth: 1, border: 'white', borderStyle: 'solid'
         }} onClick={() => this.hide(190)}>

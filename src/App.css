@@ -119,6 +119,9 @@ body{
 }
 .highlight-date{
   background: var(--heat-orange) !important;
+  border-style: solid !important;
+  border-width: 1px !important;
+  border: 1 !important;
 }
 .calendar-detail{
   color: white;
