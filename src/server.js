@@ -9,7 +9,6 @@ const PORT = 3001;
 
 const print = console.log
 
-
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -41,7 +40,6 @@ function validatePostRequest(data, required, strict=false){
   for (let search of required){
     if (!(data.hasOwnProperty(search))) return false
     if (data[search] === '') return false
-
   }
   return true
 }
@@ -87,7 +85,6 @@ function dbPostUserLogin(req, res){
     if (err) {
       throwDBError(res, err);
     } else {
-      
       if (result.length > 0){
         let uid = result[0].id
         let password_hash = result[0].password
@@ -100,7 +97,6 @@ function dbPostUserLogin(req, res){
             res.json({ success: false })
           }
         })
-        
       }
       else{
         res.json({ success: false })
@@ -126,9 +122,7 @@ function dbPostUserRegister(req, res){
         res.json({ success: true, token: token });
       }
   })
-  
-})
-  
+})  
 }
 
 function dbPostUserDetails(req, res){
@@ -198,7 +192,7 @@ function dbPostUserDiet(req, res){
     }
   });
 }
-function dbPostUserWorkouts(req, res){
+function dbPostUserDates(req, res){
   let required_fields = ["token", "date"]
   let data = req.body;
   let query = `SELECT DATE_FORMAT( workout.date, "%Y-%m-%d") as date FROM login INNER JOIN user ON login.user_id = user.id INNER JOIN workout ON workout.user_id = user.id WHERE login.token = ? AND YEAR(workout.date) = ? AND MONTH(workout.date) = ?`
@@ -222,6 +216,29 @@ function dbPostUserWorkouts(req, res){
     }
   });
 }
+function dbPostUserWorkouts(req, res){
+  let required_fields = ["token", "date"]
+  let data = req.body;
+  let query = `SELECT workout.id, workout.duration, \`set\`.data, exercise_template.name FROM workout INNER JOIN exercise ON exercise.workout_id = workout.id INNER JOIN \`set\` ON \`set\`.exercise_id = exercise.id INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE workout.user_id = (SELECT login.user_id FROM login WHERE login.token = ?) AND DATE_FORMAT( workout.date, "%Y-%m-%d") = ?`
+
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
+
+  connection.query(query, [data.token, data.date], (err, result) => {
+    console.log(result)
+    if (err) {
+      throwDBError(res, err);
+    } else {
+      let workoutsArray = [];
+        for(const item of result) workoutsArray.push(item)
+      if (result.length > 0){
+        res.json({ success: true, data: workoutsArray });
+      }
+      else{
+        res.json({ success: false })
+      }
+    }
+  });
+}
 
 connection.connect((err) => {
   if (err) {
@@ -231,14 +248,13 @@ connection.connect((err) => {
   }
 });
 
-
 app.post('/api/login', (req, res) => dbPostUserLogin(req, res));
 app.post('/api/signup', (req, res) => dbPostUserRegister(req, res));
 app.post('/api/user', (req, res) => dbPostUserDetails(req, res));
 app.post('/api/home/muscles', (req, res) => dbPostUserMuscles(req, res));
 app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
-app.post('/api/workouts/date', (req, res) => dbPostUserWorkouts(req, res));
-
+app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
+app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
 
 const root = require('path').join(__dirname, 'build')
 console.log(root);
