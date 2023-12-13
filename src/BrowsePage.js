@@ -50,7 +50,7 @@ class BrowsePage extends Component {
             if(r.success){
               this.setState({templates: r.exerciseTemplateNames});
             }else{
-              
+                this.setState({templates: []});
             }
           })
           .catch(error => console.log('error', error));
