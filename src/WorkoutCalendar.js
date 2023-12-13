@@ -2,7 +2,9 @@ import logo from './logo.svg';
 import './App.css';
 import React, { Component } from 'react';
 import Calendar from 'react-calendar';
-import { ReactComponent as Icon_expand } from './assets/icon-expand.svg';
+import { ReactComponent as Icon_duration } from './assets/icon-duration.svg';
+import { ReactComponent as Icon_reps } from './assets/icon-reps.svg';
+import { ReactComponent as Icon_weight } from './assets/icon-weight.svg';
 
 import 'react-calendar/dist/Calendar.css';
 
@@ -132,13 +134,21 @@ export default class WorkoutCalendar extends Component {
     var parsed = []
     this.state.workoutsData.map((workout, index) => (
       
-      parsed.push(<div key={index}>
+      parsed.push(<div key={index} style={{backgroundColor: 'var(--darker-contrast)', borderRadius: 5, padding: 10, margin: 5,animation: 'grow 0.4s ease-in'}}>
         
-        {prevId != workout["id"]&&<div><h2>{workout["workout_name"]}</h2>
-        <p>Duration: <b>{workout["duration"]}</b></p></div>}
+        {prevId != workout["id"]&&<div ><h2>{workout["workout_name"]}</h2>
+        <p><Icon_duration/> <b>{workout["duration"]}</b></p></div>}
         
-        <p>Name: <b>{workout["name"]}</b></p>
-        <p>{workout["data"]}</p>
+        <p><b>{workout["name"]}</b></p>
+        <ul>
+          <li>
+          <p><Icon_reps style={{width:20,height:20}}/> <b>{JSON.parse(workout["data"])["reps"]}</b></p>
+          </li>
+          <li>
+          <p><Icon_weight style={{width:20,height:20}}/> <b>{JSON.parse(workout["data"])["weight"]}</b> kg</p>
+          </li>
+        </ul>
+        
       </div>),prevId = workout["id"]
       
     ))
@@ -155,7 +165,7 @@ export default class WorkoutCalendar extends Component {
         {this.state.panelExtended && <div className={`anim interactable calendar-detail${this.state.animationState}`} style={{
           width: 350, height: 280, borderRadius: 10, backgroundColor: 'var(--contrast)', position: 'relative',
           left: 0
-          , top: -280, zIndex: 1
+          , top: -280, zIndex: 1, borderWidth: 1, border: 'white', borderStyle: 'solid'
         }} onClick={() => this.hide(190)}>
 
           <h2>{this.state.selectedDate}</h2>
