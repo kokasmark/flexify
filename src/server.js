@@ -156,7 +156,7 @@ function dbPostUserDetails(req, res){
 function dbPostUserMuscles(req, res){
   let required_fields = ["token"]
   let data = req.body;
-  let query = 'SELECT muscles FROM exercise_template WHERE user_id = (SELECT user_id FROM login WHERE token = ?);'
+  let query = 'SELECT exercise_template.muscles FROM exercise INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE exercise_template.user_id = (SELECT user_id FROM login WHERE token = ?)'
 
   if (throwErrorOnMissingPostFields(data, required_fields, res)) return
 
@@ -166,6 +166,7 @@ function dbPostUserMuscles(req, res){
     } else {
       
       if (result.length > 0){
+        console.log(result)
         const muscles = result.map(entry => entry.muscles);
         res.json({ success: true, muscles});
       }
