@@ -11,6 +11,7 @@ import logo from './assets/logo.webp';
 
 import {Link} from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import swal from 'sweetalert';
 
 const NavBarWrapper = () => {
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ class Navbar extends Component {
         if(r.success){
          this.setState({username: r.username, email: r.email});
         }else{
+          swal("Oops!", "You have been logged out!", "error");
           this.props.navigate('/login');
         }
       })
