@@ -8,6 +8,7 @@ import { PieChart } from 'react-minimal-pie-chart';
 import AuthRedirect from './authRedirect';
 import DietChart from './DietChart';
 import WorkoutCalendar from './WorkoutCalendar';
+import NavBarWrapper from './NavBar';
 
 class App extends Component {
   muscleViewRef = React.createRef();
@@ -95,7 +96,7 @@ componentDidMount(){
         <div className='load-anim' style={{position: 'absolute', left: 200, top: 400}}>
           <WorkoutCalendar />
         </div>
-        <Navbar />
+        <NavBarWrapper />
         <Sidebar />
       </div>
     );

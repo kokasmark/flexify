@@ -10,7 +10,15 @@ import { ReactComponent as Icon_dark } from './assets/icon-dark.svg';
 import logo from './assets/logo.webp';
 
 import {Link} from 'react-router-dom';
-export default class Navbar extends Component {
+import { useNavigate } from 'react-router-dom';
+
+const NavBarWrapper = () => {
+  const navigate = useNavigate();
+
+  return <Navbar navigate={navigate} />;
+};
+
+class Navbar extends Component {
 
   constructor(props) {
     super(props);
@@ -46,7 +54,7 @@ export default class Navbar extends Component {
         if(r.success){
          this.setState({username: r.username, email: r.email});
         }else{
-          
+          this.props.navigate('/login');
         }
       })
       .catch(error => console.log('error', error));
@@ -80,3 +88,4 @@ export default class Navbar extends Component {
       );
     }
   }
+  export default NavBarWrapper;

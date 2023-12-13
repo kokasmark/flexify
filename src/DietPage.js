@@ -7,6 +7,7 @@ import Navbar from './NavBar';
 import { PieChart } from 'react-minimal-pie-chart';
 import AuthRedirect from './authRedirect';
 import DietChart from './DietChart';
+import NavBarWrapper from './NavBar';
 
 class DietPage extends Component {
   state = {
@@ -54,7 +55,7 @@ class DietPage extends Component {
             <Icon_add className='interactable' onClick={this.addCaloriesManually}/>
           </div>
         </div>
-        <Navbar />
+        <NavBarWrapper />
         <Sidebar />
       </div>
     );

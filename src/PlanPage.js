@@ -10,6 +10,7 @@ import Navbar from './NavBar';
 
 import AuthRedirect from './authRedirect';
 import WorkoutCalendar from './WorkoutCalendar';
+import NavBarWrapper from './NavBar';
 
 class PlanPage extends Component {
   state = {
@@ -23,7 +24,7 @@ class PlanPage extends Component {
         </div>
         <h1 className='load-anim' style={{position: 'relative', color: 'white', top: 300, left: 880}}>Add Workout to {this.state.selectedDate}</h1>
 
-        <Navbar/>
+        <NavBarWrapper/>
         <Sidebar/>
       </div>
     );

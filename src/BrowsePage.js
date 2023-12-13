@@ -8,6 +8,7 @@ import Sidebar from './Sidebar';
 import Navbar from './NavBar';
 import MusclesView from './MusclesView';
 import AuthRedirect from './authRedirect';
+import NavBarWrapper from './NavBar';
 
 class BrowsePage extends Component {
     state = {
@@ -70,7 +71,7 @@ class BrowsePage extends Component {
                 
                 
                 <Sidebar />
-                <Navbar/>
+                <NavBarWrapper />
 
             </div>
         );

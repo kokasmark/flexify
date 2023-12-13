@@ -9,6 +9,7 @@ import Navbar from './NavBar';
 import MusclesView from './MusclesView';
 import { Card } from 'react-bootstrap';
 import AuthRedirect from './authRedirect';
+import NavBarWrapper from './NavBar';
 
 class CreatePage extends Component {
   constructor(props) {
@@ -86,7 +87,7 @@ class CreatePage extends Component {
           </div>
 
         </div>
-        <Navbar />
+        <NavBarWrapper />
         <Sidebar />
       </div>
     );

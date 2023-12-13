@@ -10,6 +10,7 @@ import 'react-calendar/dist/Calendar.css';
 import Navbar from './NavBar';
 
 import AuthRedirect from './authRedirect';
+import NavBarWrapper from './NavBar';
 
 class AccountPage extends Component {
   state = {
@@ -57,7 +58,7 @@ class AccountPage extends Component {
           <Icon_email/>
           <p style={{display: 'inline-block', fontWeight: 'bold'}}>{this.state.email}</p>
         </div>
-        <Navbar/>
+        <NavBarWrapper />
         <Sidebar/>
       </div>
     );
