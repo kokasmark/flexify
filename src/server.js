@@ -219,7 +219,7 @@ function dbPostUserDates(req, res){
 function dbPostUserWorkouts(req, res){
   let required_fields = ["token", "date"]
   let data = req.body;
-  let query = `SELECT workout.id, workout.duration, \`set\`.data, exercise_template.name FROM workout INNER JOIN exercise ON exercise.workout_id = workout.id INNER JOIN \`set\` ON \`set\`.exercise_id = exercise.id INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE workout.user_id = (SELECT login.user_id FROM login WHERE login.token = ?) AND DATE_FORMAT( workout.date, "%Y-%m-%d") = ?`
+  let query = `SELECT workout.id, workout.duration, workout.workout_name, \`set\`.data, exercise_template.name FROM workout INNER JOIN exercise ON exercise.workout_id = workout.id INNER JOIN \`set\` ON \`set\`.exercise_id = exercise.id INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE workout.user_id = (SELECT login.user_id FROM login WHERE login.token = ?) AND DATE_FORMAT( workout.date, "%Y-%m-%d") = ?`
 
   if (throwErrorOnMissingPostFields(data, required_fields, res)) return
 
