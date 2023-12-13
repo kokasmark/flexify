@@ -239,6 +239,14 @@ app.post('/api/home/muscles', (req, res) => dbPostUserMuscles(req, res));
 app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
 app.post('/api/workouts/date', (req, res) => dbPostUserWorkouts(req, res));
 
+
+const root = require('path').join(__dirname, 'build')
+console.log(root);
+app.use(express.static(root));
+app.get("*", (req, res) => {
+    res.sendFile('index.html', { root });
+})
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
