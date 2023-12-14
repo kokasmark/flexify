@@ -143,12 +143,18 @@ export default class WorkoutCalendar extends Component {
         
         <p><b>{workout["name"]}</b></p>
         <ul>
+        {JSON.parse(workout["set_data"])["sets"].map((set, index) => (
+          <div>
           <li>
-          <p><Icon_reps style={{width:20,height:20}}/> <b>{JSON.parse(workout["data"])["reps"]}</b></p>
+          <p><Icon_reps style={{width:20,height:20}}/> <b>{set["reps"]}</b></p>
           </li>
           <li>
-          <p><Icon_weight style={{width:20,height:20}}/> <b>{JSON.parse(workout["data"])["weight"]}</b> kg</p>
+          <p><Icon_weight style={{width:20,height:20}}/> <b>{set["weight"]}</b> kg</p>
           </li>
+          </div>
+        ))}
+          
+          
         </ul>
         
       </div>),prevId = workout["id"]
