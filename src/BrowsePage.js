@@ -87,10 +87,10 @@ class BrowsePage extends Component {
                     {this.state.templates.map((template, index) => (
                       <div>
                     {JSON.parse(template.muscles).includes(this.state.choosenGroup) &&
-                    <Card key={index} 
+                    <Card key={index}
                     onMouseEnter={()=>this.colorAffectedMuscles(template.muscles, false)} 
                     onMouseLeave={()=>this.colorAffectedMuscles(template.muscles, true)}
-                    className="animated-card" style={{ maxWidth: 240, marginTop: -20 }}>
+                    className="animated-card interactable" style={{ maxWidth: 240, marginTop: -20 }}>
                     <Icon_save className='interactable' style={{position: 'relative', height: 30, width:30, top: 35, left: '85%'}}/>
                         <Card.Body>
                             <Card.Title>{template.name}</Card.Title>                            

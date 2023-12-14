@@ -136,7 +136,7 @@ class Navbar extends Component {
             </div>
             <div style={{position: 'relative', left: '40%', top: -50}}>
               <Icon_streak className='anim-heartbeat'/>
-              <p style={{display: 'inline-block', color: 'white', margin: 5}}>You are on a <b>{this.state.streak}</b> day workout streak</p>
+              <p style={{display: 'inline-block', color: 'white', margin: 5}}>You are on a <b style={{color: 'var(--heat-orange)'}}>{this.state.streak}</b> day workout streak</p>
 
               <div style={{color: 'white', position: 'relative', top: -50, left: '43%'}}>
               
