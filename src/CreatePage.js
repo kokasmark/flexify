@@ -146,7 +146,7 @@ class CreatePage extends Component {
 
         <div className='load-anim'>
           <MusclesView chooseCallback={this.chooseMuscleGroup} />
-          <div style={{ color: 'white', position: 'relative', top: -800, left: '15%',backgroundColor: 'var(--contrast)', borderRadius: 10, height: 500, overflow: 'auto', width: 300 }}>
+          <div className='anim' style={{ color: 'white', position: 'relative', top: -800, left: '15%',backgroundColor: 'var(--contrast)', borderRadius: 10, height: 500, overflow: 'auto', width: 300 }}>
             <h1 style={{marginTop: 5, textAlign: 'center'}}>Templates</h1>
             {this.state.getTemplates.map((template, index) => (
               <div>
