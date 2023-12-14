@@ -281,6 +281,31 @@ function dbPostExerciseTemplates(req, res){
   });
 }
 
+function dbPostSaveWorkoutTemplate(req, res){
+  let required_fields = ["token", "name", "comment", "data"]
+  let data = req.body;
+
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
+    // TODO: validity check on data, so insert can't fail on only some of the data
+
+    connection.query('INSERT INTO workout_template (name, user_id, comment) VALUES (?, (SELECT user_id FROM login WHERE token = ?), ?)', [data.name, data.token, data.comment], (err, result) => {
+      if (err) {
+        throwDBError(res, err);
+      } else {
+      
+      const workoutTemplateId = result.insertId;
+      for (let exercise of data.data){
+        // TODO: check if user can see the workout that he sent the id for -> possible data leak
+        connection.query('INSERT INTO workout_template_exercises (workout_template_id, exercise_template_id, set_data, comment) VALUES (?, ?, ?, ?)', [workoutTemplateId, exercise.id, JSON.stringify(exercise.set_data), exercise.comment], (err, result) => {
+          if (err) {
+            throwDBError(res, err);
+          }
+        })
+    }}
+    })
+    res.json({ success: true });
+  }
+
 connection.connect((err) => {
   if (err) {
     console.error('Error connecting to MySQL:', err);
@@ -298,6 +323,7 @@ app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
 app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
 app.post('/api/browse', (req, res) => dbGetExerciseTemplatesByMuscle(req,res));
 app.post('/api/templates/exercises', (req, res) => dbPostExerciseTemplates(req, res));
+app.post('/api/templates/save_workout', (res, req) => dbPostSaveWorkoutTemplate(res, req))
 
 const root = require('path').join(__dirname, 'build')
 console.log(root);
