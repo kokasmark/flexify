@@ -83,7 +83,7 @@ class CreatePage extends Component {
     this.setState((prevState) => ({
       exerciseNum: prevState.exerciseNum + 1,
       exercises: [...prevState.exercises, 0],
-      exerciseTemplates: template ? [...prevState.exerciseTemplates, template] : [...prevState.exerciseTemplates, {name: 'Empty', type: 'reps'}]
+      exerciseTemplates: template ? [...prevState.exerciseTemplates, template] : [...prevState.exerciseTemplates, {name: 'Empty', type: 'rep'}]
     }));
   }
   selectTemplate(name, type) {
@@ -120,7 +120,6 @@ class CreatePage extends Component {
         <Card style={{ width: 300, border: 'white', boxShadow: '2px 2px 5px var(--shadow)' }} className='create-workout-card'>
           <Card.Body>
             {template.name != 'Empty' ? <Card.Title>{template.name}</Card.Title>:<Card.Title><input placeholder='name'/></Card.Title>}
-
             <input
               style={{ width: 50 }}
               placeholder=''
@@ -147,7 +146,7 @@ class CreatePage extends Component {
 
         <div className='load-anim'>
           <MusclesView chooseCallback={this.chooseMuscleGroup} />
-          <div style={{ color: 'white', position: 'relative', top: -800, left: '10%',backgroundColor: 'var(--contrast)', borderRadius: 10, height: 500, overflow: 'auto', width: 300 }}>
+          <div style={{ color: 'white', position: 'relative', top: -800, left: '15%',backgroundColor: 'var(--contrast)', borderRadius: 10, height: 500, overflow: 'auto', width: 300 }}>
             <h1 style={{marginTop: 5, textAlign: 'center'}}>Templates</h1>
             {this.state.getTemplates.map((template, index) => (
               <div>
