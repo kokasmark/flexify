@@ -241,11 +241,11 @@ function dbPostUserWorkouts(req, res){
 function dbGetExerciseTemplatesByMuscle(req, res) {
   let required_field = "muscle";
   let data = req.body;
-  let query = 'SELECT name FROM exercise_template WHERE JSON_CONTAINS(muscles, ?);';
+  let query = `SELECT exercise_template.name FROM exercise_template WHERE (exercise_template.muscles) LIKE ?`;
 
   if (throwErrorOnMissingPostFields(data, [required_field], res)) return;
 
-  connection.query(query, [`{"muscle": "${data[required_field]}"}`], (err, result) => {
+  connection.query(query, "%" + [data.muscle] + "%", (err, result) => {
     if (err) {
       throwDBError(res, err);
     } else {
