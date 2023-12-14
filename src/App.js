@@ -45,7 +45,6 @@ class App extends Component {
     for (const muscleName in averageCounts) {
       const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3)));
       this.muscleViewRef.current.updateMuscleGroup(muscleName, mappedValue);
-      console.log(muscleName, mappedValue)
     }
   }
 
