@@ -19,14 +19,17 @@ class App extends Component {
 
   colorMuscles(muscles) {
     const muscleCounts = {};
-  
+    var count = 0;
     // Assuming 'muscles' is an array of muscle objects
     for (var i = 0; i < muscles.length; i++) {
       var muscleData = JSON.parse(muscles[i]);
-      var name = muscleData[0]; // Assuming the muscle is the first element in the array
-  
+      for(var ii = 0; ii < muscleData.length; ii++){
+      var name = muscleData[ii]; // Assuming the muscle is the first element in the array
+          count++;
       // Count the occurrences of each muscle
       muscleCounts[name] = (muscleCounts[name] || 0) + 1;
+      }
+      
     }
   
     // Calculate the average count for each muscle group
@@ -34,7 +37,7 @@ class App extends Component {
   
     for (const muscleName in muscleCounts) {
       const totalOccurrences = muscleCounts[muscleName];
-      const averageCount = totalOccurrences / muscles.length; // Adjust the denominator if needed
+      const averageCount = totalOccurrences / count; // Adjust the denominator if needed
       averageCounts[muscleName] = averageCount;
     }
   
@@ -42,6 +45,7 @@ class App extends Component {
     for (const muscleName in averageCounts) {
       const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3)));
       this.muscleViewRef.current.updateMuscleGroup(muscleName, mappedValue);
+      console.log(muscleName, mappedValue)
     }
   }
 

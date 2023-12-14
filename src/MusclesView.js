@@ -99,13 +99,17 @@ export default class MusclesView extends Component {
       if(this.props.muscles != null){
       var muscles = this.props.muscles;
       const muscleCounts = {};
-      // Assuming 'muscles' is an array of muscle objects
+    var count = 0;
+    // Assuming 'muscles' is an array of muscle objects
     for (var i = 0; i < muscles.length; i++) {
       var muscleData = JSON.parse(muscles[i]);
-      var name = muscleData[0]; // Assuming the muscle is the first element in the array
-  
+      for(var ii = 0; ii < muscleData.length; ii++){
+      var name = muscleData[ii]; // Assuming the muscle is the first element in the array
+          count++;
       // Count the occurrences of each muscle
       muscleCounts[name] = (muscleCounts[name] || 0) + 1;
+      }
+      
     }
   
     // Calculate the average count for each muscle group
@@ -113,7 +117,7 @@ export default class MusclesView extends Component {
   
     for (const muscleName in muscleCounts) {
       const totalOccurrences = muscleCounts[muscleName];
-      const averageCount = totalOccurrences / muscles.length; // Adjust the denominator if needed
+      const averageCount = totalOccurrences / count; // Adjust the denominator if needed
       averageCounts[muscleName] = averageCount;
     }
   
@@ -121,6 +125,7 @@ export default class MusclesView extends Component {
     for (const muscleName in averageCounts) {
       const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3)));
       this.updateMuscleGroup(muscleName, mappedValue);
+      console.log(muscleName, mappedValue)
     }
     }
     }

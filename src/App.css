@@ -196,6 +196,7 @@ body{
   display: grid;
   grid-template-columns: repeat(2, 300px); /* Set each column to 200px width */
   gap: 20px; /* Adjust the gap between cards to 20px */
+  padding-left: 10px;
 }
 
 .create-workout-card {
@@ -204,9 +205,6 @@ body{
   animation: grow 0.2s ease-in;
 }
 
-.create-workout-card:nth-child(4n) {
-  margin-right: 0;
-}
 ::-webkit-scrollbar {
   width: 10px; /* Set the width of the scrollbar */
 }
