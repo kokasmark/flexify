@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { Component } from 'react';
+import React,{ Component } from 'react';
 import { ReactComponent as Icon_save } from './assets/icon-bookmark.svg';
 import { Card } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
@@ -11,13 +11,14 @@ import AuthRedirect from './authRedirect';
 import NavBarWrapper from './NavBar';
 
 class BrowsePage extends Component {
+  muscleRef = React.createRef();
     state = {
         choosenGroup: '',
         templates: []
     }
     chooseMuscleGroup = (g) => {
         if (g != null && g.name != '') {
-            this.getTemplates(g);
+          console.log(JSON.parse(this.state.templates[0].muscles), g.name)
           try { this.setState({ choosenGroup: g.name }) } catch { }
           for (var i = 0; i < 220; i++) {
             if (g.group.includes(i)) {
@@ -30,50 +31,79 @@ class BrowsePage extends Component {
     
       }
 
-    getTemplates(m){
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        var raw = JSON.stringify({muscle: m.name});
-    
-        var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: raw,
-          redirect: 'follow'
-        };
-    
-        fetch("http://localhost:3001/api/browse", requestOptions)
-          .then(response => response.text())
-          .then((response) => {
-            console.log(response)
-            var r = JSON.parse(response);
-            if(r.success){
-              this.setState({templates: r.exerciseTemplateNames});
-            }else{
-                this.setState({templates: []});
-            }
-          })
-          .catch(error => console.log('error', error));
+    getExerciseTemplates() {
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      var raw = JSON.stringify({ token: localStorage.getItem('loginToken') });
+  
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+  
+      fetch("http://localhost:3001/api/templates/exercises", requestOptions)
+        .then(response => response.text())
+        .then((response) => {
+          console.log(response)
+          var r = JSON.parse(response);
+          if (r.success) {
+            this.setState({ templates: r.data });
+          } else {
+  
+          }
+        })
+        .catch(error => console.log('error', error));
+      }
+      componentDidMount(){
+        this.getExerciseTemplates();
+      }
+      colorAffectedMuscles(muscles, leave){
+        var affected = JSON.parse(muscles);
+  
+        for (const groupName in this.muscleRef.current.state.groups) {
+          this.muscleRef.current.updateMuscleGroup(groupName,0);
+        }
+        this.muscleRef.current.updateMuscleGroup(this.state.choosenGroup,2);
+        if(!leave){
+        for(var i = 0; i < affected.length; i++){
+          if(affected[i] != this.state.choosenGroup){
+          this.muscleRef.current.updateMuscleGroup(affected[i],1);
+          }
+        }
+        
+      }
     }
     render() {
         return (
             <div className='page'>
                 <div style={{position: 'relative', left: 250}} className='load-anim'>
                     <div style={{ position: 'absolute' }}>
-                        <MusclesView chooseCallback={this.chooseMuscleGroup} />
+                        <MusclesView ref={this.muscleRef}chooseCallback={this.chooseMuscleGroup} />
                     </div>
                     {this.state.choosenGroup != '' ?<div key={this.state.choosenGroup} className='workouts anim' style={{ position: 'relative', left: 800, top: 175 }}>
                     <h1 style={{marginBottom: 20, color: 'white'}}>{this.state.choosenGroup.charAt(0).toUpperCase() + this.state.choosenGroup.slice(1)}  workouts</h1>
                     {this.state.templates.map((template, index) => (
-                    <Card  className="animated-card" style={{ maxWidth: 240, marginTop: -20 }}>
+                      <div>
+                    {JSON.parse(template.muscles).includes(this.state.choosenGroup) &&
+                    <Card key={index} 
+                    onMouseEnter={()=>this.colorAffectedMuscles(template.muscles, false)} 
+                    onMouseLeave={()=>this.colorAffectedMuscles(template.muscles, true)}
+                    className="animated-card" style={{ maxWidth: 240, marginTop: -20 }}>
                     <Icon_save className='interactable' style={{position: 'relative', height: 30, width:30, top: 35, left: '85%'}}/>
                         <Card.Body>
-                            <Card.Title>{template}</Card.Title>                            <Card.Text>
-                                Some quick example text to build on the card title and make up the
-                                bulk of the card's content.
+                            <Card.Title>{template.name}</Card.Title>                            
+                            <Card.Text>
+                                This workout will work on your:
+                                <ul>
+                                {JSON.parse(template.muscles).map((muscle, index) => (
+                                  <li>{muscle}</li>
+                                ))}
+                                </ul>
                             </Card.Text>
                         </Card.Body>
-                    </Card>
+                    </Card>}</div>
                   ))}
                         
                         <Button className='anim' style={{backgroundColor: 'var(--contrast)', border: 'none',margin: 30}}>Suggest me Workouts</Button>
