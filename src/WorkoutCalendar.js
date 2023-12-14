@@ -144,7 +144,7 @@ export default class WorkoutCalendar extends Component {
         <p><b>{workout["name"]}</b></p>
         <ul>
         {JSON.parse(workout["set_data"])["sets"].map((set, index) => (
-          <div>
+          <div style={{margin: 10}}>
           <li>
           <p><Icon_reps style={{width:20,height:20}}/> <b>{set["reps"]}</b></p>
           </li>

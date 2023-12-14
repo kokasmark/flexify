@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 import { ReactComponent as Icon_add } from './assets/icon-add.svg';
 import { ReactComponent as Icon_remove } from './assets/icon-remove.svg';
 import { ReactComponent as Icon_save } from './assets/icon-bookmark.svg';
+import { ReactComponent as Icon_reps } from './assets/icon-reps.svg';
+import { ReactComponent as Icon_weight } from './assets/icon-weight.svg';
 import Sidebar from './Sidebar';
 import Navbar from './NavBar';
 import MusclesView from './MusclesView';
@@ -17,9 +19,18 @@ class CreatePage extends Component {
     this.containerRef = React.createRef();
     this.state = {
       choosenGroup: '',
-      exerciseNum: 0
+      exerciseNum: 0,
+      exercises: []
     };
   }
+  handleRepsChange = (event, index) => {
+    const { value } = event.target;
+    this.setState((prevState) => {
+      const updatedExercises = [...prevState.exercises];
+      updatedExercises[index] = Number(value); // Store the length for the specific card
+      return { exercises: updatedExercises };
+    });
+  };
   chooseMuscleGroup = (g) => {
     if (g != null && g.name != '') {
       try { this.setState({ choosenGroup: g.name }) } catch { }
@@ -39,25 +50,33 @@ class CreatePage extends Component {
       this.containerRef.current.scrollTop = this.containerRef.current.scrollHeight;
     }
   }
+  addCard(){
+    this.setState({exerciseNum: this.state.exerciseNum+1})
+    this.setState({exercises: [...this.state.exercises, 0]})
+  }
   render() {
-    const { exerciseNum } = this.state;
-
-    // Create an array of the specified length (exerciseNum)
-    const exerciseCards = Array.from({ length: this.state.exerciseNum }).map((_, index) => (
+    const exerciseCards = Array.from({ length: this.state.exerciseNum}).map((_, index) => (
       <div className='create-workout-card-parent'>
-        <Card key={index} style={{ width: 200,border: 'white', boxShadow: '2px 2px 5px var(--shadow)'}} className='create-workout-card'>
-          <Card.Body>
-            <Card.Title>Exercise</Card.Title>
-            <input style={{ width: 50 }} placeholder=''></input>
-            <select>
-              <option>Reps</option>
-              <option>Seconds</option>
-              <option>Minutes</option>
-            </select>
-            <p style={{ marginTop: 10, marginBottom: 1 }}>Description</p>
-            <textarea style={{resize:'none', border: 'none', borderRadius: 5}}></textarea>
-          </Card.Body>
-          <Icon_remove style={{width: 30,height:30, position:'relative', top:-180, left: 165}} className='interactable' onClick={()=>this.setState({exerciseNum: this.state.exerciseNum-1})}/>
+
+          <Card key={index} style={{ width: 300,border: 'white', boxShadow: '2px 2px 5px var(--shadow)' }} className='create-workout-card'>
+            <Card.Body>
+              <Card.Title>Exercise</Card.Title>
+              <input
+                style={{ width: 50 }}
+                placeholder=''
+                id={`create-reps-${index}`}
+                onChange={(event) => this.handleRepsChange(event, index)}
+              />
+              <ol style={{maxHeight: 200, height: 200,marginTop: 20, overflow: 'auto'}}>
+                {Array.from({ length: this.state.exercises[index] }).map((_, liIndex) => (
+                  <li key={liIndex}> 
+                    <Icon_reps style={{width:20, height:20}}/> <input style={{width: 40}}></input>
+                    <Icon_weight  style={{width:20, height:20}}/> <input placeholder='kg' style={{width: 40}}></input>
+                  </li>
+                ))}
+              </ol>
+            </Card.Body>
+            <Icon_remove style={{ width: 30, height: 30, position: 'relative', top: -300, left: 265 }} className='interactable'/>
         </Card>
       </div>
     ));
@@ -80,7 +99,7 @@ class CreatePage extends Component {
                       {card}
                     </div>
                   ))}
-                  <Icon_add className='interactable' onClick={()=>this.setState({exerciseNum: this.state.exerciseNum+1})}/>
+                  <Icon_add className='interactable' onClick={()=>this.addCard()}/>
                   
                 </div>
               </div>}

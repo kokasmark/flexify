@@ -173,6 +173,18 @@ body{
 .create-workout input{
   border: none;
   border-radius: 5px;
+  background-color: var(--contrast);
+  border: white;
+  border-style: solid;
+  border-width: 1px;
+  color: white;
+}
+.create-workout li{
+  animation: grow 0.1s ease;
+}
+.create-workout input::placeholder {
+  color: white;
+  opacity: 0.5;
 }
 .create-workout select{
   border: none;
@@ -182,7 +194,7 @@ body{
 }
 .card-container {
   display: grid;
-  grid-template-columns: repeat(3, 200px); /* Set each column to 200px width */
+  grid-template-columns: repeat(2, 300px); /* Set each column to 200px width */
   gap: 20px; /* Adjust the gap between cards to 20px */
 }
 
