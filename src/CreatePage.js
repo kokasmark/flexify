@@ -15,6 +15,8 @@ import AuthRedirect from './authRedirect';
 import NavBarWrapper from './NavBar';
 
 class CreatePage extends Component {
+  muscleRef = React.createRef();
+
   constructor(props) {
     super(props);
     this.containerRef = React.createRef();
@@ -114,6 +116,22 @@ class CreatePage extends Component {
       };
     });
   }
+  colorAffectedMuscles(muscles, leave){
+      var affected = JSON.parse(muscles);
+
+      for (const groupName in this.muscleRef.current.state.groups) {
+        this.muscleRef.current.updateMuscleGroup(groupName,0);
+      }
+      this.muscleRef.current.updateMuscleGroup(this.state.choosenGroup,2);
+      if(!leave){
+      for(var i = 0; i < affected.length; i++){
+        if(affected[i] != this.state.choosenGroup){
+        this.muscleRef.current.updateMuscleGroup(affected[i],1);
+        }
+      }
+      
+    }
+  }
   render() {
     const exerciseCards = this.state.exerciseTemplates.map((template, index) => (
       <div key={index} className='create-workout-card-parent'>
@@ -145,16 +163,16 @@ class CreatePage extends Component {
       <div className='page'>
 
         <div className='load-anim'>
-          <MusclesView chooseCallback={this.chooseMuscleGroup} />
+          <MusclesView ref={this.muscleRef} chooseCallback={this.chooseMuscleGroup} />
           <div className='anim' style={{ color: 'white', position: 'relative', top: -800, left: '15%',backgroundColor: 'var(--contrast)', borderRadius: 10, height: 500, overflow: 'auto', width: 300 }}>
             <h1 style={{marginTop: 5, textAlign: 'center'}}>Templates</h1>
             {this.state.getTemplates.map((template, index) => (
               <div>
                 {template.muscles.includes(this.state.choosenGroup) &&
-                  <div onClick={()=> this.selectTemplate(template.name, template.type)} key={index} style={{backgroundColor: 'var(--contrast)', borderRadius: 5, marginLeft:'auto', marginRight:'auto', width:'80%',marginTop: 20
+                  <div onMouseEnter={()=>this.colorAffectedMuscles(template.muscles, false)} onMouseLeave={()=>this.colorAffectedMuscles(template.muscles, true)} onClick={()=> this.selectTemplate(template.name, template.type)} key={index} style={{backgroundColor: 'var(--contrast)', borderRadius: 5, marginLeft:'auto', marginRight:'auto', width:'80%',marginTop: 20
                   , height:60, textAlign: 'center', boxShadow: '5px 5px 15px var(--bg)'}} className='interactable load-anim'>
                     <h2>{template.name}</h2>
-                    <p style={{marginTop: -10}}>({template.muscles.replaceAll("[","").replaceAll("]","").replaceAll('"',"")})</p>
+                    <p style={{marginTop: -10,fontSize: 11}}>({template.muscles.replaceAll("[","").replaceAll("]","").replaceAll('"',"")})</p>
                   </div>}
               </div>
             ))}
