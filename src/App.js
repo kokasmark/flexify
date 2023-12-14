@@ -12,7 +12,7 @@ import NavBarWrapper from './NavBar';
 
 class App extends Component {
   muscleViewRef = React.createRef();
-
+  calendarRef = React.createRef()
   state = {
     muscles: []
   }
@@ -96,7 +96,7 @@ componentDidMount(){
         </div>
         <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles}/>
         <div className='load-anim' style={{position: 'absolute', left: 200, top: 400}}>
-          <WorkoutCalendar />
+          <WorkoutCalendar ref={this.calendarRef} parent = {this}/>
         </div>
         <NavBarWrapper />
         <Sidebar />

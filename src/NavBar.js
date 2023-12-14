@@ -26,8 +26,61 @@ class Navbar extends Component {
     this.state = {
      theme: 'light',
      username: '',
-     email: ''
+     email: '',
+     dates: [],
+     streak: 0,
+     dateForApi: new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
     };
+  }
+  computeStreak(){
+    const workoutDates = this.state.dates;
+    if (!workoutDates || workoutDates.length === 0) {
+      return 0; // No workouts, streak is 0
+    }
+  
+    const sortedDates = workoutDates.sort();
+    let streak = 1;
+  
+    for (let i = 1; i < sortedDates.length; i++) {
+      const currentDate = new Date(sortedDates[i]);
+      const prevDate = new Date(sortedDates[i - 1]);
+  
+      const timeDiff = currentDate.getTime() - prevDate.getTime();
+      const daysDiff = timeDiff / (1000 * 3600 * 24);
+  
+      if (daysDiff <= 2) {
+        streak++; // Continue streak if the break is less than or equal to 2 days
+      } else {
+        break; // Break the streak if the break is more than 2 days
+      }
+    }
+  
+    console.log("Streak:",streak)
+    this.setState({streak: streak});
+  }
+  getWorkouts() {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), date: this.state.dateForApi });
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    fetch("http://localhost:3001/api/workouts/date", requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        console.log(response)
+        var r = JSON.parse(response);
+        if (r.success) {
+          this.setState({ dates: r.dates });
+        } else {
+
+        }
+      })
+      .catch(error => console.log('error', error));
   }
   changeTheme = ()=>{
       this.setState({theme: this.state.theme == 'light' ? 'dark' : 'light'})
@@ -65,6 +118,12 @@ class Navbar extends Component {
     this.getUserInformation();
     var c = document.documentElement.style.getPropertyValue('--contrast');
     this.setState({theme: c == '#3C6FAA' ? 'light':'dark'})
+    this.getWorkouts();//Gets the dates for the streak calculation
+  }
+  componentDidUpdate(prevProps, prevState){
+    if(prevState.dates != this.state.dates){
+      this.computeStreak();
+    }
   }
     render() {
       return (
@@ -77,7 +136,7 @@ class Navbar extends Component {
             </div>
             <div style={{position: 'relative', left: '40%', top: -50}}>
               <Icon_streak className='anim-heartbeat'/>
-              <p style={{display: 'inline-block', color: 'white', margin: 5}}>You are on a 0 day workout streak</p>
+              <p style={{display: 'inline-block', color: 'white', margin: 5}}>You are on a <b>{this.state.streak}</b> day workout streak</p>
 
               <div style={{color: 'white', position: 'relative', top: -50, left: '43%'}}>
               
