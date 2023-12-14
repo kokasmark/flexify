@@ -224,7 +224,6 @@ function dbPostUserWorkouts(req, res){
   if (throwErrorOnMissingPostFields(data, required_fields, res)) return
 
   connection.query(query, [data.token, data.date], (err, result) => {
-    console.log(result)
     if (err) {
       throwDBError(res, err);
     } else {
@@ -259,6 +258,29 @@ function dbGetExerciseTemplatesByMuscle(req, res) {
     }
   });
 }
+function dbPostExerciseTemplates(req, res){
+  let required_fields = ["token"]
+  let data = req.body;
+  let query = `SELECT exercise_template.name, exercise_template.type, exercise_template.muscles FROM exercise_template INNER JOIN user ON exercise_template.user_id = user.id WHERE exercise_template.is_default = 1 OR exercise_template.user_id = (SELECT user_id FROM login WHERE token = ?)`
+
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
+
+  connection.query(query, [data.token], (err, result) => {
+    if (err) {
+      throwDBError(res, err);
+    } else {
+      if (result.length > 0){
+        let exercisesArray = [];
+        for(const item of result) exercisesArray.push(item)
+        res.json({ success: true, data: exercisesArray });
+      }
+      else{
+        res.json({ success: false })
+      }
+    }
+  });
+}
+
 connection.connect((err) => {
   if (err) {
     console.error('Error connecting to MySQL:', err);
@@ -275,6 +297,7 @@ app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
 app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
 app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
 app.post('/api/browse', (req, res) => dbGetExerciseTemplatesByMuscle(req,res));
+app.post('/api/templates/exercises', (req, res) => dbPostExerciseTemplates(req, res));
 
 const root = require('path').join(__dirname, 'build')
 console.log(root);
