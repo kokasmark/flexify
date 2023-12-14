@@ -93,39 +93,35 @@ export default class MusclesView extends Component {
   }
   rotate(){
     this.setState({front: !this.state.front});
-    
-   
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.front !== this.state.front) {
       if(this.props.muscles != null){
       var muscles = this.props.muscles;
       const muscleCounts = {};
-
       // Assuming 'muscles' is an array of muscle objects
-      for (var i = 0; i < muscles.length; i++) {
-        var muscle = muscles[i];
-        var muscleData = JSON.parse(muscle);
-        var name = muscleData.muscle;
-      
-        // Count the occurrences of each muscle
-        muscleCounts[name] = (muscleCounts[name] || 0) + 1;
-      }
-      
-      // Calculate the average count for each muscle group
-      const averageCounts = {};
-      
-      for (const muscleName in muscleCounts) {
-        const totalOccurrences = muscleCounts[muscleName];
-        const averageCount = totalOccurrences / muscles.length; // Adjust the denominator if needed
-        averageCounts[muscleName] = averageCount;
-      }
-      
-      // Map the average counts to the range [0, 3] and update muscle groups
-      for (const muscleName in averageCounts) {
-        const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3)));
-        this.updateMuscleGroup(muscleName, mappedValue);
-      }
+    for (var i = 0; i < muscles.length; i++) {
+      var muscleData = JSON.parse(muscles[i]);
+      var name = muscleData[0]; // Assuming the muscle is the first element in the array
+  
+      // Count the occurrences of each muscle
+      muscleCounts[name] = (muscleCounts[name] || 0) + 1;
+    }
+  
+    // Calculate the average count for each muscle group
+    const averageCounts = {};
+  
+    for (const muscleName in muscleCounts) {
+      const totalOccurrences = muscleCounts[muscleName];
+      const averageCount = totalOccurrences / muscles.length; // Adjust the denominator if needed
+      averageCounts[muscleName] = averageCount;
+    }
+  
+    // Map the average counts to the range [0, 3] and update muscle groups
+    for (const muscleName in averageCounts) {
+      const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3)));
+      this.updateMuscleGroup(muscleName, mappedValue);
+    }
     }
     }
   }

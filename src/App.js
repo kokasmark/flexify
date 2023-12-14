@@ -17,33 +17,32 @@ class App extends Component {
     muscles: []
   }
 
-colorMuscles(muscles){
-  const muscleCounts = {};
-
-  // Assuming 'muscles' is an array of muscle objects
-  for (var i = 0; i < muscles.length; i++) {
-    var muscle = muscles[i];
-    var muscleData = JSON.parse(muscle);
-    var name = muscleData.muscle;
+  colorMuscles(muscles) {
+    const muscleCounts = {};
   
-    // Count the occurrences of each muscle
-    muscleCounts[name] = (muscleCounts[name] || 0) + 1;
-  }
+    // Assuming 'muscles' is an array of muscle objects
+    for (var i = 0; i < muscles.length; i++) {
+      var muscleData = JSON.parse(muscles[i]);
+      var name = muscleData[0]; // Assuming the muscle is the first element in the array
   
-  // Calculate the average count for each muscle group
-  const averageCounts = {};
+      // Count the occurrences of each muscle
+      muscleCounts[name] = (muscleCounts[name] || 0) + 1;
+    }
   
-  for (const muscleName in muscleCounts) {
-    const totalOccurrences = muscleCounts[muscleName];
-    const averageCount = totalOccurrences / muscles.length; // Adjust the denominator if needed
-    averageCounts[muscleName] = averageCount;
-  }
+    // Calculate the average count for each muscle group
+    const averageCounts = {};
   
-  // Map the average counts to the range [0, 3] and update muscle groups
-  for (const muscleName in averageCounts) {
-    const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3)));
-    this.muscleViewRef.current.updateMuscleGroup(muscleName, mappedValue);
-  }
+    for (const muscleName in muscleCounts) {
+      const totalOccurrences = muscleCounts[muscleName];
+      const averageCount = totalOccurrences / muscles.length; // Adjust the denominator if needed
+      averageCounts[muscleName] = averageCount;
+    }
+  
+    // Map the average counts to the range [0, 3] and update muscle groups
+    for (const muscleName in averageCounts) {
+      const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3)));
+      this.muscleViewRef.current.updateMuscleGroup(muscleName, mappedValue);
+    }
   }
 
   getMusclesTrained(){
