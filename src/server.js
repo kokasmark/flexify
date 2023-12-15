@@ -259,26 +259,6 @@ function dbPostUserWorkouts(req, res){
     }
   });
 }
-function dbGetExerciseTemplatesByMuscle(req, res) {
-  let required_field = "muscle";
-  let data = req.body;
-  let query = `SELECT exercise_template.name FROM exercise_template WHERE (exercise_template.muscles) LIKE ?`;
-
-  if (throwErrorOnMissingPostFields(data, [required_field], res)) return;
-
-  connection.query(query, "%" + [data.muscle] + "%", (err, result) => {
-    if (err) {
-      throwDBError(res, err);
-    } else {
-      if (result.length > 0) {
-        let exerciseTemplateNames = result.map((row) => row.name);
-        res.json({ success: true, exerciseTemplateNames });
-      } else {
-        res.json({ success: false, exerciseTemplateNames: [] });
-      }
-    }
-  });
-}
 function dbPostExerciseTemplates(req, res){
   let required_fields = ["token"]
   let data = req.body;
@@ -363,7 +343,6 @@ app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
 app.post('/api/diet/add', (req, res) => dbPostUserDietAdd(req, res));
 app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
 app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
-app.post('/api/browse', (req, res) => dbGetExerciseTemplatesByMuscle(req,res));
 app.post('/api/templates/exercises', (req, res) => dbPostExerciseTemplates(req, res));
 app.post('/api/templates/save_workout', (res, req) => dbPostSaveWorkoutTemplate(res, req));
 app.post('/api/templates/save_exercise', (res, req) => dbPostSaveExerciseTemplate(res, req));
