@@ -210,7 +210,7 @@ class CreatePage extends Component {
           set_data.push({time: document.getElementById(i+"-"+ii+"-rep").value,weight: 0, reps: 0})
         }
       }
-      data.push({id: this.state.exerciseTemplates[i].id, set_data: set_data, comment: ''})
+      data.push({exercise_name: this.state.exerciseTemplates[i].name,id: this.state.exerciseTemplates[i].id, set_data: set_data, comment: ''})
     }
     console.log(data)
     
