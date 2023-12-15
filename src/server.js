@@ -263,7 +263,7 @@ function dbPostUserWorkouts(req, res){
 function dbPostExerciseTemplates(req, res){
   let required_fields = ["token"]
   let data = req.body;
-  let query = `SELECT exercise_template.id, exercise_template.name, exercise_template.type, exercise_template.muscles,  FROM exercise_template INNER JOIN user ON exercise_template.user_id = user.id WHERE exercise_template.is_default = 1 OR exercise_template.user_id = (SELECT user_id FROM login WHERE token = ?)`
+  let query = `SELECT exercise_template.id, exercise_template.name, exercise_template.type, exercise_template.muscles  FROM exercise_template INNER JOIN user ON exercise_template.user_id = user.id WHERE exercise_template.is_default = 1 OR exercise_template.user_id = (SELECT user_id FROM login WHERE token = ?)`
 
   if (throwErrorOnMissingPostFields(data, required_fields, res)) return
 
