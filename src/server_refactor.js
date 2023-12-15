@@ -55,7 +55,7 @@ function validatePostRequest(data, required){
 function throwErrorOnMissingPostFields(data, required, res){
     if (validatePostRequest(data, required, res, strict)) return false;
 
-    throwDBError(res, "Missing POST field(s)");
+    throwDBError(res, `Missing POST field(s). Required: ${required}`);
     return true;  
 }
 
@@ -72,6 +72,6 @@ function compareHash(password, hash){
 
 function generateUserToken(){
     return require('crypto').randomBytes(32).toString('hex');
-  }
+}
   
   
