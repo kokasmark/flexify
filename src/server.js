@@ -160,7 +160,6 @@ function dbPostUserMuscles(req, res){
     } else {
       
       if (result.length > 0){
-        console.log(result)
         const muscles = result.map(entry => entry.muscles);
         res.json({ success: true, muscles});
       }
@@ -173,7 +172,7 @@ function dbPostUserMuscles(req, res){
 function dbPostUserDiet(req, res){
   let required_fields = ["token"]
   let data = req.body;
-  let query = `SELECT diet.calories, diet.protein, diet.carbs, diet.fat FROM diet INNER JOIN user ON diet.user_id = user.id WHERE user_id = (SELECT user_id FROM login WHERE token = ?)`
+  let query = `SELECT diet.calories, diet.protein, diet.carbs, diet.fat FROM diet INNER JOIN user ON diet.user_id = user.id WHERE user_id = (SELECT user_id FROM login WHERE token = ?) AND date=CURDATE()`
 
   if (throwErrorOnMissingPostFields(data, required_fields, res)) return
 
@@ -191,6 +190,28 @@ function dbPostUserDiet(req, res){
       }
     }
   });
+}
+
+function dbPostUserDietAdd(req, res){
+  let required_fields = ["token", "carbs", "fat", "protein"]
+  let data = req.body;
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
+
+  connection.query(`SELECT id FROM diet WHERE user_id = (SELECT login.user_id FROM login WHERE login.token = ?) AND date=CURDATE()`, [data.token], (err, result_exist) =>{
+    if (err) throwDBError(res, err);
+    else if (result_exist.length > 0){
+      connection.query(`UPDATE diet SET carbs=carbs+?, fat=fat+?, protein=protein+? WHERE id=?`, [data.carbs, data.fat, data.protein, result_exist[0].id], (err, result) =>{
+        if (err) throwDBError(res, err);
+        else res.json({ success: true })
+      })
+    }
+    else{
+      connection.query(`INSERT INTO diet (carbs, fat, protein, user_id) VALUES (?, ?, ?, (SELECT login.user_id FROM login WHERE login.token = ?))`, [data.carbs, data.fat, data.protein, data.token], (err, result) =>{
+        if (err) throwDBError(res, err);
+        else res.json({ success: true })
+      })
+    }
+  })
 }
 function dbPostUserDates(req, res){
   let required_fields = ["token", "date"]
@@ -301,10 +322,30 @@ function dbPostSaveWorkoutTemplate(req, res){
             throwDBError(res, err);
           }
         })
+        res.json({ success: true, id: workoutTemplateId });
     }}
     })
-    res.json({ success: true });
   }
+
+function dbPostSaveExerciseTemplate(req, res){
+  let required_fields = ["token", "name", "type", "muscles"]
+  let data = req.body;
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
+  if (!data.type in ["rep", "duration"]) throwDBError(res, `Invalid exercise type '${data.type}'.`)
+  
+  let sql = `INSERT INTO exercise_template (name, \`type\`, muscles, user_id) VALUES (?, ?, ?, (SELECT user_id FROM login WHERE token = ?))`
+  connection.query(sql, [data.name, data.type, JSON.stringify(data.muscles), data.token], (err, result) =>{
+    if (err) {
+      throwDBError(res, err);
+    }
+    else if (result.insertId){
+      res.json({success: true, id: result.insertId})
+    }
+    else{
+      res.json({success: false})
+    }
+  })
+}
 
 connection.connect((err) => {
   if (err) {
@@ -319,11 +360,13 @@ app.post('/api/signup', (req, res) => dbPostUserRegister(req, res));
 app.post('/api/user', (req, res) => dbPostUserDetails(req, res));
 app.post('/api/home/muscles', (req, res) => dbPostUserMuscles(req, res));
 app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
+app.post('/api/diet/add', (req, res) => dbPostUserDietAdd(req, res));
 app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
 app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
 app.post('/api/browse', (req, res) => dbGetExerciseTemplatesByMuscle(req,res));
 app.post('/api/templates/exercises', (req, res) => dbPostExerciseTemplates(req, res));
-app.post('/api/templates/save_workout', (res, req) => dbPostSaveWorkoutTemplate(res, req))
+app.post('/api/templates/save_workout', (res, req) => dbPostSaveWorkoutTemplate(res, req));
+app.post('/api/templates/save_exercise', (res, req) => dbPostSaveExerciseTemplate(res, req));
 
 const root = require('path').join(__dirname, 'build')
 console.log(root);
