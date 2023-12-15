@@ -160,7 +160,6 @@ function dbPostUserMuscles(req, res){
     } else {
       
       if (result.length > 0){
-        console.log(result)
         const muscles = result.map(entry => entry.muscles);
         res.json({ success: true, muscles});
       }
@@ -314,7 +313,6 @@ function dbPostSaveExerciseTemplate(req, res){
   
   let sql = `INSERT INTO exercise_template (name, \`type\`, muscles, user_id) VALUES (?, ?, ?, (SELECT user_id FROM login WHERE token = ?))`
   connection.query(sql, [data.name, data.type, JSON.stringify(data.muscles), data.token], (err, result) =>{
-    console.log(result)
     if (err) {
       throwDBError(res, err);
     }
