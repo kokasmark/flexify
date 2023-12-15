@@ -23,9 +23,34 @@ class DietPage extends Component {
     var f =document.getElementById('add-fat').value == "" ? 0: parseInt(document.getElementById('add-fat').value);
     var p = document.getElementById('add-proteins').value == "" ? 0:parseInt(document.getElementById('add-proteins').value);
     console.log(c, f, p)
-    this.setState({carbs: this.state.carbs + c,fat: this.state.fat + f,proteins: this.state.proteins + p})
 
-    this.setState({calories: ((this.state.carbs+c) * 4)+((this.state.fat+f) * 9)+((this.state.proteins+p) * 4)})
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({token: localStorage.getItem('loginToken'), carbs: c, fat: f, protein: p});
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/diet/add", requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        console.log(response)
+        var r = JSON.parse(response);
+        if(r.success){
+          this.setState({carbs: this.state.carbs + c,fat: this.state.fat + f,proteins: this.state.proteins + p})
+
+          this.setState({calories: ((this.state.carbs+c) * 4)+((this.state.fat+f) * 9)+((this.state.proteins+p) * 4)})
+        }else{
+          
+        }
+      })
+      .catch(error => console.log('error', error));
+
+   
   }
 
   render() {
