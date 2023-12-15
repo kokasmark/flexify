@@ -32,6 +32,7 @@ export default class DietChart extends Component {
         console.log(response)
         var r = JSON.parse(response);
         if(r.success){
+          this.setState({carbs: this.state.carbs+r.carbs,fat: this.state.fat+r.fat,protein: this.state.protein+r.protein})
           this.setState({carbs: r.carbs, fat: r.fat, protein: r.protein, calories: r.carbs *4 + r.protein * 4 + r.fat *9});
         }else{
           
@@ -39,8 +40,36 @@ export default class DietChart extends Component {
       })
       .catch(error => console.log('error', error));
   }
+  getUserDietOnDate(date){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({token: localStorage.getItem('loginToken'), date: date});
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/diet/date", requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        console.log(response)
+        var r = JSON.parse(response);
+        if(r.success){
+          this.setState({carbs: this.state.carbs+r.carbs,fat: this.state.fat+r.fat,protein: this.state.protein+r.protein})
+          this.setState({carbs: r.carbs, fat: r.fat, protein: r.protein, calories: r.carbs *4 + r.protein * 4 + r.fat *9});
+        }else{
+          this.setState({carbs: 0, fat: 0, protein: 0})
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
   componentDidMount(){
+
     this.getUserDiet();
+
   }
   render() {
     return (
@@ -66,7 +95,7 @@ export default class DietChart extends Component {
             </div>}
             <div style={{ position: 'relative', left: -200, top: -200 }}>
              <PieChart
-                label={(props) => { return props.dataEntry.title; }}
+                label={this.props.hideInfo == null ? (props) => { return props.dataEntry.title; }: false}
                 animate='true'
                 animationDuration={1000}
                 animationEasing="ease"
@@ -101,8 +130,6 @@ export default class DietChart extends Component {
             </div>
           </div> : <div style={{position: 'relative', top: 200, right: 400}}><h1 style={{color: 'white'}}>There is no data for today.</h1></div>}
         </div>
-        <Navbar />
-        <Sidebar />
       </div>
     );
   }

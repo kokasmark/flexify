@@ -192,6 +192,28 @@ function dbPostUserDiet(req, res){
     }
   });
 }
+function dbPostUserDietOnDate(req, res){
+  let required_fields = ["token","date"]
+  let data = req.body;
+  let query = `SELECT diet.calories, diet.protein, diet.carbs, diet.fat FROM diet INNER JOIN user ON diet.user_id = user.id WHERE user_id = (SELECT user_id FROM login WHERE token = ?) AND date=?`
+
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
+
+  connection.query(query, [data.token,data.date], (err, result) => {
+    if (err) {
+      throwDBError(res, err);
+    } else {
+      
+      if (result.length > 0){
+        let userDiet = result[0];
+        res.json({ success: true, calories: userDiet.calories, protein: userDiet.protein, carbs: userDiet.carbs, fat: userDiet.fat});
+      }
+      else{
+        res.json({ success: false })
+      }
+    }
+  });
+}
 
 function dbPostUserDietAdd(req, res){
   let required_fields = ["token", "carbs", "fat", "protein"]
@@ -362,6 +384,7 @@ app.post('/api/signup', (req, res) => dbPostUserRegister(req, res));
 app.post('/api/user', (req, res) => dbPostUserDetails(req, res));
 app.post('/api/home/muscles', (req, res) => dbPostUserMuscles(req, res));
 app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
+app.post('/api/diet/date', (req, res) => dbPostUserDietOnDate(req, res));
 app.post('/api/diet/add', (req, res) => dbPostUserDietAdd(req, res));
 app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
 app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
