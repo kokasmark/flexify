@@ -123,6 +123,13 @@ body{
   border-width: 1px !important;
   border: 1 !important;
 }
+.highlight-date-diet{
+  border-style: solid !important;
+  border-width: 1px !important;
+  border: 1 !important;
+  color: rgb(17, 226, 17) !important;
+  border-color: white !important;
+}
 .calendar-detail{
   color: white;
   padding: 5px;

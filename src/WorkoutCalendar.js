@@ -18,6 +18,7 @@ export default class WorkoutCalendar extends Component {
     dateForApi: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
     workouts: [],
     workoutsData: [],
+    dietDates:[],
     panelExtended: false,
     animationState: '',
     workoutsParsed: ""
@@ -71,6 +72,36 @@ export default class WorkoutCalendar extends Component {
       })
       .catch(error => console.log('error', error));
   }
+  getDietDates() {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({ token: localStorage.getItem('loginToken')});
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    fetch("http://localhost:3001/api/diet/get_dates", requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        console.log(response)
+        var r = JSON.parse(response);
+        if (r.success) {
+          
+          var dates = []
+          r.dates.forEach(date => {
+            dates.push(new Date(date).toISOString().split('T')[0]+1)
+          });
+          console.log(dates)
+          this.setState({dietDates: dates });
+        } else {
+
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
   change(e) {
     if (this.props.onChange != null) {
       this.props.onChange(e);
@@ -115,11 +146,14 @@ export default class WorkoutCalendar extends Component {
     var day = d.getDate().toString().padStart(2, '0');
 
     var formattedDate = `${year}-${month}-${day}`;
+
+
     return formattedDate === x;
   }
   componentDidMount() {
     this.getWorkouts();
     this.getWorkoutsData();
+    this.getDietDates();
   }
   hide = async (ms) => {
 
@@ -167,7 +201,14 @@ export default class WorkoutCalendar extends Component {
       <div>
         <Calendar onChange={(e) => this.change(e)} tileClassName={({ date, view }) => {
           if (this.state.workouts.find(x => this.markWorkout(date, x))) {
-            return 'highlight-date'
+            if (!this.state.dietDates.includes(new Date(date).toISOString().split('T')[0]+1)){
+              return 'highlight-date'
+            }else{
+              return 'highlight-date highlight-date-diet'
+            }
+          }
+          if (this.state.dietDates.find(x => new Date(date).toISOString().split('T')[0]+1=== x)) {
+            return 'highlight-date-diet'
           }
         }} />
         {this.state.panelExtended && <div className={`anim interactable calendar-detail${this.state.animationState}`} style={{

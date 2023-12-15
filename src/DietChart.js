@@ -76,7 +76,7 @@ export default class DietChart extends Component {
       <div>
         <div style={{ position: 'relative', left: '39vw', top: 250 }} className='chart load-anim'>
         {(this.state.carbs > 0 || this.state.fat > 0 || this.state.proteins > 0) ? <div>
-            <h1 style={{ margin: 0, position: 'relative', left: 100, top: 220, color: 'white', textAlign: 'center', width: 200 }}>{this.state.calories} kcal</h1>
+            <h1 style={{ margin: 0, position: 'relative', left: 100, top: 220, color: 'white', textAlign: 'center', width: 200 }}>{parseInt(this.state.calories)} kcal</h1>
             {this.props.hideInfo == null &&<div style={{position: 'absolute', top: 300, left: 400}}>
               <ul style={{color:'white', listStyle: 'none'}}>
                 <li style={{marginBottom: -30}}>
