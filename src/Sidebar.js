@@ -45,7 +45,7 @@ export default class Sidebar extends Component {
                 </li>
                 <li className='interactable' style={{ marginLeft: -33 }}>
                     <Link to="/browse"><Icon_search style={{width: 48, height: 48}}/>
-                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>Browse Workouts</p></Link>
+                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>Browse Exercises</p></Link>
                 </li>
                 <li className='interactable' style={{ marginLeft: -55, marginBottom:-40 }}>
                     <Link to="/diet"><Icon_chart style={{width: 90, height: 90}}/>
