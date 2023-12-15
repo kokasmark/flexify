@@ -13,6 +13,7 @@ import MusclesView from './MusclesView';
 import { Card } from 'react-bootstrap';
 import AuthRedirect from './authRedirect';
 import NavBarWrapper from './NavBar';
+import swal from 'sweetalert';
 
 class CreatePage extends Component {
   muscleRef = React.createRef();
@@ -91,11 +92,12 @@ class CreatePage extends Component {
       exerciseTemplates: template ? [...prevState.exerciseTemplates, template] : [...prevState.exerciseTemplates, {name: 'Empty', type: 'rep'}]
     }));
   }
-  selectTemplate(name, type) {
+  selectTemplate(name, type, id) {
     // Create a new card data object with the given name and type
     const newCard = {
       name: name,
       type: type,
+      id: id
     };
   
     // Update the state to include the new card
@@ -194,6 +196,50 @@ class CreatePage extends Component {
   
     this.addCard(this.state.currentTemplateGrabbed);
   };
+  saveWorkout(){
+
+    var data = [
+    ]
+    
+    for(var i = 0; i < this.state.exercises.length; i++){
+      var set_data = [];
+      for(var ii = 0; ii < this.state.exercises[i]; ii++){
+        if(this.state.exerciseTemplates[i].type == 'rep'){
+        set_data.push({reps: document.getElementById(i+"-"+ii+"-rep").value,weight: document.getElementById(i+"-"+ii+"-weight").value, time: 0})
+        }else if(this.state.exerciseTemplates[i].type == 'time'){
+          set_data.push({time: document.getElementById(i+"-"+ii+"-rep").value,weight: 0, reps: 0})
+        }
+      }
+      data.push({id: this.state.exerciseTemplates[i].id, set_data: set_data, comment: ''})
+    }
+    console.log(data)
+    
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({token: localStorage.getItem('loginToken'), name: document.getElementById('create-name').value
+  ,comment: 'Empty', data: data});
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    console.log(raw)
+    fetch("http://localhost:3001/api/templates/save_workout", requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        console.log(response)
+        var r = JSON.parse(response);
+        if(r.success){
+          swal('Workout saved!', `${document.getElementById('create-name').value} has been successfully saved!`,"success")
+        }else{
+          swal('Oops!', `An error occured!`,"error")
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
   render() {
     const exerciseCards = this.state.exerciseTemplates.map((template, index) => (
       <div key={index} className='create-workout-card-parent'>
@@ -208,11 +254,11 @@ class CreatePage extends Component {
             />
             <ol style={{ maxHeight: 200, height: 200, marginTop: 20, overflow: 'auto' }}>
               {Array.from({ length: this.state.exercises[index] }).map((_, liIndex) => (
-                <li key={liIndex} style={{textAlign: 'start'}}>
+                <li key={liIndex}  style={{textAlign: 'start'}}>
                   {template.type === 'rep' && <Icon_reps style={{ width: 20, height: 20 }} />}
                   {template.type === 'time' && <Icon_duration style={{ width: 20, height: 20 }} />}
-                  <input style={{ width: 50 }} placeholder={template.type === 'time' && 'sec'}/>
-                  {template.type === 'rep' && <div style={{display: 'inline-block'}}><Icon_weight style={{ width: 20, height: 20 }} /> <input placeholder='kg' style={{ width: 50 }} /></div>}
+                  <input id={index+'-'+liIndex+'-rep'} style={{ width: 50 }} placeholder={template.type === 'time' && 'sec'}/>
+                  {template.type === 'rep' && <div style={{display: 'inline-block'}}><Icon_weight style={{ width: 20, height: 20 }} /> <input id={index+'-'+liIndex+'-weight'} placeholder='kg' style={{ width: 50 }} /></div>}
                 </li>
               ))}
             </ol>
@@ -235,7 +281,7 @@ class CreatePage extends Component {
                 {template.muscles.includes(this.state.choosenGroup) &&
                   <div ref={this.cardRef}  draggable
     onDragStart={(e) => this.dragStart(e, index, template)}
-    onDrop={this.drop} onMouseEnter={()=>this.colorAffectedMuscles(template.muscles, false)} onMouseLeave={()=>this.colorAffectedMuscles(template.muscles, true)} onClick={()=> this.selectTemplate(template.name, template.type)} key={index} style={{backgroundColor: 'var(--contrast)', borderRadius: 5, marginLeft:'auto', marginRight:'auto', width:'80%',marginTop: 20
+    onDrop={this.drop} onMouseEnter={()=>this.colorAffectedMuscles(template.muscles, false)} onMouseLeave={()=>this.colorAffectedMuscles(template.muscles, true)} onClick={()=> this.selectTemplate(template.name, template.type, template.id)} key={index} style={{backgroundColor: 'var(--contrast)', borderRadius: 5, marginLeft:'auto', marginRight:'auto', width:'80%',marginTop: 20
                   , height:60, textAlign: 'center', boxShadow: '5px 5px 15px var(--bg)'}} className='interactable load-anim'>
                     <h2>{template.name}</h2>
                     <p style={{marginTop: -10,fontSize: 11}}>({template.muscles.replaceAll("[","").replaceAll("]","").replaceAll('"',"")})</p>
@@ -248,7 +294,7 @@ class CreatePage extends Component {
             <div className='create-workout anim' ref={this.containerRef} style={exerciseCards.length == 0 ? { position: 'relative', left: 50, height: 200, textAlign: 'center' }
             :{ position: 'relative', left: 50, textAlign: 'center' }}>
               <input id='create-name' style={{ display: 'inline-block' }} placeholder='Name'></input>
-              <Icon_save className='interactable' title='Save Workout' />
+              <Icon_save className='interactable' title='Save Workout' onClick={()=>this.saveWorkout()}/>
                 
                 {exerciseCards.length == 0 && <h1>Select a muscle and drag & drop the template here</h1>}
               <div className="card-container">
