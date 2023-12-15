@@ -327,6 +327,25 @@ function dbPostSaveExerciseTemplate(req, res){
   })
 }
 
+async function dbPostSavedWorkoutTemplates(req, res){
+  let required_fields = ["token"]
+  let data = req.body;
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
+
+  try{
+    let templates = []
+    let workoutTemplates = (await connection.promise().query(`SELECT workout_template.id, workout_template.name, workout_template.comment FROM workout_template WHERE workout_template.user_id = (SELECT user_id FROM login WHERE token = ?)`, [data.token]))[0]
+    for (const wtemplate of workoutTemplates) {
+      let exerciseTemplates = (await connection.promise().query(`SELECT exercise_template_id, set_data, comment FROM workout_template_exercises WHERE workout_template_id=?`, [wtemplate.id]))[0]
+      templates.push({name:wtemplate.name, comment:wtemplate.comment, data:exerciseTemplates})
+    }
+    res.json({success: true, templates: templates})
+  }
+  catch (error){
+    throwDBError(res, error);
+  }
+}
+
 connection.connect((err) => {
   if (err) {
     console.error('Error connecting to MySQL:', err);
@@ -343,6 +362,7 @@ app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
 app.post('/api/diet/add', (req, res) => dbPostUserDietAdd(req, res));
 app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
 app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
+app.post('/api/templates/workouts', (req, res) => dbPostSavedWorkoutTemplates(req, res));
 app.post('/api/templates/exercises', (req, res) => dbPostExerciseTemplates(req, res));
 app.post('/api/templates/save_workout', (res, req) => dbPostSaveWorkoutTemplate(res, req));
 app.post('/api/templates/save_exercise', (res, req) => dbPostSaveExerciseTemplate(res, req));
