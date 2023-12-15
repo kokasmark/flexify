@@ -224,7 +224,7 @@ class CreatePage extends Component {
     return (
       <div className='page'>
 
-        <div className='load-anim'>
+        <div className='load-anim' style={{position: 'relative', top: -150}}>
           <div  style={{position: 'relative', top:200}}>
           <MusclesView ref={this.muscleRef} chooseCallback={this.chooseMuscleGroup}/>
           </div>

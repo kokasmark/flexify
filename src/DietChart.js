@@ -32,7 +32,7 @@ export default class DietChart extends Component {
         console.log(response)
         var r = JSON.parse(response);
         if(r.success){
-          this.setState({carbs: r.carbs, fat: r.fat, protein: r.protein, calories: r.calories});
+          this.setState({carbs: r.carbs, fat: r.fat, protein: r.protein, calories: r.carbs *4 + r.protein * 4 + r.fat *9});
         }else{
           
         }
