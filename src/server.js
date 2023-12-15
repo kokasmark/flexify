@@ -74,6 +74,7 @@ function getNewUserToken(uid, location, res){
   return token;
 }
 
+
 function dbPostUserLogin(req, res){
   let required_fields = ["username", "password"]
   let data = req.body;
@@ -262,7 +263,7 @@ function dbPostUserWorkouts(req, res){
 function dbPostExerciseTemplates(req, res){
   let required_fields = ["token"]
   let data = req.body;
-  let query = `SELECT exercise_template.name, exercise_template.type, exercise_template.muscles,  FROM exercise_template INNER JOIN user ON exercise_template.user_id = user.id WHERE exercise_template.is_default = 1 OR exercise_template.user_id = (SELECT user_id FROM login WHERE token = ?)`
+  let query = `SELECT exercise_template.id, exercise_template.name, exercise_template.type, exercise_template.muscles,  FROM exercise_template INNER JOIN user ON exercise_template.user_id = user.id WHERE exercise_template.is_default = 1 OR exercise_template.user_id = (SELECT user_id FROM login WHERE token = ?)`
 
   if (throwErrorOnMissingPostFields(data, required_fields, res)) return
 
@@ -331,7 +332,6 @@ async function dbPostSavedWorkoutTemplates(req, res){
   let required_fields = ["token"]
   let data = req.body;
   if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-
   try{
     let templates = []
     let workoutTemplates = (await connection.promise().query(`SELECT workout_template.id, workout_template.name, workout_template.comment FROM workout_template WHERE workout_template.user_id = (SELECT user_id FROM login WHERE token = ?)`, [data.token]))[0]
