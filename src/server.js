@@ -298,13 +298,16 @@ function dbPostSaveWorkoutTemplate(req, res){
       const workoutTemplateId = result.insertId;
       for (let exercise of data.data){
         // TODO: check if user can see the workout that he sent the id for -> possible data leak
+        console.log(exercise)
         connection.query('INSERT INTO workout_template_exercises (workout_template_id, exercise_template_id, set_data, comment) VALUES (?, ?, ?, ?)', [workoutTemplateId, exercise.id, JSON.stringify(exercise.set_data), exercise.comment], (err, result) => {
           if (err) {
             throwDBError(res, err);
           }
         })
-        res.json({ success: true, id: workoutTemplateId });
-    }}
+       
+    }
+    res.json({ success: true, id: workoutTemplateId });
+  }
     })
   }
 

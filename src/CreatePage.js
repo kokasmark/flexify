@@ -210,7 +210,7 @@ class CreatePage extends Component {
           set_data.push({time: document.getElementById(i+"-"+ii+"-rep").value,weight: 0, reps: 0})
         }
       }
-      data.push({exercise_name: this.state.exerciseTemplates[i].name,id: this.state.exerciseTemplates[i].id, set_data: set_data, comment: ''})
+      data.push({id: this.state.exerciseTemplates[i].id, set_data: set_data, comment: this.state.exerciseTemplates[i].name})
     }
     console.log(data)
     
@@ -226,7 +226,7 @@ class CreatePage extends Component {
       redirect: 'follow'
     };
 
-    console.log(raw)
+    console.log(data,'\n',raw)
     fetch("http://localhost:3001/api/templates/save_workout", requestOptions)
       .then(response => response.text())
       .then((response) => {

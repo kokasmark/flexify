@@ -57,19 +57,19 @@ class SavedPage extends Component {
       <div className='page'>
 
         {this.state.savedTemplates.map((template, index) => (
-          <Card key={index} style={{ width: 200, height: 250, textAlign: 'center' }}>
+          <Card key={index} style={{ width: 400, height: 500, textAlign: 'center' }}>
 
             <Card.Body>
               <Card.Title>{template.name}</Card.Title>
               <Card.Text>{template.comment}</Card.Text>
-              <ol style={{overflow: 'auto', maxHeight: 250}}>
+              <ol style={{overflow: 'auto'}}>
                 {template.data.map((data, index) => (
 
-                  <div>
-                    <p>{data.exercise_name}</p>{/*TODO: Name not showing */}
-                    {JSON.parse(data.set_data).map((set, index) => (
+                  <div key={index} style={{textAlign: 'start'}}>
+                    <h5>{data.comment}</h5>
+                    {JSON.parse(data.set_data).map((set, liIndex) => (
 
-                      <li style={{textAlign: 'start'}}>
+                      <li key={liIndex}>
                         <div style={{display: 'inline-block'}}>
                         <Icon_reps  style={{ width: 20, height: 20 }}/><p style={{display: 'inline-block'}}>{set.reps == 0 ? '-': set.reps}</p>
                         <Icon_weight style={{ width: 20, height: 20 }}/><p style={{display: 'inline-block'}}>{set.weight == 0 ? '-': set.weight+' kg'} </p>
