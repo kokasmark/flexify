@@ -301,10 +301,31 @@ function dbPostSaveWorkoutTemplate(req, res){
             throwDBError(res, err);
           }
         })
+        res.json({ success: true, id: workoutTemplateId });
     }}
     })
-    res.json({ success: true });
   }
+
+function dbPostSaveExerciseTemplate(req, res){
+  let required_fields = ["token", "name", "type", "muscles"]
+  let data = req.body;
+  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
+  if (!data.type in ["rep", "duration"]) throwDBError(res, `Invalid exercise type '${data.type}'.`)
+  
+  let sql = `INSERT INTO exercise_template (name, \`type\`, muscles, user_id) VALUES (?, ?, ?, (SELECT user_id FROM login WHERE token = ?))`
+  connection.query(sql, [data.name, data.type, JSON.stringify(data.muscles), data.token], (err, result) =>{
+    console.log(result)
+    if (err) {
+      throwDBError(res, err);
+    }
+    else if (result.insertId){
+      res.json({success: true, id: result.insertId})
+    }
+    else{
+      res.json({success: false})
+    }
+  })
+}
 
 connection.connect((err) => {
   if (err) {
@@ -323,7 +344,8 @@ app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
 app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
 app.post('/api/browse', (req, res) => dbGetExerciseTemplatesByMuscle(req,res));
 app.post('/api/templates/exercises', (req, res) => dbPostExerciseTemplates(req, res));
-app.post('/api/templates/save_workout', (res, req) => dbPostSaveWorkoutTemplate(res, req))
+app.post('/api/templates/save_workout', (res, req) => dbPostSaveWorkoutTemplate(res, req));
+app.post('/api/templates/save_exercise', (res, req) => dbPostSaveExerciseTemplate(res, req));
 
 const root = require('path').join(__dirname, 'build')
 console.log(root);
