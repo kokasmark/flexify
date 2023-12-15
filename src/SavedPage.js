@@ -17,7 +17,8 @@ import { ReactComponent as Icon_duration } from './assets/icon-duration.svg';
 
 class SavedPage extends Component {
   state = {
-    savedTemplates: []
+    savedTemplates: [],
+    opened: -1
   }
   getSavedTemplates() {
     var myHeaders = new Headers();
@@ -56,28 +57,34 @@ class SavedPage extends Component {
     return (
       <div className='page'>
 
+        <div className='saved-card-container' style={{position: 'absolute', top: 100}}>
         {this.state.savedTemplates.map((template, index) => (
-          <Card key={index} style={{ width: 400, height: 500, textAlign: 'center' }}>
+          <Card key={index} style={{ width: 300, height: 350, textAlign: 'center', boxShadow: '5px 5px 5px var(--shadow)' }}>
 
             <Card.Body>
               <Card.Title>{template.name}</Card.Title>
               <Card.Text>{template.comment}</Card.Text>
-              <ol style={{overflow: 'auto'}}>
+              <ol style={{maxHeight: 200}}>
                 {template.data.map((data, index) => (
 
-                  <div key={index} style={{textAlign: 'start'}}>
-                    <h5>{data.comment}</h5>
+                  <div className='interactable' key={index} onClick={()=> this.setState({opened: this.state.opened == index? -1:index})}>
+                    <h5 style={{textAlign: 'start'}}>{(index+1)+'. '+data.comment}</h5>
+                    <div style={{textAlign: 'start',overflow: 'auto', maxHeight: 150, backgroundColor: 'var(--darker-contrast)', borderRadius: 5}}>
+                    
+                    
                     {JSON.parse(data.set_data).map((set, liIndex) => (
-
-                      <li key={liIndex}>
+                      <div>
+                      {this.state.opened == (index)&& <li key={liIndex}>
                         <div style={{display: 'inline-block'}}>
-                        <Icon_reps  style={{ width: 20, height: 20 }}/><p style={{display: 'inline-block'}}>{set.reps == 0 ? '-': set.reps}</p>
-                        <Icon_weight style={{ width: 20, height: 20 }}/><p style={{display: 'inline-block'}}>{set.weight == 0 ? '-': set.weight+' kg'} </p>
-                        <Icon_duration style={{ width: 20, height: 20 }}/><p style={{display: 'inline-block'}}>{set.time == 0 ? '-': set.time+' sec'}</p>
+                        <Icon_reps  style={{ width: 20, height: 20 }}/><p style={{display: 'inline-block', fontWeight: 700}}>{set.reps == 0 ? '-': set.reps}</p>
+                        <Icon_weight style={{ width: 20, height: 20 }}/><p style={{display: 'inline-block', fontWeight: 700}}>{set.weight == 0 ? '-': set.weight+' kg'} </p>
+                        <Icon_duration style={{ width: 20, height: 20 }}/><p style={{display: 'inline-block', fontWeight: 700}}>{set.time == 0 ? '-': set.time+' sec'}</p>
                         </div>
-                      </li>
+                      </li>}
+                      </div>
 
                     ))}
+                    </div>
                   </div>
 
                 ))}
@@ -86,6 +93,7 @@ class SavedPage extends Component {
           </Card>
 
         ))}
+        </div>
         <NavBarWrapper />
         <Sidebar />
       </div>

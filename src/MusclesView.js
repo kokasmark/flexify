@@ -28,7 +28,8 @@ export default class MusclesView extends Component {
       neck: [18,19,20]
     },
     muscleData:[],
-    frontLastKey: 138
+    frontLastKey: 138,
+    animation: 'fade-in'
   }
   findMuscleGroup = (index) =>{
     const groups = this.state.groups;
@@ -91,8 +92,11 @@ export default class MusclesView extends Component {
     }
       return data;
   }
-  rotate(){
+  async rotate(){
+    this.setState({animation: 'fade-out'})
+    await new Promise(r => setTimeout(r, 200))
     this.setState({front: !this.state.front});
+    this.setState({animation: 'fade-in'})
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.front !== this.state.front) {
@@ -139,8 +143,8 @@ export default class MusclesView extends Component {
   render() {
     return (
       <div>
-        <div className='muscles anim load-anim' id='muscle-container' onClick={(e)=>this.muscleClicked(e)}>
-          {this.state.front == true ?  <Muscles onLoad={()=> console.log('+')}/> :  <div style={{width: 1024, height:1028}}><MusclesBack style={{position: 'relative', left: 265, top:35,transform: 'scale(0.7)'}}/></div>}
+        <div className={'muscles anim load-anim '+this.state.animation} id='muscle-container' onClick={(e)=>this.muscleClicked(e)}>
+          {this.state.front == true ?  <Muscles /> :  <div style={{width: 1024, height:1028}}><MusclesBack style={{position: 'relative', left: 265, top:35,transform: 'scale(0.7)'}}/></div>}
           <Icon_rotate className='interactable' style={{transform: 'scale(2)', position: 'relative', top:-175,left:500,fill:'#fff !important'}} onClick={()=>this.rotate()}/>
         </div>
 

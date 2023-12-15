@@ -198,6 +198,12 @@ body{
   gap: 20px; /* Adjust the gap between cards to 20px */
   padding-left: 10px;
 }
+.saved-card-container {
+  display: grid;
+  grid-template-columns: repeat(6, 300px); /* Set each column to 200px width */
+  gap: 20px; /* Adjust the gap between cards to 20px */
+  padding-left: 10px;
+}
 
 .create-workout-card {
   margin-bottom: 10px; /* Adjust the margin-bottom value to control spacing between rows */
@@ -236,6 +242,12 @@ body{
 .home-chart text{
   display: none;
 }
+.fade-in{
+  animation: opacity-fade-in 200ms linear;
+}
+.fade-out{
+  animation: opacity-fade-out 200ms linear;
+}
 @keyframes page-transition {
   0% {
     transform: scale(.90);
@@ -269,5 +281,21 @@ body{
   }
   100%{
     transform: scale(1);
+  }
+}
+@keyframes opacity-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100%{
+    opacity:1;
+  }
+}
+@keyframes opacity-fade-out {
+  0% {
+    opacity: 1;
+  }
+  100%{
+    opacity:0;
   }
 }
