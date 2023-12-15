@@ -16,7 +16,7 @@ import NavBarWrapper from './NavBar';
 
 class CreatePage extends Component {
   muscleRef = React.createRef();
-
+  cardRef = React.createRef();
   constructor(props) {
     super(props);
     this.containerRef = React.createRef();
@@ -25,7 +25,10 @@ class CreatePage extends Component {
       exerciseNum: 0,
       exercises: [],
       exerciseTemplates: [],
-      getTemplates: []
+      getTemplates: [],
+      offsetX: 0,
+      offsetY: 0,
+      currentTemplateGrabbed: ''
     };
   }
   handleRepsChange = (event, index) => {
@@ -132,6 +135,65 @@ class CreatePage extends Component {
       
     }
   }
+
+
+  drag = (e) => {
+    const { offsetX, offsetY } = this.state;
+  this.cardRef.current.style.position = 'relative';
+  this.cardRef.current.style.left = `${e.clientX - offsetX}px`;
+  this.cardRef.current.style.top = `${e.clientY - offsetY}px`;
+  };
+
+  dragStart = (e, index, template) => {
+    e.dataTransfer.setData('text/plain', index.toString());
+    this.setState({currentTemplateGrabbed: template})
+  };
+  dragEnd = (e) => {
+    this.setState({
+      offsetX: 0,
+      offsetY: 0,
+    });
+  
+    // Get the position of the drop
+    const dropX = e.clientX;
+    const dropY = e.clientY;
+  
+    // Get the position of the create-workout component
+    const workoutRect = this.containerRef.current.getBoundingClientRect();
+  
+    // Check if the drop occurred within the create-workout component
+    if (
+      dropX >= workoutRect.left &&
+      dropX <= workoutRect.right &&
+      dropY >= workoutRect.top &&
+      dropY <= workoutRect.bottom
+    ) {
+
+      this.setState({currentTemplateGrabbed: ''})
+    }
+  };
+  dragOver = (e) => {
+    e.preventDefault();
+  };
+  
+  drop = (e) => {
+    e.preventDefault();
+    const index = parseInt(e.dataTransfer.getData('text/plain'));
+    // Implement logic to handle the drop, e.g., reorder cards
+    // For simplicity, let's assume you want to move the card to the end
+    this.setState((prevState) => {
+      const updatedTemplates = [...prevState.exerciseTemplates];
+      const movedCard = updatedTemplates.splice(index, 1)[0];
+      updatedTemplates.push(movedCard);
+      return { exerciseTemplates: updatedTemplates };
+    });
+    
+  };
+  createWorkoutDrop = (e) => {
+    e.preventDefault();
+  
+    this.addCard(this.state.currentTemplateGrabbed);
+  };
   render() {
     const exerciseCards = this.state.exerciseTemplates.map((template, index) => (
       <div key={index} className='create-workout-card-parent'>
@@ -163,13 +225,17 @@ class CreatePage extends Component {
       <div className='page'>
 
         <div className='load-anim'>
-          <MusclesView ref={this.muscleRef} chooseCallback={this.chooseMuscleGroup} />
-          <div className='anim' style={{ color: 'white', position: 'relative', top: -800, left: '15%',backgroundColor: 'var(--contrast)', borderRadius: 10, height: 500, overflow: 'auto', width: 300 }}>
+          <div  style={{position: 'relative', top:200}}>
+          <MusclesView ref={this.muscleRef} chooseCallback={this.chooseMuscleGroup}/>
+          </div>
+          <div className='anim' style={{ color: 'white', position: 'relative', top: -600, left: '15%',backgroundColor: 'var(--contrast)', borderRadius: 10, height: 500, overflow: 'auto', width: 300 }}>
             <h1 style={{marginTop: 5, textAlign: 'center'}}>Templates</h1>
             {this.state.getTemplates.map((template, index) => (
               <div>
                 {template.muscles.includes(this.state.choosenGroup) &&
-                  <div onMouseEnter={()=>this.colorAffectedMuscles(template.muscles, false)} onMouseLeave={()=>this.colorAffectedMuscles(template.muscles, true)} onClick={()=> this.selectTemplate(template.name, template.type)} key={index} style={{backgroundColor: 'var(--contrast)', borderRadius: 5, marginLeft:'auto', marginRight:'auto', width:'80%',marginTop: 20
+                  <div ref={this.cardRef}  draggable
+    onDragStart={(e) => this.dragStart(e, index, template)}
+    onDrop={this.drop} onMouseEnter={()=>this.colorAffectedMuscles(template.muscles, false)} onMouseLeave={()=>this.colorAffectedMuscles(template.muscles, true)} onClick={()=> this.selectTemplate(template.name, template.type)} key={index} style={{backgroundColor: 'var(--contrast)', borderRadius: 5, marginLeft:'auto', marginRight:'auto', width:'80%',marginTop: 20
                   , height:60, textAlign: 'center', boxShadow: '5px 5px 15px var(--bg)'}} className='interactable load-anim'>
                     <h2>{template.name}</h2>
                     <p style={{marginTop: -10,fontSize: 11}}>({template.muscles.replaceAll("[","").replaceAll("]","").replaceAll('"',"")})</p>
@@ -177,14 +243,16 @@ class CreatePage extends Component {
               </div>
             ))}
           </div>
-          <div style={{ color: 'white', position: 'relative', top: -1300, left: '55%' }}>
-            <div className='create-workout anim' ref={this.containerRef} style={{ position: 'relative', left: 50, textAlign: 'center' }}>
+          <div onDragOver={this.dragOver}
+  onDrop={this.createWorkoutDrop} style={{ color: 'white', position: 'absolute', top: 400, left: '55%' }}>
+            <div className='create-workout anim' ref={this.containerRef} style={exerciseCards.length == 0 ? { position: 'relative', left: 50, height: 200, textAlign: 'center' }
+            :{ position: 'relative', left: 50, textAlign: 'center' }}>
               <input id='create-name' style={{ display: 'inline-block' }} placeholder='Name'></input>
               <Icon_save className='interactable' title='Save Workout' />
-
+                
+                {exerciseCards.length == 0 && <h1>Select a muscle and drag & drop the template here</h1>}
               <div className="card-container">
               {exerciseCards}
-              <Icon_add className='interactable' onClick={() => this.addCard()} />
 
               </div>
             </div>

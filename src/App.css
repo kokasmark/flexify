@@ -220,7 +220,7 @@ body{
 .create-workout{
   background-color: var(--contrast);
   border-radius: 10px;
-  max-width: 650px;
+  width: 650px;
   position: relative;
   left: 100px !important;
   overflow: auto;
