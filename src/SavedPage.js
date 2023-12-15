@@ -65,16 +65,16 @@ class SavedPage extends Component {
               <Card.Title>{template.name}</Card.Title>
               <Card.Text>{template.comment}</Card.Text>
               <ol style={{maxHeight: 200}}>
-                {template.data.map((data, index) => (
+                {template.data.map((data, olIndex) => (
 
-                  <div className='interactable' key={index} onClick={()=> this.setState({opened: this.state.opened == index? -1:index})}>
-                    <h5 style={{textAlign: 'start'}}>{(index+1)+'. '+data.comment}</h5>
+                  <div className='interactable' key={index} onClick={()=> this.setState({opened: this.state.opened == index+'-'+olIndex? -1:index+'-'+olIndex})}>
+                    <h5 style={{textAlign: 'start'}}>{(olIndex+1)+'. '+data.comment}</h5>
                     <div style={{textAlign: 'start',overflow: 'auto', maxHeight: 150, backgroundColor: 'var(--darker-contrast)', borderRadius: 5}}>
                     
                     
                     {JSON.parse(data.set_data).map((set, liIndex) => (
                       <div>
-                      {this.state.opened == (index)&& <li key={liIndex}>
+                      {this.state.opened == (index+'-'+olIndex)&& <li key={liIndex}>
                         <div style={{display: 'inline-block'}}>
                         <Icon_reps  style={{ width: 20, height: 20 }}/><p style={{display: 'inline-block', fontWeight: 700}}>{set.reps == 0 ? '-': set.reps}</p>
                         <Icon_weight style={{ width: 20, height: 20 }}/><p style={{display: 'inline-block', fontWeight: 700}}>{set.weight == 0 ? '-': set.weight+' kg'} </p>
