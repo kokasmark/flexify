@@ -172,7 +172,7 @@ function dbPostUserMuscles(req, res){
 function dbPostUserDiet(req, res){
   let required_fields = ["token"]
   let data = req.body;
-  let query = `SELECT diet.calories, diet.protein, diet.carbs, diet.fat FROM diet INNER JOIN user ON diet.user_id = user.id WHERE user_id = (SELECT user_id FROM login WHERE token = ?)`
+  let query = `SELECT diet.calories, diet.protein, diet.carbs, diet.fat FROM diet INNER JOIN user ON diet.user_id = user.id WHERE user_id = (SELECT user_id FROM login WHERE token = ?) AND date=CURDATE()`
 
   if (throwErrorOnMissingPostFields(data, required_fields, res)) return
 
