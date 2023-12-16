@@ -14,6 +14,8 @@ import NavBarWrapper from './NavBar';
 import { ReactComponent as Icon_reps } from './assets/icon-reps.svg';
 import { ReactComponent as Icon_weight } from './assets/icon-weight.svg';
 import { ReactComponent as Icon_duration } from './assets/icon-duration.svg';
+import { ReactComponent as Icon_copy } from './assets/icon-copy.svg';
+import { Link } from 'react-router-dom';
 
 class SavedPage extends Component {
   state = {
@@ -63,7 +65,9 @@ class SavedPage extends Component {
 
             <Card.Body>
               <Card.Title>{template.name}</Card.Title>
-              <Card.Text>{template.comment}</Card.Text>
+              <Link to={{ pathname: '/create', search: template.name }} style={{position: 'relative', top: -50, left: 120}}><Icon_copy title='Duplicate Workout' className='interactable'/></Link>
+              <div style={{position: 'relative', top: -40}}>
+              <Card.Text >{template.comment}</Card.Text>
               <ol style={{maxHeight: 200}}>
                 {template.data.map((data, olIndex) => (
 
@@ -89,6 +93,7 @@ class SavedPage extends Component {
 
                 ))}
               </ol>
+              </div>
             </Card.Body>
           </Card>
 

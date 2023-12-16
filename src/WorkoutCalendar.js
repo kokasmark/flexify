@@ -10,6 +10,7 @@ import { ReactComponent as Icon_weight } from './assets/icon-weight.svg';
 
 
 import { Link } from 'react-router-dom';
+import DietChart from './DietChart';
 
 export default class WorkoutCalendar extends Component {
   state = {
@@ -221,7 +222,6 @@ export default class WorkoutCalendar extends Component {
           {this.getWorkoutToDate() == true ? 
             <div>
               {this.state.workoutsParsed}
-             
             </div> :
             <div>
               <p>There are no workouts for this date</p>
