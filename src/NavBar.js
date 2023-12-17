@@ -12,6 +12,7 @@ import logo from './assets/logo.webp';
 import {Link} from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
+import {host} from './constants'
 
 const NavBarWrapper = () => {
   const navigate = useNavigate();
@@ -76,7 +77,7 @@ class Navbar extends Component {
       body: raw,
       redirect: 'follow'
     };
-    fetch("http://localhost:3001/api/workouts/date", requestOptions)
+    fetch(`http://${host}:3001/api/workouts/date`, requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)
@@ -107,7 +108,7 @@ class Navbar extends Component {
       redirect: 'follow'
     };
 
-    fetch("http://localhost:3001/api/user", requestOptions)
+    fetch(`http://${host}:3001/api/user`, requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)
@@ -135,7 +136,7 @@ class Navbar extends Component {
     render() {
       return (
         <div>
-          <div className='navBar'>
+          {this.props.isDesktop &&<div className='navBar'>
           <Link to="/" draggable='false'><img className='interactable' src={logo} style={{position: 'fixed', top: -15, left: -110, transform: 'scale(0.3)'}} draggable='false'/></Link> 
             <div>
               {this.state.theme == 'light' && <Icon_dark className='interactable' onClick={this.changeTheme}/>}
@@ -151,7 +152,23 @@ class Navbar extends Component {
               <p style={{display: 'inline-block'}}>Welcome, <b>{this.state.username}</b></p>
               </div>
             </div>
-          </div>
+          </div>}
+
+
+          {!this.props.isDesktop &&<div className='navBar'>
+          <Link to="/" draggable='false'><img className='interactable' src={logo} style={{position: 'fixed', top: -15, left: -70, transform: 'scale(0.2)'}} draggable='false'/></Link> 
+            <div>
+              {this.state.theme == 'light' && <Icon_dark className='interactable' onClick={this.changeTheme}/>}
+              {this.state.theme == 'dark' && <Icon_light className='interactable' onClick={this.changeTheme}/>}
+            </div>
+            <div style={{position: 'relative', left: '45%', top: -50}}>
+              <Icon_streak className='anim-heartbeat'/>
+              <p style={{display: 'inline-block', color: 'white', margin: 10, position: 'relative', right: 10,fontSize: 12}}>Workout Streak: <b style={{color: 'var(--heat-orange)'}}>{this.state.streak}</b></p>
+
+              <div style={{color: 'white', position: 'relative', top: -50, left: '43%'}}>
+              </div>
+            </div>
+          </div>}
         </div>
       );
     }

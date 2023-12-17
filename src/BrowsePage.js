@@ -9,6 +9,7 @@ import Navbar from './NavBar';
 import MusclesView from './MusclesView';
 import AuthRedirect from './authRedirect';
 import NavBarWrapper from './NavBar';
+import {host} from './constants'
 
 class BrowsePage extends Component {
   muscleRef = React.createRef();
@@ -43,7 +44,7 @@ class BrowsePage extends Component {
         redirect: 'follow'
       };
   
-      fetch("http://localhost:3001/api/templates/exercises", requestOptions)
+      fetch(`http://${host}:3001/api/templates/exercises`, requestOptions)
         .then(response => response.text())
         .then((response) => {
           console.log(response)

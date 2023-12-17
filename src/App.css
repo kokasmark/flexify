@@ -33,6 +33,7 @@ body{
   border-radius: 10px 0px 0px 10px;
   transition: .5s ease;
   box-shadow: -5px 5px 5px var(--shadow);
+  z-index: 10;
 }
 .card{
   border: none !important;

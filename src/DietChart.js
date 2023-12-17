@@ -5,6 +5,7 @@ import { ReactComponent as Icon_add } from './assets/icon-add.svg';
 import Sidebar from './Sidebar';
 import Navbar from './NavBar';
 import { PieChart } from 'react-minimal-pie-chart';
+import {host} from './constants'
 
 export default class DietChart extends Component {
   state = {
@@ -26,7 +27,7 @@ export default class DietChart extends Component {
       redirect: 'follow'
     };
 
-    fetch("http://localhost:3001/api/diet", requestOptions)
+    fetch(`http://${host}:3001/api/diet`, requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)
@@ -52,7 +53,7 @@ export default class DietChart extends Component {
       redirect: 'follow'
     };
 
-    fetch("http://localhost:3001/api/diet/date", requestOptions)
+    fetch(`http://${host}:3001/api/diet/date`, requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)
@@ -74,7 +75,7 @@ export default class DietChart extends Component {
   render() {
     return (
       <div>
-        <div style={{ position: 'relative', left: '39vw', top: 250 }} className='chart load-anim'>
+        <div className='chart load-anim'>
         {(this.state.carbs > 0 || this.state.fat > 0 || this.state.proteins > 0) ? <div>
             <h1 style={{ margin: 0, position: 'relative', left: 100, top: 220, color: 'white', textAlign: 'center', width: 200 }}>{parseInt(this.state.calories)} kcal</h1>
             {this.props.hideInfo == null &&<div style={{position: 'absolute', top: 300, left: 400}}>

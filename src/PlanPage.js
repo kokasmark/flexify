@@ -13,6 +13,7 @@ import WorkoutCalendar from './WorkoutCalendar';
 import NavBarWrapper from './NavBar';
 import DietChart from './DietChart';
 
+
 class PlanPage extends Component {
   dietRef = React.createRef();
   state = {

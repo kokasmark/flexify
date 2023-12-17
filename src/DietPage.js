@@ -9,7 +9,7 @@ import { PieChart } from 'react-minimal-pie-chart';
 import AuthRedirect from './authRedirect';
 import DietChart from './DietChart';
 import NavBarWrapper from './NavBar';
-
+import {host} from './constants'
 class DietPage extends Component {
   state = {
     carbs: 0,
@@ -36,7 +36,7 @@ class DietPage extends Component {
       redirect: 'follow'
     };
 
-    fetch("http://localhost:3001/api/diet/add", requestOptions)
+    fetch(`http://${host}:3001/api/diet/add`, requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)
@@ -111,7 +111,7 @@ class DietPage extends Component {
       redirect: 'follow'
     };
 
-    fetch("http://localhost:3001/api/diet/add", requestOptions)
+    fetch(`http://${host}:3001/api/diet/add`, requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)

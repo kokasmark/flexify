@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import screenshot1 from './assets/screenshot1.png';
 import screenshot2 from './assets/screenshot2.png';
 import swal from 'sweetalert';
+import {host} from './constants'
 
 const SignInWrapper = () => {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ class SignInPage extends Component {
       redirect: 'follow'
     };
 
-    fetch("http://localhost:3001/api/login", requestOptions)
+    fetch(`http://${host}:3001/api/login`, requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)

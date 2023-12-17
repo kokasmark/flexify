@@ -9,7 +9,7 @@ import { ReactComponent as Icon_email } from './assets/icon-email.svg';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-
+import {host} from './constants'
 const SignUpWrapper = () => {
   const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ class SignUpPage extends Component {
       redirect: 'follow'
     };
 
-    fetch("http://localhost:3001/api/signup", requestOptions)
+    fetch(`http://${host}:3001/api/signup`, requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)

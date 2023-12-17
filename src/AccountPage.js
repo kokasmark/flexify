@@ -11,6 +11,7 @@ import Navbar from './NavBar';
 
 import AuthRedirect from './authRedirect';
 import NavBarWrapper from './NavBar';
+import {host} from './constants'
 
 class AccountPage extends Component {
   state = {
@@ -31,7 +32,7 @@ class AccountPage extends Component {
       redirect: 'follow'
     };
 
-    fetch("http://localhost:3001/api/user", requestOptions)
+    fetch(`http://${host}:3001/api/user`, requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)

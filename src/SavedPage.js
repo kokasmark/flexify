@@ -17,6 +17,8 @@ import { ReactComponent as Icon_duration } from './assets/icon-duration.svg';
 import { ReactComponent as Icon_copy } from './assets/icon-copy.svg';
 import { Link } from 'react-router-dom';
 
+import {host} from './constants'
+
 class SavedPage extends Component {
   state = {
     savedTemplates: [],
@@ -34,7 +36,7 @@ class SavedPage extends Component {
       redirect: 'follow'
     };
 
-    fetch("http://localhost:3001/api/templates/workouts", requestOptions)
+    fetch(`http://${host}:3001/api/templates/workouts`, requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)
