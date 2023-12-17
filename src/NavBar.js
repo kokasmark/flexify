@@ -32,32 +32,39 @@ class Navbar extends Component {
      dateForApi: new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
     };
   }
-  computeStreak(){
+  computeStreak() {
     const workoutDates = this.state.dates;
+  
     if (!workoutDates || workoutDates.length === 0) {
       return 0; // No workouts, streak is 0
     }
   
-    const sortedDates = workoutDates.sort();
-    let streak = 1;
+    // Sort dates using a compare function
+    const sortedDates = workoutDates.sort((a, b) => new Date(a) - new Date(b));
   
-    for (let i = 1; i < sortedDates.length; i++) {
-      const currentDate = new Date(sortedDates[i]);
-      const prevDate = new Date(sortedDates[i - 1]);
+    let streak = 0;
+    // Include today's date in the comparison
+    const today = new Date();
   
-      const timeDiff = currentDate.getTime() - prevDate.getTime();
-      const daysDiff = timeDiff / (1000 * 3600 * 24);
+    sortedDates.push(today);
   
-      if (daysDiff <= 2) {
-        streak++; // Continue streak if the break is less than or equal to 2 days
-      } else {
-        break; // Break the streak if the break is more than 2 days
-      }
+    for (let i = 0; i < sortedDates.length; i++) {
+
+        const daysdiff = new Date(sortedDates[i]).getDate() - new Date(sortedDates[i-1]).getDate()
+        if(daysdiff > 2){
+          streak = 0;
+        }else{
+          streak++;
+        }
+      
     }
   
-    console.log("Streak:",streak)
-    this.setState({streak: streak});
+    console.log("Streak:", streak);
+    this.setState({ streak: streak });
   }
+  
+  
+  
   getWorkouts() {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
