@@ -133,10 +133,18 @@ class Navbar extends Component {
       this.computeStreak();
     }
   }
+  isDesktop(){
+    if(window.innerWidth > 1224){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
     render() {
       return (
         <div>
-          {this.props.isDesktop &&<div className='navBar'>
+          {this.isDesktop() &&<div className='navBar'>
           <Link to="/" draggable='false'><img className='interactable' src={logo} style={{position: 'fixed', top: -15, left: -110, transform: 'scale(0.3)'}} draggable='false'/></Link> 
             <div>
               {this.state.theme == 'light' && <Icon_dark className='interactable' onClick={this.changeTheme}/>}
@@ -155,7 +163,7 @@ class Navbar extends Component {
           </div>}
 
 
-          {!this.props.isDesktop &&<div className='navBar'>
+          {!this.isDesktop() &&<div className='navBar'>
           <Link to="/" draggable='false'><img className='interactable' src={logo} style={{position: 'fixed', top: -15, left: -70, transform: 'scale(0.2)'}} draggable='false'/></Link> 
             <div>
               {this.state.theme == 'light' && <Icon_dark className='interactable' onClick={this.changeTheme}/>}
