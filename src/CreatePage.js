@@ -197,7 +197,7 @@ class CreatePage extends Component {
     if(prevState.importActions != this.state.importActions){
       if(this.state.importActions == this.state.importedWorkout.data.length){
         this.setState({importDone: true})
-        swal('Success!','Imported '+this.state.importedWorkout.name+'!','success')
+        swal(GetString("alert-workout-imported")[0],this.state.importedWorkout.name+GetString("alert-workout-imported")[1],'success')
       }
     }
   }
@@ -352,9 +352,9 @@ class CreatePage extends Component {
         console.log(response)
         var r = JSON.parse(response);
         if (r.success) {
-          swal('Workout saved!', `${document.getElementById('create-name').value} has been successfully saved!`, "success")
+          swal(GetString("alert-workout-saved")[0], `${document.getElementById('create-name').value}`+GetString("alert-workout-saved")[1], "success")
         } else {
-          swal('Oops!', `An error occured!`, "error")
+          swal(GetString("alert-general-error")[0], GetString("alert-general-error")[1], "error")
         }
       })
       .catch(error => console.log('error', error));

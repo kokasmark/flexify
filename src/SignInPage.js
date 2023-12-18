@@ -13,6 +13,7 @@ import screenshot1 from './assets/screenshot1.png';
 import screenshot2 from './assets/screenshot2.png';
 import swal from 'sweetalert';
 import {host} from './constants'
+import GetString from './language';
 
 const SignInWrapper = () => {
   const navigate = useNavigate();
@@ -50,9 +51,9 @@ class SignInPage extends Component {
           console.log('Validating');
           const { navigate } = this.props;
           navigate('/');
-          swal("Succesful login!",`Welcome ${document.getElementById('username').value}!`,'success');
+          swal(GetString("alert-login-success"),`${GetString("navbar-welcome")} ${document.getElementById('username').value}!`,'success');
         } else {
-          swal("Oops!", "The credentials doesn't match!", "error");
+          swal(GetString("alert-login-error")[0], GetString("alert-login-error")[1], "error");
         }
       })
       .catch(error => console.log('error', error));

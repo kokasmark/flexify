@@ -67,6 +67,31 @@ function GetString(name){
         "workouts":{
             "HU": "Edzések",
             "EN": "Workouts"
+        },
+        "alert-login-success":{
+            "HU": "Sikeres bejelentkezés!",
+            "EN": "Successful login!"
+        }
+        ,
+        "alert-login-error":{
+            "HU": ["Hoppá!", "A megadott mezők hibásak"],
+            "EN": ["Oops!", "The credentials doesn't match!"]
+        },
+        "alert-logged-out":{
+            "HU": ["Hoppá!", "Ki lett jelentkeztetve!"],
+            "EN": ["Oops!", "You have been logged out!"]
+        },
+        "alert-general-error":{
+            "HU": ["Hoppá!", "Valami hiba történt!"],
+            "EN": ["Oops!", "An error occured!"]
+        },
+        "alert-workout-saved":{
+            "HU": ["Edzés elmentve!", " sikeresen el lett mentve!"],
+            "EN": ["Workout saved!", " was saved succesfully"]
+        },
+        "alert-workout-imported": {
+            "HU": ["Sikeresen másolva!", " sikeresen bemásolva!"],
+            "EN": ["Successfully imported!", " was imported succesfully"]
         }
     };
     return strings[name][localStorage.getItem('lang') != null ? localStorage.getItem('lang') : 'HU']
