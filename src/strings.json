@@ -30,5 +30,41 @@
     "page-account":{
         "HU": "Fiók Beállítások",
         "EN": "My Account"
+    },
+    "streak-start":{
+        "HU": "",
+        "EN": "You are on a "
+    },
+    "streak-end":{
+        "HU": " napos edzés sorozatod van!",
+        "EN": " days workout streak!"
+    },
+    "navbar-welcome":{
+        "HU": "Üdvözöljük, ",
+        "EN": "Welcome, "
+    },
+    "home-period":{
+        "HU": ["Heti", "Havi", "Fél éves", "Éves", "Összes"],
+        "EN": ["Weekly", "Monthly", "6 Months", "Yearly", "All"]
+    },
+    "create-select-a-muscle":{
+        "HU": "Válasszon ki egy izomcsoportot és húzzon ide egy gyakorlatot",
+        "EN": "Select a muscle and drag & drop the template here"
+    },
+    "create-template":{
+        "HU": "Gyakorlatok",
+        "EN": "Templates"
+    },
+    "browse-choose-a-muscle":{
+        "HU": "Válasszon ki egy izomcsoportot melyre edzeni szeretne!",
+        "EN": "Choose a muscle group that you wanna train!"
+    },
+    "browse-suggest":{
+        "HU": "Ajánlj edzéseket",
+        "EN": "Suggest me workouts"
+    },
+    "workouts":{
+        "HU": "Edzések",
+        "EN": "Workouts"
     }
 }

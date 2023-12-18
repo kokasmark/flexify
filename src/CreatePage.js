@@ -16,6 +16,7 @@ import NavBarWrapper from './NavBar';
 import swal from 'sweetalert';
 
 import { useLocation } from 'react-router-dom';
+import GetString from './language';
 
 const CreatePageWrapper = () => {
   const location = useLocation();
@@ -390,13 +391,12 @@ class CreatePage extends Component {
     ));
     return (
       <div className='page'>
-
         <div className='load-anim' style={{ position: 'relative', top: -150 }}>
-          <div style={{ position: 'relative', top: 200 }}>
+          <div style={{ position: 'relative', top: 150 }}>
             <MusclesView ref={this.muscleRef} chooseCallback={this.chooseMuscleGroup} />
           </div>
           <div className='anim' style={{ color: 'white', position: 'relative', top: -600, left: '15%', backgroundColor: 'var(--contrast)', borderRadius: 10, height: 500, overflow: 'auto', width: 300 }}>
-            <h1 style={{ marginTop: 5, textAlign: 'center' }}>Templates</h1>
+            <h1 style={{ marginTop: 5, textAlign: 'center' }}>{GetString("create-template")}</h1>
             {this.state.getTemplates.map((template, index) => (
               <div>
                 {template.muscles.includes(this.state.choosenGroup) &&
@@ -413,13 +413,13 @@ class CreatePage extends Component {
             ))}
           </div>
           <div onDragOver={this.dragOver}
-            onDrop={this.createWorkoutDrop} style={{ color: 'white', position: 'absolute', top: 400, left: '55%' }}>
+            onDrop={this.createWorkoutDrop} style={{ color: 'white', position: 'relative', top: -1100, left: 1050 }}>
             <div className='create-workout anim' ref={this.containerRef} style={exerciseCards.length == 0 ? { position: 'relative', left: 50, height: 200, textAlign: 'center' }
               : { position: 'relative', left: 50, textAlign: 'center' }}>
               <input id='create-name' style={{ display: 'inline-block' }} placeholder='Name'></input>
               <Icon_save className='interactable' title='Save Workout' onClick={() => this.saveWorkout()} />
 
-              {exerciseCards.length == 0 && <h1>Select a muscle and drag & drop the template here</h1>}
+              {exerciseCards.length == 0 && <h1>{GetString("create-select-a-muscle")}</h1>}
               <div className="card-container">
                 {exerciseCards}
 

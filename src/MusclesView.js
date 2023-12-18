@@ -144,19 +144,9 @@ export default class MusclesView extends Component {
     return (
       <div>
         <div className={'muscles anim load-anim '+this.state.animation} id='muscle-container' onClick={(e)=>this.muscleClicked(e)}>
-          {this.state.front == true ?  <Muscles /> :  <div style={{width: 1024, height:1028}}><MusclesBack style={{position: 'relative', left: 265, top:35,transform: 'scale(0.7)'}}/></div>}
+          {this.state.front == true ?  <Muscles style={{width: 1024, height:1028}}/> :  <div ><MusclesBack style={{width: 1024, height:1028,transform: 'scale(0.65)'}}/></div>}
           <Icon_rotate className='interactable' style={{transform: 'scale(2)', position: 'relative', top:-175,left:500,fill:'#fff !important'}} onClick={()=>this.rotate()}/>
         </div>
-
-        {/*CSAK TESZTELÉSHEZ
-        
-        <div style={{position: 'absolute',top: 200,width:200, height:200, backgroundColor: 'var(--contrast)'}}>
-          <input id='test-group' placeholder='Muscle group name for testing'></input>
-          <input id='test-value' placeholder='value'></input>
-          <button onClick={()=> this.updateMuscleGroup(document.getElementById('test-group').value, document.getElementById('test-value').value)}>Set value</button>
-        </div>
-        
-        */}
         
       </div>
     );

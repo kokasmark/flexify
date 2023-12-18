@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
 import {host} from './constants'
 
+import GetString from './language';
+
 const NavBarWrapper = () => {
   const navigate = useNavigate();
 
@@ -152,50 +154,34 @@ class Navbar extends Component {
   }
   switchLanguage(){
     localStorage.setItem('lang',localStorage.getItem('lang') == 'HU' ? 'EN':'HU');
-    this.setState({language: this.state.language == 'HU' ? 'EN' : 'HU'})
+   
     console.log('Switching language');
     window.location.reload();
   }
     render() {
       return (
         <div>
-          {this.isDesktop() &&<div className='navBar'>
+          <div className='navBar'>
           <Link to="/" draggable='false'><img className='interactable' src={logo} style={{position: 'fixed', top: -15, left: -110, transform: 'scale(0.3)'}} draggable='false'/></Link> 
             <div>
               {this.state.theme == 'light' && <Icon_dark className='interactable' onClick={this.changeTheme}/>}
               {this.state.theme == 'dark' && <Icon_light className='interactable' onClick={this.changeTheme}/>}
             </div>
-            <div style={{color: 'white', position: 'relative', top: -45, left: 50, marginBottom: -40}} >
-              {this.state.language == 'HU' && <h3 onClick={() => this.switchLanguage()} className='interactable'>EN</h3>}
-              {this.state.language == 'EN' && <h3 onClick={() => this.switchLanguage()} className='interactable'>HU</h3>}
+            <div style={{color: 'white', position: 'relative', top: -40, left: 50, marginBottom: -40, width: 50, height: 50}} >
+              {this.state.language == 'HU' && <h5 onClick={() => this.switchLanguage()} className='interactable'>EN</h5>}
+              {this.state.language == 'EN' && <h5 onClick={() => this.switchLanguage()} className='interactable'>HU</h5>}
             </div>
-            <div style={{position: 'relative', left: '40%', top: -50}}>
+            <div style={{position: 'relative', left: '40%', top: -60}}>
               <Icon_streak className='anim-heartbeat'/>
-              <p style={{display: 'inline-block', color: 'white', margin: 5}}>You are on a <b style={{color: 'var(--heat-orange)'}}>{this.state.streak}</b> day workout streak</p>
+              <p style={{display: 'inline-block', color: 'white', margin: 5}}>{GetString("streak-start")}<b style={{color: 'var(--heat-orange)'}}>{this.state.streak}</b> {GetString("streak-end")}</p>
 
               <div style={{color: 'white', position: 'relative', top: -50, left: '43%'}}>
               
               <Link to='/account'><Icon_user style={{position: 'relative', left: 200, width: 40, height: 40, margin: 5, paddingLeft: 10}} className='interactable'/></Link>
-              <p style={{display: 'inline-block'}}>Welcome, <b>{this.state.username}</b></p>
+              <p style={{display: 'inline-block', marginLeft: -10}}>{GetString("navbar-welcome")} <b>{this.state.username}</b></p>
               </div>
             </div>
-          </div>}
-
-
-          {!this.isDesktop() &&<div className='navBar'>
-          <Link to="/" draggable='false'><img className='interactable' src={logo} style={{position: 'fixed', top: -15, left: -70, transform: 'scale(0.2)'}} draggable='false'/></Link> 
-            <div>
-              {this.state.theme == 'light' && <Icon_dark className='interactable' onClick={this.changeTheme}/>}
-              {this.state.theme == 'dark' && <Icon_light className='interactable' onClick={this.changeTheme}/>}
-            </div>
-            <div style={{position: 'relative', left: '45%', top: -50}}>
-              <Icon_streak className='anim-heartbeat'/>
-              <p style={{display: 'inline-block', color: 'white', margin: 10, position: 'relative', right: 10,fontSize: 12}}>Workout Streak: <b style={{color: 'var(--heat-orange)'}}>{this.state.streak}</b></p>
-
-              <div style={{color: 'white', position: 'relative', top: -50, left: '43%'}}>
-              </div>
-            </div>
-          </div>}
+          </div>
         </div>
       );
     }

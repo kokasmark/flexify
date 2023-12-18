@@ -10,6 +10,7 @@ import NavBarWrapper from './NavBar';
 import Carousel from 'react-bootstrap/Carousel';
 
 import {host} from './constants'
+import GetString from './language';
 class App extends Component {
   muscleViewRef = React.createRef();
   calendarRef = React.createRef()
@@ -92,19 +93,21 @@ componentDidMount(){
         {this.isDesktop() &&<div>
         <div>
         <div className='timePeriod load-anim'>
-          <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 45px 4px 25px"}}>Weekly</p>
-          <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 45px 4px 4px"}}>Monthly</p>
-          <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 45px 4px 4px"}}>6 Months</p>
-          <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 45px 4px 4px"}}>1 Year</p>
-          <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 25px 4px 4px", fontWeight: 'bold'}}>All</p>
+          <p className='interactable'>{GetString("home-period")[0]}</p>
+          <p className='interactable'>{GetString("home-period")[1]}</p>
+          <p className='interactable'>{GetString("home-period")[2]}</p>
+          <p className='interactable'>{GetString("home-period")[3]}</p>
+          <p className='interactable'>{GetString("home-period")[4]}</p>
         </div>
         
         
-        <div style={{position: 'relative',float: 'right', right: -200, top: 300, zIndex:-1}} className='home-chart'>
+        <div style={{position: 'relative',float: 'right', right: -250, top: 300, zIndex:-1}} className='home-chart'>
             <DietChart noDataStyle={{position: 'relative', top:200, right: 400}} hideInfo/>
           </div> 
         </div>
-        <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles}/>
+        <div style={{position: 'relative', bottom: 50}}>
+          <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles}/>
+        </div>
         <div className='load-anim' style={{position: 'absolute', left: 200, top: 400}}>
           <WorkoutCalendar ref={this.calendarRef} parent = {this}/>
         </div>

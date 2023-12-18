@@ -91,6 +91,12 @@ body{
   box-shadow: 0px 5px 5px var(--shadow);
   transition: .5s ease;
 }
+.timePeriod p{
+  display: inline-block;
+  color: white;
+  margin: 4px 10px 4px 10px;
+  width: 80px;
+}
 .navBar{
   position: fixed;
   left: 10%;
@@ -261,8 +267,11 @@ body{
   position: absolute !important;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden;
+
+  animation: opacity-fade-in 1s ease;
 }
 @keyframes page-transition {
   0% {
