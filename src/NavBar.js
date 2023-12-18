@@ -30,7 +30,8 @@ class Navbar extends Component {
      email: '',
      dates: [],
      streak: 0,
-     dateForApi: new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
+     dateForApi: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
+     language: 'HU'
     };
   }
   computeStreak() {
@@ -127,6 +128,14 @@ class Navbar extends Component {
     var c = document.documentElement.style.getPropertyValue('--contrast');
     this.setState({theme: c == '#3C6FAA' ? 'light':'dark'})
     this.getWorkouts();//Gets the dates for the streak calculation
+
+
+    if(localStorage.getItem('lang')){
+      this.setState({language: localStorage.getItem('lang')});
+    }
+    else{
+      localStorage.setItem('lang','HU')
+    }
   }
   componentDidUpdate(prevProps, prevState){
     if(prevState.dates != this.state.dates){
@@ -141,6 +150,12 @@ class Navbar extends Component {
       return false;
     }
   }
+  switchLanguage(){
+    localStorage.setItem('lang',localStorage.getItem('lang') == 'HU' ? 'EN':'HU');
+    this.setState({language: this.state.language == 'HU' ? 'EN' : 'HU'})
+    console.log('Switching language');
+    window.location.reload();
+  }
     render() {
       return (
         <div>
@@ -149,6 +164,10 @@ class Navbar extends Component {
             <div>
               {this.state.theme == 'light' && <Icon_dark className='interactable' onClick={this.changeTheme}/>}
               {this.state.theme == 'dark' && <Icon_light className='interactable' onClick={this.changeTheme}/>}
+            </div>
+            <div style={{color: 'white', position: 'relative', top: -45, left: 50, marginBottom: -40}} >
+              {this.state.language == 'HU' && <h3 onClick={() => this.switchLanguage()} className='interactable'>EN</h3>}
+              {this.state.language == 'EN' && <h3 onClick={() => this.switchLanguage()} className='interactable'>HU</h3>}
             </div>
             <div style={{position: 'relative', left: '40%', top: -50}}>
               <Icon_streak className='anim-heartbeat'/>

@@ -7,6 +7,8 @@ import Navbar from './NavBar';
 import { PieChart } from 'react-minimal-pie-chart';
 import {host} from './constants'
 
+import GetString from './language';
+
 export default class DietChart extends Component {
   state = {
     carbs: 0,
@@ -41,6 +43,9 @@ export default class DietChart extends Component {
       })
       .catch(error => console.log('error', error));
   }
+  isDataForDate(){
+    return (this.state.carbs > 0 || this.state.fat > 0 || this.state.proteins > 0);
+  }
   getUserDietOnDate(date){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -68,9 +73,7 @@ export default class DietChart extends Component {
       .catch(error => console.log('error', error));
   }
   componentDidMount(){
-
     this.getUserDiet();
-
   }
   render() {
     return (
@@ -129,7 +132,7 @@ export default class DietChart extends Component {
                 className='anim'
               />
             </div>
-          </div> : <div style={{position: 'relative', top: 200, right: 400}}><h1 style={{color: 'white'}}>There is no data for today.</h1></div>}
+          </div> : <div style={this.props.noDataStyle}><h1 style={{color: 'white', fontSize: 30, width: "fit-content", position: "relative"}}>{GetString('diet-chart-no-data')}</h1></div>}
         </div>
       </div>
     );

@@ -10,8 +10,9 @@
   --heat-orange: rgb(246, 136, 56);
   --heat-blue:  var(--contrast);
 }
+
 .load-anim{
-  animation: page-transition .6s; 
+  animation: page-transition .6s;
   transition: .5s ease;
 }
 body{
@@ -208,7 +209,7 @@ body{
 }
 .saved-card-container {
   display: grid;
-  grid-template-columns: repeat(6, 300px); /* Set each column to 200px width */
+  grid-template-columns: repeat(5, 300px); /* Set each column to 200px width */
   gap: 20px; /* Adjust the gap between cards to 20px */
   padding-left: 10px;
 }
@@ -255,6 +256,13 @@ body{
 }
 .fade-out{
   animation: opacity-fade-out 200ms linear;
+}
+.page {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
 }
 @keyframes page-transition {
   0% {

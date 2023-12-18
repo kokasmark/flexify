@@ -90,7 +90,7 @@ componentDidMount(){
     return (
       <div className='page'>
         {this.isDesktop() &&<div>
-        <div style={{position: 'relative'}} >
+        <div>
         <div className='timePeriod load-anim'>
           <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 45px 4px 25px"}}>Weekly</p>
           <p className='interactable' style={{display: 'inline-block',color: 'white',margin: "4px 45px 4px 4px"}}>Monthly</p>
@@ -100,8 +100,8 @@ componentDidMount(){
         </div>
         
         
-        <div style={{position: 'absolute', right: -200, top: 300, zIndex:-1}} className='home-chart'>
-            <DietChart hideInfo/>
+        <div style={{position: 'relative',float: 'right', right: -200, top: 300, zIndex:-1}} className='home-chart'>
+            <DietChart noDataStyle={{position: 'relative', top:200, right: 400}} hideInfo/>
           </div> 
         </div>
         <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles}/>
