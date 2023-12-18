@@ -5,11 +5,11 @@ import { ReactComponent as Icon_save } from './assets/icon-bookmark.svg';
 import { Card } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
 import Sidebar from './Sidebar';
-import Navbar from './NavBar';
 import MusclesView from './MusclesView';
 import AuthRedirect from './authRedirect';
 import NavBarWrapper from './NavBar';
 import {host} from './constants'
+import GetString from './language';
 
 class BrowsePage extends Component {
   muscleRef = React.createRef();
@@ -84,7 +84,7 @@ class BrowsePage extends Component {
                         <MusclesView ref={this.muscleRef}chooseCallback={this.chooseMuscleGroup} />
                     </div>
                     {this.state.choosenGroup != '' ?<div key={this.state.choosenGroup} className='workouts anim' style={{ position: 'relative', left: 800, top: 175 }}>
-                    <h1 style={{marginBottom: 20, color: 'white'}}>{this.state.choosenGroup.charAt(0).toUpperCase() + this.state.choosenGroup.slice(1)}  workouts</h1>
+                    <h1 style={{marginBottom: 20, color: 'white'}}>{this.state.choosenGroup.charAt(0).toUpperCase() + this.state.choosenGroup.slice(1)}  {GetString("workouts")}</h1>
                     {this.state.templates.map((template, index) => (
                       <div>
                     {JSON.parse(template.muscles).includes(this.state.choosenGroup) &&
@@ -107,8 +107,8 @@ class BrowsePage extends Component {
                     </Card>}</div>
                   ))}
                         
-                        <Button className='anim' style={{backgroundColor: 'var(--contrast)', border: 'none',margin: 30}}>Suggest me Workouts</Button>
-                    </div> : <h1  style={{ position: 'relative', left: 700, top: 250, color: 'white' }}>Choose a muscle group that you want to train</h1>}
+                        <Button className='anim' style={{backgroundColor: 'var(--contrast)', border: 'none',margin: 30}}>{GetString("browse-suggest")}</Button>
+                    </div> : <h1  style={{ position: 'relative', left: 700, top: 250, color: 'white', width: 1000 }}>{GetString("browse-choose-a-muscle")}</h1>}
                 </div>
 
                 
