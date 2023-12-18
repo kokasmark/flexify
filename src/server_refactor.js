@@ -46,6 +46,32 @@ app.post('/api/templates/save_exercise', (req, res) => dbPostSaveExerciseTemplat
 
 
 
+// validating functions
+function validateOne(to_check, test){
+    switch (test) {
+        case 'email':
+            return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(to_check)
+        case 'type':
+            return to_check in ['rep', 'duration']
+        case 'int':
+            return Number.isInteger(to_check)
+        case 'array':
+            return Array.isArray(to_check)
+        default:
+            log(`Validation not yet implemented: ${test}`, 2)
+            return true
+    }
+}
+
+function validateMany(dict){
+    for (const key of Object.keys(dict)) {
+        for (const value of dict[key]) {
+            if (!validateMany(value, key)) return false
+        }
+    }
+    return true
+}
+
 
 // basic database functions
 function createConnection(){
@@ -330,6 +356,7 @@ async function dbPostSaveWorkoutTemplate(req, res){
 }
 
 async function dbPostSaveExerciseTemplate(req, res){
+    // if (!validateOne(req.body.type, 'type')) throwDBError('Invalid data for field [type]')
     let uid = await getUserId(req, res)
     let sql = 'INSERT INTO exercise_template (name, \`type\`, muscles, user_id) VALUES (?, ?, ?, ?)'
 
