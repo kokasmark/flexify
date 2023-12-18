@@ -78,7 +78,7 @@ export default class DietChart extends Component {
   render() {
     return (
       <div>
-        <div className='chart load-anim'>
+        <div className='chart load-anim' style={{width: 800, height: 800}}>
         {(this.state.carbs > 0 || this.state.fat > 0 || this.state.proteins > 0) ? <div>
             <h1 style={{ margin: 0, position: 'relative', left: 100, top: 220, color: 'white', textAlign: 'center', width: 200 }}>{parseInt(this.state.calories)} kcal</h1>
             {this.props.hideInfo == null &&<div style={{position: 'absolute', top: 300, left: 400}}>
@@ -132,7 +132,8 @@ export default class DietChart extends Component {
                 className='anim'
               />
             </div>
-          </div> : <div style={this.props.noDataStyle}><h1 style={{color: 'white', fontSize: 30, width: "fit-content", position: "relative"}}>{GetString('diet-chart-no-data')}</h1></div>}
+          </div> : <div style={this.props.noDataStyle}><h1 style={{color: 'white', fontSize: 30, width: "fit-content", position: "relative", textAlign: "center"
+        }}>{GetString('diet-chart-no-data')}</h1></div>}
         </div>
       </div>
     );

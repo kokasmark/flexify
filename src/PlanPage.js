@@ -43,7 +43,7 @@ class PlanPage extends Component {
           </div>
           <h1 className='load-anim' style={{ position: 'relative', color: 'white', top: 300, left: 880 }}>{this.state.selectedDate}</h1>
           <div style={{ position: 'absolute', top: 120, left: 675, zIndex: -1, transform: 'scale(0.5)' }}>
-            {this.state.chartShow && <DietChart hideInfo noDataStyle={{position: 'relative', top:600, right: -200}} date={this.dateForapi} ref={this.dietRef} />}
+            {this.state.chartShow && <DietChart hideInfo noDataStyle={{position: 'relative', top:200, right: 0}} date={this.dateForapi} ref={this.dietRef} />}
           </div>
         </div>
         <NavBarWrapper />

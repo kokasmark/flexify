@@ -102,10 +102,10 @@ class App extends Component {
 
 
             <div style={{ position: 'relative', float: 'right', right: -250, top: 300, zIndex: -1 }} className='home-chart'>
-              <DietChart noDataStyle={{ position: 'relative', top: 200, right: 400 }} hideInfo />
+              <DietChart noDataStyle={{ position: 'relative', top: 200, right: 200 }} hideInfo />
             </div>
           </div>
-          <div style={{ position: 'relative', bottom: 50 }}>
+          <div style={{ position: 'relative', top: -810 }}>
             <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles} />
           </div>
           <div className='load-anim' style={{ position: 'absolute', left: 200, top: 400 }}>
