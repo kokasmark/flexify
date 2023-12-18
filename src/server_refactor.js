@@ -127,8 +127,8 @@ function responseTemplate(res, result, data){
     res.json(json)
 }
 
-function responseFail(res){
-    res.json({success:false})
+function responseFail(res, result){
+    if (result !== false) res.json({success:false})
 }
 
 function responseSuccess(res){
@@ -211,7 +211,7 @@ async function dbPostUserRegister(req, res){
         let token = await updateUserToken(req, uid, res)
         res.json({success: true, token: token})
     }
-    else responseFail(res)
+    else responseFail(res, result)
 }
 
 async function dbPostUserMuscles(req, res){
@@ -222,7 +222,7 @@ async function dbPostUserMuscles(req, res){
         const muscles = result.map(entry => entry.muscles);
         res.json({ success: true, muscles});
     }
-    else responseFail(res)
+    else responseFail(res, result)
 }
 
 async function dbPostUserDiet(req, res){
@@ -232,7 +232,7 @@ async function dbPostUserDiet(req, res){
     if (result){
         responseTemplate(res, result, ["protein", "carbs", "fat"])
     }
-    else responseFail(res)
+    else responseFail(res, result)
 }
 
 async function dbPostUserDietOnDate(req, res){
@@ -242,7 +242,7 @@ async function dbPostUserDietOnDate(req, res){
     if (result){
         responseTemplate(res, result, ["protein", "carbs", "fat"])
     }
-    else responseFail(res)
+    else responseFail(res, result)
 }
 
 async function dbPostUserDietDates(req, res){
@@ -253,7 +253,7 @@ async function dbPostUserDietDates(req, res){
         const dates = result.map((row) => row.date); // Extract dates from the result
         res.json({success: true, dates: dates})
     }
-    else responseFail(res)
+    else responseFail(res, result)
 }
 
 async function dbPostUserDietAdd(req, res){
@@ -281,7 +281,7 @@ async function dbPostUserDates(req, res){
         let dateArray = result.map((x) => x.date)
         res.json({success: true, dates: dateArray})
     }
-    else responseFail(res)
+    else responseFail(res, result)
 }
 
 async function dbPostUserWorkouts(req, res){
@@ -292,7 +292,7 @@ async function dbPostUserWorkouts(req, res){
         let workoutsArray = result.map((x) => x)
         res.json({ success: true, data: workoutsArray });
     }
-    else responseFail(res)
+    else responseFail(res, result)
 }
 
 async function dbPostSavedWorkoutTemplates(req, res){
@@ -337,5 +337,5 @@ async function dbPostSaveExerciseTemplate(req, res){
     if (result) {
         res.json({success: true, id: result.insertId})
     }
-    else responseFail(res)
+    else responseFail(res, result)
 }
