@@ -2,6 +2,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const bcrypt = require("bcrypt");
+var moment = require('moment')
 
 
 // use DEBUG_MODE to send back error messages to client
@@ -138,7 +139,7 @@ async function updateUserToken(req, uid, res){
 
 // logging functions
 function log(message, level){
-    if (LOGGING_LEVEL >= level) console.log(message)
+    if (LOGGING_LEVEL >= level) console.log(moment().format('YYYY-MM-DD hh:mm:ss') + " - " + message)
 }
 
 
