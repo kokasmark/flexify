@@ -6,7 +6,7 @@ var moment = require('moment')
 
 
 // use DEBUG_MODE to send back error messages to client
-// LOGGING_LEVEL 0 = nothing, 1 = connect to db, new connections, db errors; 2=function calls, 3=sql commands, query responses
+// LOGGING_LEVEL 0 = nothing, 1 = connect to db, new connections, db errors; 2=function calls, 3=sql commands, query responses, -1 = temporary
 const RESPONSE_DEBUG_MODE = true;
 const LOGGING_LEVEL = 4;
 
@@ -138,8 +138,12 @@ async function updateUserToken(req, uid, res){
   
 
 // logging functions
+let log_colors = ["", "\x1b[90m", "\x1b[36m", "\x1b[33m", "\x1b[32m", "\x1b[47m\x1b[30m"]
 function log(message, level){
-    if (LOGGING_LEVEL >= level) console.log(moment().format('YYYY-MM-DD hh:mm:ss') + " - " + message)
+    if (LOGGING_LEVEL >= level){
+        process.stdout.write(log_colors.at(level) + "[" + moment().format('YYYY-MM-DD hh:mm:ss') + "]:" + "\x1b[0m ")
+        console.log(message)
+    } 
 }
 
 
