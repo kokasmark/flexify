@@ -136,6 +136,16 @@
     width: 100% !important;
     height: 120% !important;
   }
+  .saved-card-container {
+    display: grid;
+    grid-template-columns: repeat(1, 300px) !important; /* Set each column to 200px width */
+    gap: 20px; /* Adjust the gap between cards to 20px */
+    padding-left: 10px;
+    overflow-y: auto;
+    position:  relative !important;
+    width: fit-content !important;
+    left: -150px !important;
+  }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
