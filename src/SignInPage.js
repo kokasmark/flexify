@@ -31,7 +31,7 @@ class SignInPage extends Component {
 
     var raw = JSON.stringify({
       "username": document.getElementById('username').value,
-      "password": document.getElementById('password').value
+      "password": document.getElementById('password').value, location: "web"
     });
 
     var requestOptions = {

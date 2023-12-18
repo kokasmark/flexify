@@ -58,7 +58,7 @@ class CreatePage extends Component {
   getSavedTemplates() {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ token: localStorage.getItem('loginToken') });
+    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), location: "web" });
 
     var requestOptions = {
       method: 'POST',
@@ -91,7 +91,7 @@ class CreatePage extends Component {
   getExerciseTemplates() {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ token: localStorage.getItem('loginToken') });
+    var raw = JSON.stringify({ token: localStorage.getItem('loginToken') , location: "web"});
 
     var requestOptions = {
       method: 'POST',

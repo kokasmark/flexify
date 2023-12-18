@@ -74,7 +74,7 @@ class Navbar extends Component {
   getWorkouts() {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), date: this.state.dateForApi });
+    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), date: this.state.dateForApi, location: "web" });
 
     var requestOptions = {
       method: 'POST',
@@ -104,7 +104,7 @@ class Navbar extends Component {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
-    var raw = JSON.stringify({"token": localStorage.getItem('loginToken')});
+    var raw = JSON.stringify({"token": localStorage.getItem('loginToken'), location: "web"});
 
     var requestOptions = {
       method: 'POST',

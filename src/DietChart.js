@@ -20,7 +20,7 @@ export default class DietChart extends Component {
   getUserDiet(){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({token: localStorage.getItem('loginToken')});
+    var raw = JSON.stringify({token: localStorage.getItem('loginToken'), location: "web"});
 
     var requestOptions = {
       method: 'POST',
@@ -49,7 +49,7 @@ export default class DietChart extends Component {
   getUserDietOnDate(date){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({token: localStorage.getItem('loginToken'), date: date});
+    var raw = JSON.stringify({token: localStorage.getItem('loginToken'), date: date, location: "web"});
 
     var requestOptions = {
       method: 'POST',

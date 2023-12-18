@@ -27,7 +27,7 @@ class SavedPage extends Component {
   getSavedTemplates() {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ token: localStorage.getItem('loginToken') });
+    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), location: "web" });
 
     var requestOptions = {
       method: 'POST',

@@ -27,7 +27,7 @@ class DietPage extends Component {
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({token: localStorage.getItem('loginToken'), carbs: c, fat: f, protein: p});
+    var raw = JSON.stringify({token: localStorage.getItem('loginToken'), carbs: c, fat: f, protein: p, location: "web"});
 
     var requestOptions = {
       method: 'POST',
@@ -102,7 +102,7 @@ class DietPage extends Component {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({token: localStorage.getItem('loginToken'), carbs: c
-    , fat: f, protein: p});
+    , fat: f, protein: p, location: "web"});
 
     var requestOptions = {
       method: 'POST',
