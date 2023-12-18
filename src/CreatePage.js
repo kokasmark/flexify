@@ -391,11 +391,11 @@ class CreatePage extends Component {
     ));
     return (
       <div className='page'>
-        <div className='load-anim' style={{ position: 'relative', top: -150 }}>
-          <div style={{ position: 'relative', top: 150 }}>
+        <div className='load-anim create-container' style={{ position: 'relative', top: -150 }}>
+          <div className='create-muscles' style={{ position: 'relative', top: 150 }}>
             <MusclesView ref={this.muscleRef} chooseCallback={this.chooseMuscleGroup} />
           </div>
-          <div className='anim' style={{ color: 'white', position: 'relative', top: -600, left: '15%', backgroundColor: 'var(--contrast)', borderRadius: 10, height: 500, overflow: 'auto', width: 300 }}>
+          <div className='anim create-templates' style={{ color: 'white', position: 'relative', top: -600, left: '15%', backgroundColor: 'var(--contrast)', borderRadius: 10, height: 500, overflow: 'auto', width: 300 }}>
             <h1 style={{ marginTop: 5, textAlign: 'center' }}>{GetString("create-template")}</h1>
             {this.state.getTemplates.map((template, index) => (
               <div>
@@ -413,7 +413,7 @@ class CreatePage extends Component {
             ))}
           </div>
           <div onDragOver={this.dragOver}
-            onDrop={this.createWorkoutDrop} style={{ color: 'white', position: 'relative', top: -1100, left: 1050 }}>
+            onDrop={this.createWorkoutDrop} className='create-drop' style={{ color: 'white', position: 'relative', top: -1100, left: 1050 }}>
             <div className='create-workout anim' ref={this.containerRef} style={exerciseCards.length == 0 ? { position: 'relative', left: 50, height: 200, textAlign: 'center' }
               : { position: 'relative', left: 50, textAlign: 'center' }}>
               <input id='create-name' style={{ display: 'inline-block' }} placeholder='Name'></input>
