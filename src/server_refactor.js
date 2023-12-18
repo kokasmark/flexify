@@ -8,7 +8,7 @@ var moment = require('moment')
 // use DEBUG_MODE to send back error messages to client
 // LOGGING_LEVEL 0 = nothing, 1 = connect to db, new connections, db errors; 2=function calls, 3=sql commands, query responses, -1 = temporary
 const RESPONSE_DEBUG_MODE = true;
-const LOGGING_LEVEL = 4;
+const LOGGING_LEVEL = 3;
 
 
 // setup server and database connection
@@ -27,6 +27,14 @@ const connection = createConnection()
 app.post('/api/user', (req, res) => dbPostUserDetails(req, res));
 app.post('/api/login', (req, res) => dbPostUserLogin(req, res));
 app.post('/api/signup', (req, res) => dbPostUserRegister(req, res));
+
+app.post('/api/home/muscles', (req, res) => dbPostUserMuscles(req, res));
+
+app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
+app.post('/api/diet/date', (req, res) => dbPostUserDietOnDate(req, res));
+app.post('/api/diet/get_dates', (req, res) => dbPostUserDietDates(req, res));
+app.post('/api/diet/add', (req, res) => dbPostUserDietAdd(req, res));
+
 
 
 // basic database functions
@@ -102,10 +110,18 @@ async function getUserId(req, res){
     throwDBError("Invalid token", res)
 }
 
-async function responseTemplate(res, result, data){
+function responseTemplate(res, result, data){
     let json = {success: true}
     data.map((x) => json[x] = result[x])
     res.json(json)
+}
+
+function responseFail(res){
+    res.json({success:false})
+}
+
+function responseSuccess(res){
+    res.json({success:true})
 }
 
 
@@ -139,7 +155,7 @@ async function updateUserToken(req, uid, res){
 
 // logging functions
 let log_colors = ["", "\x1b[90m", "\x1b[36m", "\x1b[33m", "\x1b[32m", "\x1b[47m\x1b[30m"]
-function log(message, level){
+function log(message, level=-1){
     if (LOGGING_LEVEL >= level){
         process.stdout.write(log_colors.at(level) + "[" + moment().format('YYYY-MM-DD hh:mm:ss') + "]:" + "\x1b[0m ")
         console.log(message)
@@ -184,7 +200,64 @@ async function dbPostUserRegister(req, res){
         let token = await updateUserToken(req, uid, res)
         res.json({success: true, token: token})
     }
-    else {
-        res.json({success: false})
+    else responseFail(res)
+}
+
+async function dbPostUserMuscles(req, res){
+    let uid = await getUserId(req, res)
+    let sql = 'SELECT exercise_template.muscles FROM exercise INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE exercise_template.user_id = ?'
+    let result = await validateAndQuery(req, sql, [], res, [uid])
+    if (result){
+        const muscles = result.map(entry => entry.muscles);
+        res.json({ success: true, muscles});
     }
+    else responseFail(res)
+}
+
+async function dbPostUserDiet(req, res){
+    let uid = await getUserId(req, res)
+    let sql = 'SELECT protein, carbs, fat FROM diet WHERE user_id = ? AND date=CURDATE()'
+    let result = await validateAndQuery(req, sql, [], res, [uid], single=true)
+    if (result){
+        responseTemplate(res, result, ["protein", "carbs", "fat"])
+    }
+    else responseFail(res)
+}
+
+async function dbPostUserDietOnDate(req, res){
+    let uid = await getUserId(req, res)
+    let sql = 'SELECT calories, protein, carbs, fat FROM diet WHERE date=? AND user_id=?'
+    let result = await validateAndQuery(req, sql, ["date"], res, [uid], single=true)
+    if (result){
+        responseTemplate(res, result, ["protein", "carbs", "fat"])
+    }
+    else responseFail(res)
+}
+
+async function dbPostUserDietDates(req, res){
+    let uid = await getUserId(req, res)
+    let sql = `SELECT date FROM diet  WHERE user_id = ?`;
+    let result = await validateAndQuery(req, sql, [], res, [uid])
+    if (result){
+        const dates = result.map((row) => row.date); // Extract dates from the result
+        res.json({success: true, dates: dates})
+    }
+    else responseFail(res)
+}
+
+async function dbPostUserDietAdd(req, res){
+    let uid = await getUserId(req, res)
+    let sql_current = 'SELECT id FROM diet WHERE user_id = ? AND date=CURDATE()'
+    let result = await validateAndQuery(req, sql_current, [], res, [uid], single=true)
+    if (result){
+        // having entry for today, add values
+        let sql_new = `UPDATE diet SET carbs=carbs+?, fat=fat+?, protein=protein+? WHERE id=?`
+        validateAndQuery(req, sql_new, ["carbs", "fat", "protein"], res, [result.id], single=true)
+    }
+    else{
+        // no entry for today, create new
+        let sql_new = `INSERT INTO diet (carbs, fat, protein, user_id) VALUES (?, ?, ?, ?)`
+        validateAndQuery(req, sql_new, ["carbs", "fat", "protein"], res, [uid], single=true)
+    }
+    responseSuccess(res)
 }
