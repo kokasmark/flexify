@@ -3,7 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 import { ReactComponent as Icon_streak } from './assets/icon-streak.svg';
-import { ReactComponent as Icon_signIn } from './assets/icon-sign-in.svg';
 import { ReactComponent as Icon_user } from './assets/icon-user.svg';
 import { ReactComponent as Icon_light } from './assets/icon-light.svg';
 import { ReactComponent as Icon_dark } from './assets/icon-dark.svg';
@@ -15,6 +14,7 @@ import swal from 'sweetalert';
 import {host} from './constants'
 
 import GetString from './language';
+
 
 const NavBarWrapper = () => {
   const navigate = useNavigate();
@@ -153,10 +153,31 @@ class Navbar extends Component {
     }
   }
   switchLanguage(){
-    localStorage.setItem('lang',localStorage.getItem('lang') == 'HU' ? 'EN':'HU');
+    /*swal("Change language?", "This will reload the page! All unsaved changes will be deleted!", "warning").then((result)=> {
+
+      console.log(result)
+      if(result){
+        localStorage.setItem('lang',localStorage.getItem('lang') == 'HU' ? 'EN':'HU');
    
-    console.log('Switching language');
-    window.location.reload();
+        console.log('Switching language');
+        window.location.reload();
+      }
+    
+    });*/
+    swal({
+      title: "Change language?",
+      text: 'This will reload the page! All unsaved changes will be deleted!',
+      buttons: ["No, dont change it!","Yes, change it!"],
+      icon: 'warning'
+    }).then((result) => {
+      if(result){
+        localStorage.setItem('lang',localStorage.getItem('lang') == 'HU' ? 'EN':'HU');
+   
+        console.log('Switching language');
+        window.location.reload();
+      }
+    });
+    
   }
     render() {
       return (

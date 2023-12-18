@@ -9,7 +9,7 @@ import NavBarWrapper from './NavBar';
 
 import Carousel from 'react-bootstrap/Carousel';
 
-import {host} from './constants'
+import { host } from './constants'
 import GetString from './language';
 class App extends Component {
   muscleViewRef = React.createRef();
@@ -19,11 +19,11 @@ class App extends Component {
     muscles: []
   }
 
-  isDesktop(){
-    if(window.innerWidth > 1224){
+  isDesktop() {
+    if (window.innerWidth > 1224) {
       return true;
     }
-    else{
+    else {
       return false;
     }
   }
@@ -33,24 +33,24 @@ class App extends Component {
     // Assuming 'muscles' is an array of muscle objects
     for (var i = 0; i < muscles.length; i++) {
       var muscleData = JSON.parse(muscles[i]);
-      for(var ii = 0; ii < muscleData.length; ii++){
-      var name = muscleData[ii]; // Assuming the muscle is the first element in the array
-          count++;
-      // Count the occurrences of each muscle
-      muscleCounts[name] = (muscleCounts[name] || 0) + 1;
+      for (var ii = 0; ii < muscleData.length; ii++) {
+        var name = muscleData[ii]; // Assuming the muscle is the first element in the array
+        count++;
+        // Count the occurrences of each muscle
+        muscleCounts[name] = (muscleCounts[name] || 0) + 1;
       }
-      
+
     }
-  
+
     // Calculate the average count for each muscle group
     const averageCounts = {};
-  
+
     for (const muscleName in muscleCounts) {
       const totalOccurrences = muscleCounts[muscleName];
       const averageCount = totalOccurrences / count; // Adjust the denominator if needed
       averageCounts[muscleName] = averageCount;
     }
-  
+
     // Map the average counts to the range [0, 3] and update muscle groups
     for (const muscleName in averageCounts) {
       const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3)));
@@ -58,10 +58,10 @@ class App extends Component {
     }
   }
 
-  getMusclesTrained(){
+  getMusclesTrained() {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({token: localStorage.getItem('loginToken')});
+    var raw = JSON.stringify({ token: localStorage.getItem('loginToken') });
 
     var requestOptions = {
       method: 'POST',
@@ -75,67 +75,46 @@ class App extends Component {
       .then((response) => {
         console.log(response)
         var r = JSON.parse(response);
-        if(r.success){
-          this.setState({muscles: r.muscles});
-        }else{
-          
+        if (r.success) {
+          this.setState({ muscles: r.muscles });
+        } else {
+
         }
       })
       .catch(error => console.log('error', error));
   }
-componentDidMount(){
-  this.getMusclesTrained();
-}
+  componentDidMount() {
+    this.getMusclesTrained();
+  }
   render() {
     this.colorMuscles(this.state.muscles);
     return (
       <div className='page'>
-        {this.isDesktop() &&<div>
         <div>
-        <div className='timePeriod load-anim'>
-          <p className='interactable'>{GetString("home-period")[0]}</p>
-          <p className='interactable'>{GetString("home-period")[1]}</p>
-          <p className='interactable'>{GetString("home-period")[2]}</p>
-          <p className='interactable'>{GetString("home-period")[3]}</p>
-          <p className='interactable'>{GetString("home-period")[4]}</p>
-        </div>
-        
-        
-        <div style={{position: 'relative',float: 'right', right: -250, top: 300, zIndex:-1}} className='home-chart'>
-            <DietChart noDataStyle={{position: 'relative', top:200, right: 400}} hideInfo/>
-          </div> 
-        </div>
-        <div style={{position: 'relative', bottom: 50}}>
-          <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles}/>
-        </div>
-        <div className='load-anim' style={{position: 'absolute', left: 200, top: 400}}>
-          <WorkoutCalendar ref={this.calendarRef} parent = {this}/>
-        </div>
-        </div>}
+          <div>
+            <div className='timePeriod load-anim'>
+              <p className='interactable'>{GetString("home-period")[0]}</p>
+              <p className='interactable'>{GetString("home-period")[1]}</p>
+              <p className='interactable'>{GetString("home-period")[2]}</p>
+              <p className='interactable'>{GetString("home-period")[3]}</p>
+              <p className='interactable'>{GetString("home-period")[4]}</p>
+            </div>
 
-        {/*MOBILE*/}
-        {!this.isDesktop() &&
-        <div >
-          <div style={{position: 'relative', right: 0}}>
-            <Carousel style={{width: '92%', zIndex:1, position: 'fixed', top: -150}}>
-              <Carousel.Item  style={{position: 'relative', right: 260, height: 1000}}>
-              <div style={{transform: 'scale(0.8)'}}>
-              <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles}/></div>
-              </Carousel.Item>
-              <Carousel.Item style={{position: 'relative', top: 200, left: 0, height: 1000}}>
-                <div style={{transform: 'scale(0.6)'}}>
-                <DietChart ref={this.chartRef} hideInfo/></div>
-              </Carousel.Item>
-              <Carousel.Item style={{position: 'relative', top: 75, left: 10, height: 1000}}>
-              <div style={{transform: 'scale(0.8)', position: 'relative', top: 300}}>
-              <WorkoutCalendar ref={this.calendarRef} parent = {this}/></div>
-              </Carousel.Item>
-            </Carousel>
-          
-    
+
+            <div style={{ position: 'relative', float: 'right', right: -250, top: 300, zIndex: -1 }} className='home-chart'>
+              <DietChart noDataStyle={{ position: 'relative', top: 200, right: 400 }} hideInfo />
+            </div>
           </div>
-          </div>}
-        <NavBarWrapper isDesktop={this.isDesktop()}/>
+          <div style={{ position: 'relative', bottom: 50 }}>
+            <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles} />
+          </div>
+          <div className='load-anim' style={{ position: 'absolute', left: 200, top: 400 }}>
+            <WorkoutCalendar ref={this.calendarRef} parent={this} />
+          </div>
+        </div>
+
+
+        <NavBarWrapper />
         <Sidebar />
       </div>
     );
