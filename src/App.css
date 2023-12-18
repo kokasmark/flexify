@@ -134,7 +134,7 @@
     overflow-x: hidden;
     left: 10px !important ;
     width: 100% !important;
-    height: 120% !important;
+    height: 110% !important;
   }
   .saved-card-container {
     display: grid;
@@ -151,6 +151,32 @@
   }
   .saved-card-container .card{
     height: fit-content !important;
+  }
+  .dietpage-chart{
+    transform: scale(0.6);
+    position: relative;
+    left: -170px !important;
+    top: -200px !important;
+  }
+  .dietpage-chart text{
+    font-size: 5px !important;
+  }
+  .dietpage-chart ul{
+    position: relative;
+    top: 200px !important;
+    left: -250px;
+  }
+  .plan-calendar{
+    position: relative !important;
+    top: 100px !important;
+    left:-140px !important;
+    transform: scale(0.8);
+  }
+  .plan-chart{
+    position: relative !important;
+    top: -150px !important;
+    left:-160px !important;
+    transform: scale(0.8);
   }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */

@@ -130,7 +130,7 @@ class DietPage extends Component {
     return (
       <div className='page'>
         <div style={{ position: 'relative', left: '39vw', top: 250 }} className='chart'>
-          <div style={{position:'relative', left:0, top: 0}}>
+          <div className='dietpage-chart' style={{position:'relative', left:0, top: 0}}>
             <DietChart/>
           </div>
         

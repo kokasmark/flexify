@@ -37,12 +37,12 @@ class PlanPage extends Component {
     return (
       <div className='page'>
         <div style={{position: 'relative', left: 150}}>
-          <div style={{ position: 'absolute', left: 500, top: 300 }} className='load-anim'>
+          <div style={{ position: 'absolute', left: 500, top: 300 }} className='load-anim plan-calendar'>
             <WorkoutCalendar onChange={(e) => this.select(e)} />
 
           </div>
           <h1 className='load-anim' style={{ position: 'relative', color: 'white', top: 300, left: 880 }}>{this.state.selectedDate}</h1>
-          <div style={{ position: 'absolute', top: 120, left: 675, zIndex: -1, transform: 'scale(0.5)' }}>
+          <div style={{ position: 'absolute', top: 120, left: 675, zIndex: -1, transform: 'scale(0.5)' }} className='plan-chart'>
             {this.state.chartShow && <DietChart hideInfo noDataStyle={{position: 'relative', top:200, right: 0}} date={this.dateForapi} ref={this.dietRef} />}
           </div>
         </div>
