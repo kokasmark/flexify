@@ -345,7 +345,7 @@ function dbPostSaveWorkoutTemplate(req, res){
         console.log(exercise)
         connection.query('INSERT INTO workout_template_exercises (workout_template_id, exercise_template_id, set_data, comment) VALUES (?, ?, ?, ?)', [workoutTemplateId, exercise.id, JSON.stringify(exercise.set_data), exercise.comment], (err, result) => {
           if (err) {
-            throwDBError(res, err);
+            //throwDBError(res, err); Causes Crash
           }
         })
        
