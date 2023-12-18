@@ -35,6 +35,11 @@ app.post('/api/diet/date', (req, res) => dbPostUserDietOnDate(req, res));
 app.post('/api/diet/get_dates', (req, res) => dbPostUserDietDates(req, res));
 app.post('/api/diet/add', (req, res) => dbPostUserDietAdd(req, res));
 
+app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
+app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
+
+
+
 
 
 // basic database functions
@@ -260,4 +265,26 @@ async function dbPostUserDietAdd(req, res){
         validateAndQuery(req, sql_new, ["carbs", "fat", "protein"], res, [uid], single=true)
     }
     responseSuccess(res)
+}
+
+async function dbPostUserDates(req, res){
+    let uid = await getUserId(req, res)
+    let sql = 'SELECT DATE_FORMAT( date, "%Y-%m-%d") as date FROM workout WHERE DATE_FORMAT( date, "%Y-%m") = ? AND user_id = ?'
+    let result = await validateAndQuery(req, sql, ["date"], res, [uid])
+    if (result){
+        let dateArray = result.map((x) => x.date)
+        res.json({success: true, dates: dateArray})
+    }
+    else responseFail(res)
+}
+
+async function dbPostUserWorkouts(req, res){
+    let uid = await getUserId(req, res)
+    let sql = 'SELECT workout.id, workout.duration, workout.workout_name, exercise.set_data, exercise_template.name FROM exercise INNER JOIN workout ON exercise.workout_id = workout.id INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE DATE_FORMAT( workout.date, "%Y-%m-%d") = ? AND workout.user_id = ?'
+    let result = await validateAndQuery(req, sql, ["date"], res, [uid])
+    if (result && result.length > 0){
+        let workoutsArray = result.map((x) => x)
+        res.json({ success: true, data: workoutsArray });
+    }
+    else responseFail(res)
 }
