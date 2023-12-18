@@ -240,7 +240,7 @@ class CreatePage extends Component {
   colorAffectedMuscles(muscles, leave) {
     var affected = JSON.parse(muscles);
 
-    for (const groupName in this.muscleRef.current.state.groups) {
+    for (const groupName in this.muscleRef.current.getGroup()) {
       this.muscleRef.current.updateMuscleGroup(groupName, 0);
     }
     this.muscleRef.current.updateMuscleGroup(this.state.choosenGroup, 2);

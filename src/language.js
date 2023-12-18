@@ -92,6 +92,10 @@ function GetString(name){
         "alert-workout-imported": {
             "HU": ["Sikeresen másolva!", " sikeresen bemásolva!"],
             "EN": ["Successfully imported!", " was imported succesfully"]
+        },
+        "alert-change-language":{
+            "HU": ["Nyelv megváltoztatása?", "Ez a művelet újra fogja tölteni az oldalt! Minden mentetlen változtatás törlödik!", "Ne változtassa!", "Változtassa!"],
+            "EN": ["Change language?", "This will reload the page! All unsaved changes will be deleted!","No, dont change it!", "Yes, change it!"]
         }
     };
     return strings[name][localStorage.getItem('lang') != null ? localStorage.getItem('lang') : 'HU']

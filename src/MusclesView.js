@@ -2,13 +2,17 @@ import './App.css';
 import { Component } from 'react';
 import { ReactComponent as Muscles } from './assets/muscles.svg';
 import { ReactComponent as MusclesBack } from './assets/muscles-back.svg';
+import { ReactComponent as W_Muscles } from './assets/women-muscles.svg';
+import { ReactComponent as W_MusclesBack } from './assets/women-muscles-back.svg';
 import { ReactComponent as Icon_rotate } from './assets/icon-rotate.svg';
 
 
 export default class MusclesView extends Component {
   state= {
     front: true,
+    men:  true,
     groups: {
+      men:{
       traps: [146,147,148,149,21,22,23,24],
       shoulder: [26,27,29,30,150,151],
       chest: [25,28,31,32],
@@ -25,14 +29,37 @@ export default class MusclesView extends Component {
       hamstrings: [198,202,200,204,192,193,201,205,203,199],
       adductors: [76,79,87,93,94,88,82,78],
       midBack: [152,153],
-      neck: [18,19,20]
+      neck: [18,19,20]},
+      
+      women: {
+        traps: [88,89],
+        shoulder: [7,8,9,12,90,91],
+        chest: [13,14],
+        biceps: [15,16],
+        triceps: [21,22,98,100,94,95,99,101],
+        lats: [96,97,104,105],
+        abs: [23,24,29,30,37,38,42,43],
+        obliques: [17,19,25,27,33,18,20,26,28,34,112,113],
+        quadriceps: [63,48,44,66,45,49,64,67],
+        calves: [138,140,141,139],
+        leg: [78,76, 74, 75,77,79,144,142,143,145],
+        forearm: [31,35,39,32,40,41,36,109,106,111,110,107,108],
+        glutes: [114,115,116,117],
+        hamstrings: [132,134,136,131,130,137,135,133],
+        adductors: [46,47,54,55],
+        midBack: [92,93],
+        neck: [3,4,2]
+      }
     },
     muscleData:[],
     frontLastKey: 138,
     animation: 'fade-in'
   }
+  getGroup(){
+    return this.state.men == true ? this.state.groups.men : this.state.groups.women;
+  }
   findMuscleGroup = (index) =>{
-    const groups = this.state.groups;
+    const groups = this.getGroup();
 
     for (const groupName in groups) {
       for(var i = 0; i < groups[groupName].length; i++){
@@ -62,12 +89,20 @@ export default class MusclesView extends Component {
   updateMuscleGroup(group,value){
     //group: pl.: 'biceps' value: 0-3
     var muscleContainer = document.getElementById('muscle-container');
-    var svgContainer = this.state.front == true? muscleContainer.children[0]: muscleContainer.children[0].children[0].children[0];
-    var muscles = svgContainer.children;
+    var svgContainer;
+    var muscles;//THE PARENT OF THE MUSCLES
+
+    if(this.state.men){
+      svgContainer = this.state.front == true? muscleContainer.children[0]: muscleContainer.children[0].children[0].children[0];
+      muscles = svgContainer.children[0].children;//THE PARENT OF THE MUSCLES
+    }else{
+      svgContainer = this.state.front == true? muscleContainer.children[0]: muscleContainer.children[0].children[0];
+      muscles = svgContainer.children[0].children[0].children;//THE PARENT OF THE MUSCLES
+    }
     const colors = ['var(--heat-blue)','var(--heat-yellow)','var(--heat-orange)','var(--heat-red)'];
-    for(var i = 0; i < this.state.groups[group].length; i++){
+    for(var i = 0; i < this.getGroup()[group].length; i++){
       try{
-        var muscle = muscles[this.state.front == true? this.state.groups[group][i]:this.state.groups[group][i]-138];
+        var muscle = muscles[this.state.front == true? this.getGroup()[group][i]:this.getGroup()[group][i]-(this.state.men == true ? 138:87)];
         var key = parseInt(muscle.id);
         this.state.muscleData[key].val = value;
         var color = colors[parseInt(this.state.muscleData[key].val)];
@@ -135,16 +170,22 @@ export default class MusclesView extends Component {
     }
   }
   componentDidMount(){
+    this.setState({men: (localStorage.getItem('anatomy') != null ? (localStorage.getItem('anatomy') == "Masculine" ? true: false) : true)})
     this.createMuscleData();
-  }
-  componentWillUnmount(){
-    //this.setColor();
+    
   }
   render() {
     return (
       <div>
         <div className={'muscles anim load-anim '+this.state.animation} id='muscle-container' onClick={(e)=>this.muscleClicked(e)}>
-          {this.state.front == true ?  <Muscles style={{width: 1024, height:1028}}/> :  <div ><MusclesBack style={{width: 1024, height:1028,transform: 'scale(0.65)'}}/></div>}
+          
+
+          {this.state.men == true ? 
+          <div>{this.state.front == true ?  <Muscles style={{width: 1024, height:1028}}/> :  <div ><MusclesBack style={{width: 1024, height:1028,transform: 'scale(0.65)'}}/></div>}</div> 
+          : <div>{this.state.front == true ?  <W_Muscles style={{width: 1024, height:1028}}/> :  <div ><W_MusclesBack style={{width: 1024, height:1028,transform: 'scale(0.65)'}}/></div>}</div>
+          }
+
+
           <Icon_rotate className='interactable' style={{transform: 'scale(2)', position: 'relative', top:-175,left:500,fill:'#fff !important'}} onClick={()=>this.rotate()}/>
         </div>
         

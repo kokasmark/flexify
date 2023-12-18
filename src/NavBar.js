@@ -167,9 +167,9 @@ class Navbar extends Component {
     
     });*/
     swal({
-      title: "Change language?",
-      text: 'This will reload the page! All unsaved changes will be deleted!',
-      buttons: ["No, dont change it!","Yes, change it!"],
+      title: GetString("alert-change-language")[0],
+      text: GetString("alert-change-language")[1],
+      buttons: [GetString("alert-change-language")[2],GetString("alert-change-language")[3]],
       icon: 'warning'
     }).then((result) => {
       if(result){

@@ -16,7 +16,8 @@ import {host} from './constants'
 class AccountPage extends Component {
   state = {
     username: '',
-    email: ''
+    email: '',
+    anatomy: (localStorage.getItem('anatomy') != null ? (localStorage.getItem('anatomy') == "Masculine" ? "Masculine": "Feminine") : "Masculine")
   }
 
   getUserInformation(){
@@ -48,6 +49,17 @@ class AccountPage extends Component {
   componentDidMount(){
     this.getUserInformation();
   }
+  anatomySelect(text){
+      if(text == "Masculine"){
+        localStorage.setItem('anatomy', 'Masculine');
+        this.setState({anatomy: 'Masculine'})
+      }
+      if(text == "Feminine"){
+        localStorage.setItem('anatomy', 'Feminine');
+        this.setState({anatomy: 'Feminine'})
+      }
+      console.log(localStorage.getItem('anatomy'))
+  }
   render() {
     return (
       <div className='page'>
@@ -58,6 +70,11 @@ class AccountPage extends Component {
           <br/>
           <Icon_email/>
           <p style={{display: 'inline-block', fontWeight: 'bold'}}>{this.state.email}</p>
+          <br />
+          <p>Anatomy:</p>
+          <div className='interactable' style={{position: 'relative', top: -40, left: 80, fontWeight: 'bold'}}>
+          {this.state.anatomy == "Masculine" ? <p onClick={()=>this.anatomySelect("Feminine")}>Masculine</p> : <p onClick={()=>this.anatomySelect("Masculine")}>Feminine</p>}
+          </div>
         </div>
         <NavBarWrapper />
         <Sidebar/>
