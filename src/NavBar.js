@@ -6,6 +6,8 @@ import { ReactComponent as Icon_streak } from './assets/icon-streak.svg';
 import { ReactComponent as Icon_user } from './assets/icon-user.svg';
 import { ReactComponent as Icon_light } from './assets/icon-light.svg';
 import { ReactComponent as Icon_dark } from './assets/icon-dark.svg';
+import { ReactComponent as Icon_hu } from './assets/icon-hu.svg';
+import { ReactComponent as Icon_en } from './assets/icon-en.svg';
 import logo from './assets/logo.webp';
 
 import {Link} from 'react-router-dom';
@@ -119,7 +121,7 @@ class Navbar extends Component {
         if(r.success){
          this.setState({username: r.username, email: r.email});
         }else{
-          swal("Oops!", "You have been logged out!", "error");
+          swal(GetString("alert-logged-out")[0],GetString("alert-logged-out")[1], "error");
           this.props.navigate('/login');
         }
       })
@@ -189,8 +191,8 @@ class Navbar extends Component {
               {this.state.theme == 'dark' && <Icon_light className='interactable' onClick={this.changeTheme}/>}
             </div>
             <div style={{color: 'white', position: 'relative', top: -40, left: 50, marginBottom: -40, width: 50, height: 50}} >
-              {this.state.language == 'HU' && <h5 onClick={() => this.switchLanguage()} className='interactable'>EN</h5>}
-              {this.state.language == 'EN' && <h5 onClick={() => this.switchLanguage()} className='interactable'>HU</h5>}
+              {this.state.language == 'HU' && <Icon_hu style={{width: 30, height: 30}} onClick={() => this.switchLanguage()} className='interactable'/>}
+              {this.state.language == 'EN' && <Icon_en style={{width: 30, height: 30}} onClick={() => this.switchLanguage()} className='interactable'/>}
             </div>
             <div style={{position: 'relative', left: '40%', top: -60}}>
               <Icon_streak className='anim-heartbeat'/>
