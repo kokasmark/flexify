@@ -144,7 +144,13 @@
     overflow-y: auto;
     position:  relative !important;
     width: fit-content !important;
-    left: -150px !important;
+    left: -140px !important;
+    transform: scale(0.8);
+    top: 100px !important;
+    max-height: 90%;
+  }
+  .saved-card-container .card{
+    height: fit-content !important;
   }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
@@ -360,6 +366,7 @@ body{
   padding-left: 10px;
 }
 .saved-card-container {
+  overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(5, 300px); /* Set each column to 200px width */
   gap: 20px; /* Adjust the gap between cards to 20px */
