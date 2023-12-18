@@ -10,7 +10,70 @@
   --heat-orange: rgb(246, 136, 56);
   --heat-blue:  var(--contrast);
 }
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+  .navBar p{
+    font-size: 10px;
+    width: 100px;
+  }
+  .navbar-welcome{
+    visibility: hidden;
+  }
+  .flexify-logo{
+    visibility: hidden;
+  }
 
+  .timePeriod{
+    width: 70% !important;
+    margin-left: 'auto' !important;
+  }
+  .timePeriod p{
+    font-size: 10px !important;
+    width: fit-content !important;
+    margin: 0px !important;
+    margin-left: 20px !important;
+  }
+  .container{
+    position: absolute;
+    top: 0px;
+    overflow-y:visible;
+    overflow-x: hidden;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .container::-webkit-scrollbar {
+    display: none;
+  }
+  .home-chart{
+    margin-top: 0 !important;
+    position: relative;
+    left: 360px;
+    top: 800px !important;
+    transform: scale(0.8);
+  }
+  .muscle-container-home{
+    position: relative;
+    top: -700px !important;
+    right: 270px !important;
+    transform: scale(0.8);
+  }
+  .home-calendar{
+    position: relative;
+    width: 80%;
+    top: 300px !important;
+    left: 15px !important;
+  }
+}
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+ 
+}
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {}
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {}
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {}
 .load-anim{
   animation: page-transition .6s;
   transition: .5s ease;

@@ -185,7 +185,7 @@ class Navbar extends Component {
       return (
         <div>
           <div className='navBar'>
-          <Link to="/" draggable='false'><img className='interactable' src={logo} style={{position: 'fixed', top: -15, left: -110, transform: 'scale(0.3)'}} draggable='false'/></Link> 
+          <Link to="/" draggable='false' className='flexify-logo'><img className='interactable' src={logo} style={{position: 'fixed', top: -15, left: -110, transform: 'scale(0.3)'}} draggable='false'/></Link> 
             <div>
               {this.state.theme == 'light' && <Icon_dark className='interactable' onClick={this.changeTheme}/>}
               {this.state.theme == 'dark' && <Icon_light className='interactable' onClick={this.changeTheme}/>}
@@ -201,7 +201,7 @@ class Navbar extends Component {
               <div style={{color: 'white', position: 'relative', top: -50, left: '43%'}}>
               
               <Link to='/account'><Icon_user style={{position: 'relative', left: 200, width: 40, height: 40, margin: 5, paddingLeft: 10}} className='interactable'/></Link>
-              <p style={{display: 'inline-block', marginLeft: -10}}>{GetString("navbar-welcome")} <b>{this.state.username}</b></p>
+              <p className='navbar-welcome' style={{display: 'inline-block', marginLeft: -10}}>{GetString("navbar-welcome")} <b>{this.state.username}</b></p>
               </div>
             </div>
           </div>

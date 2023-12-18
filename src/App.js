@@ -90,7 +90,7 @@ class App extends Component {
     this.colorMuscles(this.state.muscles);
     return (
       <div className='page'>
-        <div>
+        <div className='container'>
           <div>
             <div className='timePeriod load-anim'>
               <p className='interactable'>{GetString("home-period")[0]}</p>
@@ -101,14 +101,14 @@ class App extends Component {
             </div>
 
 
-            <div style={{ position: 'relative', float: 'right', right: -250, top: 300, zIndex: -1 }} className='home-chart'>
+            <div style={{ position: 'relative', float: 'right', right: -420, top: 300, zIndex: -1 }} className='home-chart'>
               <DietChart noDataStyle={{ position: 'relative', top: 200, right: 200 }} hideInfo />
             </div>
           </div>
-          <div style={{ position: 'relative', top: -810 }}>
+          <div className='muscle-container-home' style={{ position: 'relative', top: -810 }}>
             <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles} />
           </div>
-          <div className='load-anim' style={{ position: 'absolute', left: 200, top: 400 }}>
+          <div className='load-anim home-calendar' style={{ position: 'relative', left: 0, top: -600 }}>
             <WorkoutCalendar ref={this.calendarRef} parent={this} />
           </div>
         </div>
