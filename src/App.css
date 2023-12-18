@@ -101,6 +101,41 @@
   .create-container::-webkit-scrollbar {
     display: none;
   }
+  .sidebar-sign-out{
+    margin-top: 18vh !important;
+  }
+  .account-details{
+    position: relative;
+    left: 20px !important;
+    top: 150px !important;
+    transform: scale(0.8);
+  }
+  .card-container {
+    display: grid;
+    grid-template-columns: repeat(2, 300px); /* Set each column to 200px width */
+    gap: 20px; /* Adjust the gap between cards to 20px */
+    padding-left: 10px;
+  }
+  .browse-muscle{
+    position: relative !important;
+    top: -100px;
+    left: -280px;
+    transform: scale(0.8);
+  }
+  .workouts{
+    position: relative !important;
+    left: 30px !important;
+    top: -250px !important;
+  }
+  .browse-container{
+    position: absolute;
+    top: -80px !important;
+    overflow-y:visible;
+    overflow-x: hidden;
+    left: 10px !important ;
+    width: 100% !important;
+    height: 120% !important;
+  }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {

@@ -17,6 +17,7 @@ import swal from 'sweetalert';
 
 import { useLocation } from 'react-router-dom';
 import GetString from './language';
+import { host } from './constants';
 
 const CreatePageWrapper = () => {
   const location = useLocation();
@@ -67,7 +68,7 @@ class CreatePage extends Component {
       redirect: 'follow'
     };
 
-    fetch("http://localhost:3001/api/templates/workouts", requestOptions)
+    fetch(`http://${host}:3001/api/templates/workouts`, requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)
@@ -91,7 +92,7 @@ class CreatePage extends Component {
   getExerciseTemplates() {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ token: localStorage.getItem('loginToken') , location: "web"});
+    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), location: "web" });
 
     var requestOptions = {
       method: 'POST',
@@ -100,7 +101,7 @@ class CreatePage extends Component {
       redirect: 'follow'
     };
 
-    fetch("http://localhost:3001/api/templates/exercises", requestOptions)
+    fetch(`http://${host}:3001/api/templates/exercises`, requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)
@@ -137,67 +138,67 @@ class CreatePage extends Component {
 
   componentDidUpdate(prevProps, prevState) {
 
-    if(prevProps.import != this.props.import){
-      console.log('Importing workout: '+this.props.import);
+    if (prevProps.import != this.props.import) {
+      console.log('Importing workout: ' + this.props.import);
     }
 
     if (prevState.importedWorkout != this.state.importedWorkout) {
-      if(!this.state.importDone){
-      console.log(this.state.importedWorkout.data[0].set_data)
-      for (var i = 0; i < this.state.importedWorkout.data.length; i++) {
-        document.getElementById(`create-reps-${i}`).value = JSON.parse(this.state.importedWorkout.data[i].set_data).length;
+      if (!this.state.importDone) {
+        console.log(this.state.importedWorkout.data[0].set_data)
+        for (var i = 0; i < this.state.importedWorkout.data.length; i++) {
+          document.getElementById(`create-reps-${i}`).value = JSON.parse(this.state.importedWorkout.data[i].set_data).length;
 
+        }
+        const updatedExercises = [...prevState.exercises];
+        for (var i = 0; i < this.state.importedWorkout.data.length; i++) {
+          const l = JSON.parse(this.state.importedWorkout.data[i].set_data).length;
+
+          updatedExercises[i] = Number(l);
+
+        }
+        this.setState({ exercises: updatedExercises });
       }
-      const updatedExercises = [...prevState.exercises];
-      for (var i = 0; i < this.state.importedWorkout.data.length; i++) {
-        const l = JSON.parse(this.state.importedWorkout.data[i].set_data).length;
-
-        updatedExercises[i] = Number(l);
-
-      }
-      this.setState({ exercises: updatedExercises });
-    }
     }
     if (prevState.savedTemplates !== this.state.savedTemplates) {
-      if(this.props.import.length > 0){
-      if(!this.state.importDone){
-      const matchingWorkout = this.state.savedTemplates.find((workout) =>
-        workout.name === this.parseSearchString(this.props.import)
-      );
-      this.setState({ importedWorkout: matchingWorkout })
-      document.getElementById('create-name').value = matchingWorkout.name + ' Copy';
+      if (this.props.import.length > 0) {
+        if (!this.state.importDone) {
+          const matchingWorkout = this.state.savedTemplates.find((workout) =>
+            workout.name === this.parseSearchString(this.props.import)
+          );
+          this.setState({ importedWorkout: matchingWorkout })
+          document.getElementById('create-name').value = matchingWorkout.name + ' Copy';
 
-      for (var i = 0; i < matchingWorkout.data.length; i++) {
-        this.addCard({ name: matchingWorkout.data[i].comment, type: JSON.parse(matchingWorkout.data[i].set_data)[0].reps != 0 ? 'rep':'time'})
-      }
-    }
-  }else{
-    console.log('There is nothing to import!');
-    this.setState({importDone: true});
-  }
-    }
-    if(prevState.exercises != this.state.exercises){
-      if(!this.state.importDone){
-        var a = 0;
-        for(var i = 0; i < this.state.exercises.length; i++){
-          a++;
-          for(var ii = 0; ii < this.state.exercises[i]; ii++){
-            try{
-            document.getElementById(i+"-"+ii+"-rep").value = JSON.parse(this.state.importedWorkout.data[i].set_data)[ii].reps;
-            document.getElementById(i+"-"+ii+"-weight").value = JSON.parse(this.state.importedWorkout.data[i].set_data)[ii].weight;
-            }catch{
-              document.getElementById(i+"-"+ii+"-rep").value = JSON.parse(this.state.importedWorkout.data[i].set_data)[ii].time;
-            }
-            
+          for (var i = 0; i < matchingWorkout.data.length; i++) {
+            this.addCard({ name: matchingWorkout.data[i].comment, type: JSON.parse(matchingWorkout.data[i].set_data)[0].reps != 0 ? 'rep' : 'time' })
           }
         }
-        this.setState({importActions: a})
+      } else {
+        console.log('There is nothing to import!');
+        this.setState({ importDone: true });
+      }
     }
+    if (prevState.exercises != this.state.exercises) {
+      if (!this.state.importDone) {
+        var a = 0;
+        for (var i = 0; i < this.state.exercises.length; i++) {
+          a++;
+          for (var ii = 0; ii < this.state.exercises[i]; ii++) {
+            try {
+              document.getElementById(i + "-" + ii + "-rep").value = JSON.parse(this.state.importedWorkout.data[i].set_data)[ii].reps;
+              document.getElementById(i + "-" + ii + "-weight").value = JSON.parse(this.state.importedWorkout.data[i].set_data)[ii].weight;
+            } catch {
+              document.getElementById(i + "-" + ii + "-rep").value = JSON.parse(this.state.importedWorkout.data[i].set_data)[ii].time;
+            }
+
+          }
+        }
+        this.setState({ importActions: a })
+      }
     }
-    if(prevState.importActions != this.state.importActions){
-      if(this.state.importActions == this.state.importedWorkout.data.length){
-        this.setState({importDone: true})
-        swal(GetString("alert-workout-imported")[0],this.state.importedWorkout.name+GetString("alert-workout-imported")[1],'success')
+    if (prevState.importActions != this.state.importActions) {
+      if (this.state.importActions == this.state.importedWorkout.data.length) {
+        this.setState({ importDone: true })
+        swal(GetString("alert-workout-imported")[0], this.state.importedWorkout.name + GetString("alert-workout-imported")[1], 'success')
       }
     }
   }
@@ -346,13 +347,13 @@ class CreatePage extends Component {
     };
 
     console.log(data, '\n', raw)
-    fetch("http://localhost:3001/api/templates/save_workout", requestOptions)
+    fetch(`http://${host}:3001/api/templates/save_workout`, requestOptions)
       .then(response => response.text())
       .then((response) => {
         console.log(response)
         var r = JSON.parse(response);
         if (r.success) {
-          swal(GetString("alert-workout-saved")[0], `${document.getElementById('create-name').value}`+GetString("alert-workout-saved")[1], "success")
+          swal(GetString("alert-workout-saved")[0], `${document.getElementById('create-name').value}` + GetString("alert-workout-saved")[1], "success")
         } else {
           swal(GetString("alert-general-error")[0], GetString("alert-general-error")[1], "error")
         }

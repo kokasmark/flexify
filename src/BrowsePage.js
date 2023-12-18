@@ -79,8 +79,8 @@ class BrowsePage extends Component {
     render() {
         return (
             <div className='page'>
-                <div style={{position: 'relative', left: 250}} className='load-anim'>
-                    <div style={{ position: 'absolute' }}>
+                <div style={{position: 'relative', left: 250}} className='load-anim browse-container'>
+                    <div className='browse-muscle' style={{ position: 'absolute' }}>
                         <MusclesView ref={this.muscleRef}chooseCallback={this.chooseMuscleGroup} />
                     </div>
                     {this.state.choosenGroup != '' ?<div key={this.state.choosenGroup} className='workouts anim' style={{ position: 'relative', left: 800, top: 175 }}>

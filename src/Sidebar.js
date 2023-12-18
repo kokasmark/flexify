@@ -61,7 +61,7 @@ export default class Sidebar extends Component {
                     <Link to="/account"><Icon_user style={{width: 48, height: 48}}/>
                     <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>{GetString('page-account')}</p></Link>
                 </li>
-                <li className='interactable' style={{ marginLeft: -33, marginTop: 300 }}>
+                <li className='interactable sidebar-sign-out' style={{ marginLeft: -33, marginTop: 300  }}>
                     <Link to="/login" onClick={this.signOut}><Icon_sign_out style={{width: 40, height: 40, marginRight: 10}}/>
                     <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>Sign out</p></Link>
                 </li>
