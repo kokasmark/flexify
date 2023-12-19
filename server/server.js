@@ -268,7 +268,7 @@ async function dbPostUserMuscles(req, res){
     let result = await validateAndQuery(req, sql, [], res, [uid])
     if (result){
         const muscles = result.map(entry => entry.muscles);
-        responseJson(res, SUCCESS, muscles)
+        responseJson(res, SUCCESS, {muscles: muscles})
     }
     else responseFail(res, result)
 }
