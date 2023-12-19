@@ -134,7 +134,7 @@ async function validateAndQuery(req, sql, vars, res, nocheck_vars=undefined, sin
 
 async function getUserId(req, res){
     let result = await validateAndQuery(
-        req, 'SELECT user_id FROM login WHERE token=?', ["token"], res
+        req, 'SELECT user_id FROM login WHERE token=?', ["token"], res, []
     )
     if (result) return result[0]["user_id"]
     throwDBError("Invalid token", res)
@@ -209,7 +209,7 @@ async function updateUserToken(req, uid, res){
 let log_colors = ["\x1b[31m", "\x1b[90m", "\x1b[36m", "\x1b[33m", "\x1b[32m", "\x1b[47m\x1b[30m"]
 function log(message, level=-1){
     if (LOGGING_LEVEL >= level){
-        process.stdout.write(log_colors.at(level) + "[" + moment().format('YYYY-MM-DD hh:mm:ss') + "]:" + "\x1b[0m ")
+        process.stdout.write(log_colors.at(level) + "[" + moment().format('YYYY-MM-DD hh:mm:ss') + "]:\x1b[0m ")
         console.log(message)
     } 
 }
@@ -229,14 +229,17 @@ async function dbPostUserLogin(req, res){
     log('/api/login', 2)
     let sql = 'SELECT id, password FROM user WHERE username = ?'
     let result = await validateAndQuery(req, sql, ["username"], res, [], single=true)
-    if (!result) throwDBError('Invalid username or password', res)
+    if (!result){
+        throwDBError('Invalid username or password', res)
+        return
+    }
 
     let uid = result.id
     let password_hash = result.password
 
     if (await compareHash(req.body.password, password_hash)){
         let token = await updateUserToken(req, uid, res)
-        responseJson(res, SUCCESS, token)
+        responseJson(res, SUCCESS, {token: token})
     }
     else{
         throwDBError('Invalid username or password', res)
