@@ -89,12 +89,6 @@ function createConnection(){
     return connection
 }
 
-function throwDBError(error, res){
-    let msg = 'Internal Server Error';
-    if (RESPONSE_DEBUG_MODE) msg += ': ' + error;
-    res.json({success: false, message: msg});  
-}
-
 function validatePostRequest(data, required){
     for (let search of required){
         if (!(data.hasOwnProperty(search))) return false
@@ -147,6 +141,11 @@ async function getUserId(req, res){
     throwDBError("Invalid token", res)
 }
 
+
+// response functions
+const ERROR = 0;
+const SUCCESS = 1;
+
 function responseTemplate(res, result, data){
     let json = {success: true}
     data.map((x) => json[x] = result[x])
@@ -159,6 +158,16 @@ function responseFail(res, result){
 
 function responseSuccess(res){
     res.json({success:true})
+}
+function response(res, success=SUCCESS){
+    if (success == SUCCESS) responseSuccess(res)
+    else responseFail(res)
+}
+
+function throwDBError(error, res){
+    let msg = 'Internal Server Error';
+    if (RESPONSE_DEBUG_MODE) msg += ': ' + error;
+    res.json({success: false, message: msg});  
 }
 
 
@@ -202,6 +211,7 @@ function log(message, level=-1){
 
 // db business logic
 async function dbPostUserDetails(req, res){
+    log('/api/user', 2)
     let uid = await getUserId(req, res);
     let sql = 'SELECT username, email FROM user WHERE id=?'
 
@@ -210,6 +220,7 @@ async function dbPostUserDetails(req, res){
 }
 
 async function dbPostUserLogin(req, res){
+    log('/api/login', 2)
     let sql = 'SELECT id, password FROM user WHERE username = ?'
     let result = await validateAndQuery(req, sql, ["username"], res, [], single=true)
     if (!result) throwDBError('Invalid username or password', res)
@@ -228,6 +239,7 @@ async function dbPostUserLogin(req, res){
 }
 
 async function dbPostUserRegister(req, res){
+    log('/api/signup', 2)
     validatePostRequest(req.body, ["password"])
     let password_hash = await generatePasswordHash(req.body.password)
     let sql = 'INSERT INTO user (username, email, password) VALUES (?, ?, ?)'
@@ -241,6 +253,7 @@ async function dbPostUserRegister(req, res){
 }
 
 async function dbPostUserMuscles(req, res){
+    log('/api/home/muscles', 2)
     let uid = await getUserId(req, res)
     let sql = 'SELECT exercise_template.muscles FROM exercise INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE exercise_template.user_id = ?'
     let result = await validateAndQuery(req, sql, [], res, [uid])
@@ -252,6 +265,7 @@ async function dbPostUserMuscles(req, res){
 }
 
 async function dbPostUserDiet(req, res){
+    log('/api/diet', 2)
     let uid = await getUserId(req, res)
     let sql = 'SELECT protein, carbs, fat FROM diet WHERE user_id = ? AND date=CURDATE()'
     let result = await validateAndQuery(req, sql, [], res, [uid], single=true)
@@ -262,6 +276,7 @@ async function dbPostUserDiet(req, res){
 }
 
 async function dbPostUserDietOnDate(req, res){
+    log('/api/diet/date', 2)
     let uid = await getUserId(req, res)
     let sql = 'SELECT calories, protein, carbs, fat FROM diet WHERE date=? AND user_id=?'
     let result = await validateAndQuery(req, sql, ["date"], res, [uid], single=true)
@@ -272,6 +287,7 @@ async function dbPostUserDietOnDate(req, res){
 }
 
 async function dbPostUserDietDates(req, res){
+    log('/api/diet/get_dates', 2)
     let uid = await getUserId(req, res)
     let sql = `SELECT date FROM diet  WHERE user_id = ?`;
     let result = await validateAndQuery(req, sql, [], res, [uid])
@@ -283,6 +299,7 @@ async function dbPostUserDietDates(req, res){
 }
 
 async function dbPostUserDietAdd(req, res){
+    log('/api/diet/add', 2)
     let uid = await getUserId(req, res)
     let sql_current = 'SELECT id FROM diet WHERE user_id = ? AND date=CURDATE()'
     let result = await validateAndQuery(req, sql_current, [], res, [uid], single=true)
@@ -300,6 +317,7 @@ async function dbPostUserDietAdd(req, res){
 }
 
 async function dbPostUserDates(req, res){
+    log('/api/workouts/date', 2)
     let uid = await getUserId(req, res)
     let sql = 'SELECT DATE_FORMAT( date, "%Y-%m-%d") as date FROM workout WHERE DATE_FORMAT( date, "%Y-%m") = ? AND user_id = ?'
     let result = await validateAndQuery(req, sql, ["date"], res, [uid])
@@ -311,6 +329,7 @@ async function dbPostUserDates(req, res){
 }
 
 async function dbPostUserWorkouts(req, res){
+    log('/api/workouts/data', 2)
     let uid = await getUserId(req, res)
     let sql = 'SELECT workout.id, workout.duration, workout.workout_name, exercise.set_data, exercise_template.name FROM exercise INNER JOIN workout ON exercise.workout_id = workout.id INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE DATE_FORMAT( workout.date, "%Y-%m-%d") = ? AND workout.user_id = ?'
     let result = await validateAndQuery(req, sql, ["date"], res, [uid])
@@ -322,6 +341,7 @@ async function dbPostUserWorkouts(req, res){
 }
 
 async function dbPostSavedWorkoutTemplates(req, res){
+    log('/api/templates/workouts', 2)
     let uid = await getUserId(req, res)
     let sql = 'SELECT workout_template.id, workout_template.name, workout_template.comment FROM workout_template WHERE workout_template.user_id = ?'
     let result = await validateAndQuery(req, sql, [], res, [uid])
@@ -336,6 +356,7 @@ async function dbPostSavedWorkoutTemplates(req, res){
 }
 
 async function dbPostExerciseTemplates(req, res){
+    log('/api/templates/exercises', 2)
     let sql = 'SELECT id, name, `type`, muscles FROM exercise_template'
     let result = await validateAndQuery(req, sql, [], res, [])
     let exerciesArray = result.map((x) => x)
@@ -343,19 +364,23 @@ async function dbPostExerciseTemplates(req, res){
 }
 
 async function dbPostSaveWorkoutTemplate(req, res){
+    log('/api/templates/save_workout', 2)
     // TODO: validity check on data, so insert can't fail on only some of the data
     let uid = await getUserId(req, res)
     let sql = 'INSERT INTO workout_template (name, comment, user_id) VALUES (?, ?, ?)'
     let result = await validateAndQuery(req, sql, ["name", "comment"], res, [uid])
+    if (result === false) return
+    
     const workoutTemplateId = result.insertId;
     for (let exercise of req.body.data){
         let sql = 'INSERT INTO workout_template_exercises (workout_template_id, exercise_template_id, set_data, comment) VALUES (?, ?, ?, ?)'
-        validateAndQuery(req, sql, [], res, [workoutTemplateId, exercise.id, JSON.stringify(exercise.set_data), exercise.comment])
+        if ((await validateAndQuery(req, sql, [], res, [workoutTemplateId, exercise.id, JSON.stringify(exercise.set_data), exercise.comment])) === false) return
     }
     responseSuccess(res)
 }
 
 async function dbPostSaveExerciseTemplate(req, res){
+    log('/api/templates/save_exercise', 2)
     // if (!validateOne(req.body.type, 'type')) throwDBError('Invalid data for field [type]')
     let uid = await getUserId(req, res)
     let sql = 'INSERT INTO exercise_template (name, \`type\`, muscles, user_id) VALUES (?, ?, ?, ?)'
