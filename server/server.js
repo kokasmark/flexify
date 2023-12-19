@@ -2,427 +2,396 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const bcrypt = require("bcrypt");
-const { use } = require('bcrypt/promises');
+var moment = require('moment')
 
+
+// use DEBUG_MODE to send back error messages to client
+// LOGGING_LEVEL 0 = errors, 1 = connect to db, new connections, db errors; 2=function calls, 3=sql commands, query responses, -1 = temporary
+const RESPONSE_DEBUG_MODE = true;
+const LOGGING_LEVEL = 3;
+
+
+// setup server and database connection
 const app = express();
-const PORT = 3001;
-
-const print = console.log
-
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-
-const debugMode = true;
-
-const connection = mysql.createConnection({
-  host: 'bgs.jedlik.eu',
-  user: 'flexify',
-  password: 'FlFy2023',
-  database: 'flexify',
-});
+const root = require('path').join(__dirname, 'build')
+app.use(express.static(root));
+app.get("*", (req, res) => {res.sendFile('index.html', { root });})
+app.listen(3001, () => {log(`Server listening on port ${3001}`, 1);});
+const connection = createConnection()
 
 
-function generatePasswordHash(password){
-  const saltRounds = 10
-  return bcrypt.hash(password, saltRounds).catch(err => console.log(err))
-}
-
- function compareHash(password, hash){
-  let result = (bcrypt.compare(password, hash).catch(err => console.log(err)))
-  return result
-}
-
-function validatePostRequest(data, required, strict=false){
-  let fields = Object.keys(data)
-  if (strict && fields.length !== required.length) return false;
-
-  for (let search of required){
-    if (!(data.hasOwnProperty(search))) return false
-    if (data[search] === '') return false
-  }
-  return true
-}
-
-function throwErrorOnMissingPostFields(data, required, res, strict=false){
-  if (validatePostRequest(data, required, res, strict)) return false;
-
-  throwDBError(res, "Missing POST field(s)");
-  return true;
-}
-
-function throwDBError(res, err){
-  let msg = 'Internal Server Error';
-  if (debugMode) msg += ': ' + err;
-  res.json({success: false, message: msg});
-}
-
-function generateUserToken(){
-  return require('crypto').randomBytes(32).toString('hex');
-}
-
-function getNewUserToken(uid, location, res){
-  let token = generateUserToken();
-
-  connection.query('DELETE FROM login WHERE user_id = ? AND location = ?', [uid, location])
-  connection.query('INSERT INTO login (user_id, token, location) VALUES (?, ?, ?)', [uid, token, location], (err, result) => {
-    if (err) {
-      throwDBError(res, err);
-      return
-    }
-  });
-  return token;
-}
-
-
-function dbPostUserLogin(req, res){
-  let required_fields = ["username", "password"]
-  let data = req.body;
-  let query = 'SELECT id, password FROM user WHERE username = ?;'
-
-  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-
-  connection.query(query, [data["username"]], (err, result) => {
-    if (err) {
-      throwDBError(res, err);
-    } else {
-      if (result.length > 0){
-        let uid = result[0].id
-        let password_hash = result[0].password
-        compareHash(data.password, password_hash).then(match =>{
-          if (match ){
-            var token = getNewUserToken(uid, "web", res);
-            res.json({ success: true, token: token});
-          }
-          else{
-            res.json({ success: false })
-          }
-        })
-      }
-      else{
-        res.json({ success: false })
-      }
-    }
-  });
-}
-
-function dbPostUserRegister(req, res){
-  let required_fields = ["username", "email", "password"]
-  let data = req.body;
-  let query = 'INSERT INTO user (username, email, password) VALUES (?, ?, ?)'
-
-  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-
-  generatePasswordHash(data.password).then(password_hash => {
-    connection.query(query, [data.username, data.email, password_hash], (err, result) => {
-      if (err) {
-        throwDBError(res, err);
-      } else {
-        let uid = result.insertId
-        var token = getNewUserToken(uid, "web", res);
-        res.json({ success: true, token: token });
-      }
-  })
-})  
-}
-
-function dbPostUserDetails(req, res){
-  let required_fields = ["token"]
-  let data = req.body;
-  let query = 'SELECT user.username, user.email FROM login INNER JOIN user ON login.user_id = user.id WHERE login.token = ?'
-
-  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-
-  connection.query(query, [data.token], (err, result) => {
-    if (err) {
-      throwDBError(res, err);
-    } else {
-      
-      if (result.length > 0){
-        let userInfo = result[0];
-        res.json({ success: true, username: userInfo.username, email: userInfo.email});
-      }
-      else{
-        res.json({ success: false })
-      }
-    }
-  });
-}
-function dbPostUserMuscles(req, res){
-  let required_fields = ["token"]
-  let data = req.body;
-  let query = 'SELECT exercise_template.muscles FROM exercise INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE exercise_template.user_id = (SELECT user_id FROM login WHERE token = ?)'
-
-  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-
-  connection.query(query, [data.token], (err, result) => {
-    if (err) {
-      throwDBError(res, err);
-    } else {
-      
-      if (result.length > 0){
-        const muscles = result.map(entry => entry.muscles);
-        res.json({ success: true, muscles});
-      }
-      else{
-        res.json({ success: false })
-      }
-    }
-  });
-}
-function dbPostUserDiet(req, res){
-  let required_fields = ["token"]
-  let data = req.body;
-  let query = `SELECT diet.calories, diet.protein, diet.carbs, diet.fat FROM diet INNER JOIN user ON diet.user_id = user.id WHERE user_id = (SELECT user_id FROM login WHERE token = ?) AND date=CURDATE()`
-
-  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-
-  connection.query(query, [data.token], (err, result) => {
-    if (err) {
-      throwDBError(res, err);
-    } else {
-      
-      if (result.length > 0){
-        let userDiet = result[0];
-        res.json({ success: true, calories: userDiet.calories, protein: userDiet.protein, carbs: userDiet.carbs, fat: userDiet.fat});
-      }
-      else{
-        res.json({ success: false })
-      }
-    }
-  });
-}
-function dbPostUserDietDates(req, res){
-  let required_fields = ["token"];
-let data = req.body;
-let query = `
-  SELECT diet.date
-  FROM diet
-  INNER JOIN user ON diet.user_id = user.id
-  WHERE user.id = (SELECT user_id FROM login WHERE token = ?)
-`;
-
-if (throwErrorOnMissingPostFields(data, required_fields, res)) return;
-
-connection.query(query, [data.token], (err, result) => {
-  if (err) {
-    throwDBError(res, err);
-  } else {
-    const dates = result.map((row) => row.date); // Extract dates from the result
-
-    res.json({ success: true, dates: dates });
-  }
-});
-}
-function dbPostUserDietOnDate(req, res){
-  let required_fields = ["token","date"]
-  let data = req.body;
-  let query = `SELECT diet.calories, diet.protein, diet.carbs, diet.fat FROM diet INNER JOIN user ON diet.user_id = user.id WHERE user_id = (SELECT user_id FROM login WHERE token = ?) AND date=?`
-
-  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-
-  connection.query(query, [data.token,data.date], (err, result) => {
-    if (err) {
-      throwDBError(res, err);
-    } else {
-      
-      if (result.length > 0){
-        let userDiet = result[0];
-        res.json({ success: true, calories: userDiet.calories, protein: userDiet.protein, carbs: userDiet.carbs, fat: userDiet.fat});
-      }
-      else{
-        res.json({ success: false })
-      }
-    }
-  });
-}
-
-function dbPostUserDietAdd(req, res){
-  let required_fields = ["token", "carbs", "fat", "protein"]
-  let data = req.body;
-  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-
-  connection.query(`SELECT id FROM diet WHERE user_id = (SELECT login.user_id FROM login WHERE login.token = ?) AND date=CURDATE()`, [data.token], (err, result_exist) =>{
-    if (err) throwDBError(res, err);
-    else if (result_exist.length > 0){
-      connection.query(`UPDATE diet SET carbs=carbs+?, fat=fat+?, protein=protein+? WHERE id=?`, [data.carbs, data.fat, data.protein, result_exist[0].id], (err, result) =>{
-        if (err) throwDBError(res, err);
-        else res.json({ success: true })
-      })
-    }
-    else{
-      connection.query(`INSERT INTO diet (carbs, fat, protein, user_id) VALUES (?, ?, ?, (SELECT login.user_id FROM login WHERE login.token = ?))`, [data.carbs, data.fat, data.protein, data.token], (err, result) =>{
-        if (err) throwDBError(res, err);
-        else res.json({ success: true })
-      })
-    }
-  })
-}
-function dbPostUserDates(req, res){
-  let required_fields = ["token", "date"]
-  let data = req.body;
-  let query = `SELECT DATE_FORMAT( workout.date, "%Y-%m-%d") as date FROM login INNER JOIN user ON login.user_id = user.id INNER JOIN workout ON workout.user_id = user.id WHERE login.token = ? AND YEAR(workout.date) = ? AND MONTH(workout.date) = ?`
-
-  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-  
-  let year = data.date.split('-')[0];
-  let month = data.date.split('-')[1];
-  connection.query(query, [data.token, year, month], (err, result) => {
-    if (err) {
-      throwDBError(res, err);
-    } else {
-      if (result.length > 0){
-        let dateArray = [];
-        for(const item of result) dateArray.push(item["date"])
-        res.json({ success: true, dates: dateArray});
-      }
-      else{
-        res.json({ success: false })
-      }
-    }
-  });
-}
-function dbPostUserWorkouts(req, res){
-  let required_fields = ["token", "date"]
-  let data = req.body;
-  let query = `SELECT workout.id, workout.duration, workout.workout_name, exercise.set_data, exercise_template.name FROM exercise INNER JOIN workout ON exercise.workout_id = workout.id INNER JOIN exercise_template  ON exercise.exercise_template_id = exercise_template.id WHERE workout.user_id = (SELECT login.user_id FROM login WHERE login.token = ?) AND DATE_FORMAT( workout.date, "%Y-%m-%d") = ?`
-
-  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-
-  connection.query(query, [data.token, data.date], (err, result) => {
-    if (err) {
-      throwDBError(res, err);
-    } else {
-      if (result.length > 0){
-        let workoutsArray = [];
-        for(const item of result) workoutsArray.push(item)
-        res.json({ success: true, data: workoutsArray });
-      }
-      else{
-        res.json({ success: false })
-      }
-    }
-  });
-}
-function dbPostExerciseTemplates(req, res){
-  let required_fields = ["token"]
-  let data = req.body;
-  let query = `SELECT exercise_template.id, exercise_template.name, exercise_template.type, exercise_template.muscles  FROM exercise_template INNER JOIN user ON exercise_template.user_id = user.id`
-
-  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-
-  connection.query(query, [], (err, result) => {
-    if (err) {
-      throwDBError(res, err);
-    } else {
-      if (result.length > 0){
-        let exercisesArray = [];
-        for(const item of result) exercisesArray.push(item)
-        res.json({ success: true, data: exercisesArray });
-      }
-      else{
-        res.json({ success: false })
-      }
-    }
-  });
-}
-
-function dbPostSaveWorkoutTemplate(req, res){
-  let required_fields = ["token", "name", "comment", "data"]
-  let data = req.body;
-
-  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-    // TODO: validity check on data, so insert can't fail on only some of the data
-
-    connection.query('INSERT INTO workout_template (name, user_id, comment) VALUES (?, (SELECT user_id FROM login WHERE token = ?), ?)', [data.name, data.token, data.comment], (err, result) => {
-      if (err) {
-        throwDBError(res, err);
-      } else {
-      
-      const workoutTemplateId = result.insertId;
-      for (let exercise of data.data){
-        // TODO: check if user can see the workout that he sent the id for -> possible data leak
-        console.log(exercise)
-        connection.query('INSERT INTO workout_template_exercises (workout_template_id, exercise_template_id, set_data, comment) VALUES (?, ?, ?, ?)', [workoutTemplateId, exercise.id, JSON.stringify(exercise.set_data), exercise.comment], (err, result) => {
-          if (err) {
-            //throwDBError(res, err); Causes Crash
-          }
-        })
-       
-    }
-    res.json({ success: true, id: workoutTemplateId });
-  }
-    })
-  }
-
-function dbPostSaveExerciseTemplate(req, res){
-  let required_fields = ["token", "name", "type", "muscles"]
-  let data = req.body;
-  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-  if (!data.type in ["rep", "duration"]) throwDBError(res, `Invalid exercise type '${data.type}'.`)
-  
-  let sql = `INSERT INTO exercise_template (name, \`type\`, muscles, user_id) VALUES (?, ?, ?, (SELECT user_id FROM login WHERE token = ?))`
-  connection.query(sql, [data.name, data.type, JSON.stringify(data.muscles), data.token], (err, result) =>{
-    if (err) {
-      throwDBError(res, err);
-    }
-    else if (result.insertId){
-      res.json({success: true, id: result.insertId})
-    }
-    else{
-      res.json({success: false})
-    }
-  })
-}
-
-async function dbPostSavedWorkoutTemplates(req, res){
-  let required_fields = ["token"]
-  let data = req.body;
-  if (throwErrorOnMissingPostFields(data, required_fields, res)) return
-  try{
-    let templates = []
-    let workoutTemplates = (await connection.promise().query(`SELECT workout_template.id, workout_template.name, workout_template.comment FROM workout_template WHERE workout_template.user_id = (SELECT user_id FROM login WHERE token = ?)`, [data.token]))[0]
-    for (const wtemplate of workoutTemplates) {
-      let exerciseTemplates = (await connection.promise().query(`SELECT exercise_template_id, set_data, comment FROM workout_template_exercises WHERE workout_template_id=?`, [wtemplate.id]))[0]
-      templates.push({name:wtemplate.name, comment:wtemplate.comment, data:exerciseTemplates})
-    }
-    res.json({success: true, templates: templates})
-  }
-  catch (error){
-    throwDBError(res, error);
-  }
-}
-
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-  } else {
-    console.log('Connected to MySQL');
-  }
-});
-
+// setup api paths
+app.post('/api/user', (req, res) => dbPostUserDetails(req, res));
 app.post('/api/login', (req, res) => dbPostUserLogin(req, res));
 app.post('/api/signup', (req, res) => dbPostUserRegister(req, res));
-app.post('/api/user', (req, res) => dbPostUserDetails(req, res));
+
 app.post('/api/home/muscles', (req, res) => dbPostUserMuscles(req, res));
+
 app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
 app.post('/api/diet/date', (req, res) => dbPostUserDietOnDate(req, res));
 app.post('/api/diet/get_dates', (req, res) => dbPostUserDietDates(req, res));
 app.post('/api/diet/add', (req, res) => dbPostUserDietAdd(req, res));
+
 app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
 app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
+
 app.post('/api/templates/workouts', (req, res) => dbPostSavedWorkoutTemplates(req, res));
 app.post('/api/templates/exercises', (req, res) => dbPostExerciseTemplates(req, res));
-app.post('/api/templates/save_workout', (res, req) => dbPostSaveWorkoutTemplate(res, req));
-app.post('/api/templates/save_exercise', (res, req) => dbPostSaveExerciseTemplate(res, req));
+app.post('/api/templates/save_workout', (req, res) => dbPostSaveWorkoutTemplate(req, res));
+app.post('/api/templates/save_exercise', (req, res) => dbPostSaveExerciseTemplate(req, res));
 
-const root = require('path').join(__dirname, 'build')
-console.log(root);
-app.use(express.static(root));
-app.get("*", (req, res) => {
-    res.sendFile('index.html', { root });
-})
 
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+
+
+// validating functions
+function validateOne(to_check, test){
+    switch (test) {
+        case 'email':
+            return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(to_check)
+        case 'type':
+            return to_check in ['rep', 'duration']
+        case 'int':
+            return Number.isInteger(to_check)
+        case 'array':
+            return Array.isArray(to_check)
+        default:
+            log(`Validation not yet implemented: ${test}`, 2)
+            return true
+    }
+}
+
+function validateMany(dict){
+    for (const key of Object.keys(dict)) {
+        for (const value of dict[key]) {
+            if (!validateMany(value, key)) return false
+        }
+    }
+    return true
+}
+
+
+// basic database functions
+function createConnection(){
+    let connection = mysql.createConnection({
+        host: 'bgs.jedlik.eu',
+        user: 'flexify',
+        password: 'FlFy2023',
+        database: 'flexify',
+      });
+    connection.connect((err) => {
+    if (err) log('Error connecting to MySQL:' + err, 1)
+    else     log('Connected to MySQL', 1);
+    });
+
+    return connection
+}
+
+function validatePostRequest(data, required){
+    for (let search of required){
+        if (!(data.hasOwnProperty(search))) return false
+        if (data[search] === '') return false
+      }
+
+    return true    
+}
+
+function throwErrorOnMissingPostFields(data, required, res){
+    if (validatePostRequest(data, required, res)) return false;
+
+    throwDBError( `Missing POST field(s). Required: ${required}`, res);
+    return true;  
+}
+
+async function dbQuery(sql, vars){
+    let q_result = (await connection.promise().query(sql, vars))[0]
+    log('sql: ' + sql, 3)
+    log('vars: ' + vars, 3)
+    log('result: ' + q_result, 3)
+
+    return q_result
+}
+
+async function validateAndQuery(req, sql, vars, res, nocheck_vars=undefined, single=false){
+    let data = req.body
+    if (throwErrorOnMissingPostFields(data, vars, res)) return false
+    vars = vars.map((x) => data[x])
+    if (nocheck_vars) nocheck_vars.map((x) => vars.push(x))
+    
+    try{
+        if (single) return (await dbQuery(sql, vars))[0]
+        return await dbQuery(sql, vars);
+    }
+    catch (error){
+        log(error, 1)
+        throwDBError(error, res)
+        return false
+    }
+}
+
+
+async function getUserId(req, res){
+    let result = await validateAndQuery(
+        req, 'SELECT user_id FROM login WHERE token=?', ["token"], res
+    )
+    if (result) return result[0]["user_id"]
+    throwDBError("Invalid token", res)
+}
+
+
+// response functions
+const ERROR = false;
+const SUCCESS = true;
+
+function responseJson(res, success, data={}){
+    data["success"] = success
+    try{
+        res.json(data)
+    }
+    catch (e){
+        log("Error trying to respond", 0)
+        log(e, 0)
+    }
+}
+
+function responseTemplate(res, result, data){
+    let json = {}
+    data.map((x) => json[x] = result[x])
+    responseJson(res, SUCCESS, json)
+}
+
+function responseFail(res, result){
+    if (result !== false) responseJson(res, ERROR, {})
+}
+
+function responseSuccess(res){
+    responseJson(res, SUCCESS, {})
+}
+
+function throwDBError(error, res){
+    let msg = 'Internal Server Error';
+    if (RESPONSE_DEBUG_MODE) msg += ': ' + error;
+    responseJson(res, ERROR, {message: msg});  
+}
+
+
+// hashing functions
+function generatePasswordHash(password){
+    return bcrypt.hash(password, 10).catch(err => log(err, 1))
+}
+
+async function compareHash(password, hash){
+    return await (bcrypt.compare(password, hash).catch(err => log(err, 1)))
+}
+
+function generateUserToken(){
+    return require('crypto').randomBytes(32).toString('hex');
+}
+
+async function updateUserToken(req, uid, res){
+    let token = generateUserToken();
+    await validateAndQuery(req, 
+        'DELETE FROM login WHERE location=? AND user_id=?',
+        ["location"], res, [uid]
+    )
+    await validateAndQuery(req,
+        'INSERT INTO login (location, user_id, token) VALUES (?, ?, ?)',
+        ["location"], res, [uid, token]
+    )
+    return token
+    
+}
+  
+
+// logging functions
+let log_colors = ["\x1b[31m", "\x1b[90m", "\x1b[36m", "\x1b[33m", "\x1b[32m", "\x1b[47m\x1b[30m"]
+function log(message, level=-1){
+    if (LOGGING_LEVEL >= level){
+        process.stdout.write(log_colors.at(level) + "[" + moment().format('YYYY-MM-DD hh:mm:ss') + "]:" + "\x1b[0m ")
+        console.log(message)
+    } 
+}
+
+
+// db business logic
+async function dbPostUserDetails(req, res){
+    log('/api/user', 2)
+    let uid = await getUserId(req, res);
+    let sql = 'SELECT username, email FROM user WHERE id=?'
+
+    let result = await validateAndQuery(req, sql, [], res, [uid], single=true)
+    responseTemplate(res, result, ["username", "email"])
+}
+
+async function dbPostUserLogin(req, res){
+    log('/api/login', 2)
+    let sql = 'SELECT id, password FROM user WHERE username = ?'
+    let result = await validateAndQuery(req, sql, ["username"], res, [], single=true)
+    if (!result) throwDBError('Invalid username or password', res)
+
+    let uid = result.id
+    let password_hash = result.password
+
+    if (await compareHash(req.body.password, password_hash)){
+        let token = await updateUserToken(req, uid, res)
+        responseJson(res, SUCCESS, token)
+    }
+    else{
+        throwDBError('Invalid username or password', res)
+    }
+
+}
+
+async function dbPostUserRegister(req, res){
+    log('/api/signup', 2)
+    validatePostRequest(req.body, ["password"])
+    let password_hash = await generatePasswordHash(req.body.password)
+    let sql = 'INSERT INTO user (username, email, password) VALUES (?, ?, ?)'
+    let result = await validateAndQuery(req, sql, ["username", "email"], res, [password_hash])
+    if (result){
+        let uid = result.insertId
+        let token = await updateUserToken(req, uid, res)
+        responseJson(res, SUCCESS, {token: token})
+    }
+    else responseFail(res, result)
+}
+
+async function dbPostUserMuscles(req, res){
+    log('/api/home/muscles', 2)
+    let uid = await getUserId(req, res)
+    let sql = 'SELECT exercise_template.muscles FROM exercise INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE exercise_template.user_id = ?'
+    let result = await validateAndQuery(req, sql, [], res, [uid])
+    if (result){
+        const muscles = result.map(entry => entry.muscles);
+        responseJson(res, SUCCESS, muscles)
+    }
+    else responseFail(res, result)
+}
+
+async function dbPostUserDiet(req, res){
+    log('/api/diet', 2)
+    let uid = await getUserId(req, res)
+    let sql = 'SELECT protein, carbs, fat FROM diet WHERE user_id = ? AND date=CURDATE()'
+    let result = await validateAndQuery(req, sql, [], res, [uid], single=true)
+    if (result){
+        responseTemplate(res, result, ["protein", "carbs", "fat"])
+    }
+    else responseFail(res, result)
+}
+
+async function dbPostUserDietOnDate(req, res){
+    log('/api/diet/date', 2)
+    let uid = await getUserId(req, res)
+    let sql = 'SELECT calories, protein, carbs, fat FROM diet WHERE date=? AND user_id=?'
+    let result = await validateAndQuery(req, sql, ["date"], res, [uid], single=true)
+    if (result){
+        responseTemplate(res, result, ["protein", "carbs", "fat"])
+    }
+    else responseFail(res, result)
+}
+
+async function dbPostUserDietDates(req, res){
+    log('/api/diet/get_dates', 2)
+    let uid = await getUserId(req, res)
+    let sql = `SELECT date FROM diet  WHERE user_id = ?`;
+    let result = await validateAndQuery(req, sql, [], res, [uid])
+    if (result){
+        const dates = result.map((row) => row.date); // Extract dates from the result
+        responseJson(res, SUCCESS, {dates: dates})
+    }
+    else responseFail(res, result)
+}
+
+async function dbPostUserDietAdd(req, res){
+    log('/api/diet/add', 2)
+    let uid = await getUserId(req, res)
+    let sql_current = 'SELECT id FROM diet WHERE user_id = ? AND date=CURDATE()'
+    let result = await validateAndQuery(req, sql_current, [], res, [uid], single=true)
+    if (result){
+        // having entry for today, add values
+        let sql_new = `UPDATE diet SET carbs=carbs+?, fat=fat+?, protein=protein+? WHERE id=?`
+        validateAndQuery(req, sql_new, ["carbs", "fat", "protein"], res, [result.id], single=true)
+    }
+    else{
+        // no entry for today, create new
+        let sql_new = `INSERT INTO diet (carbs, fat, protein, user_id) VALUES (?, ?, ?, ?)`
+        validateAndQuery(req, sql_new, ["carbs", "fat", "protein"], res, [uid], single=true)
+    }
+    responseSuccess(res)
+}
+
+async function dbPostUserDates(req, res){
+    log('/api/workouts/date', 2)
+    let uid = await getUserId(req, res)
+    let sql = 'SELECT DATE_FORMAT( date, "%Y-%m-%d") as date FROM workout WHERE DATE_FORMAT( date, "%Y-%m") = ? AND user_id = ?'
+    let result = await validateAndQuery(req, sql, ["date"], res, [uid])
+    if (result){
+        let dateArray = result.map((x) => x.date)
+        responseJson(res, SUCCESS, {dates: dateArray})
+    }
+    else responseFail(res, result)
+}
+
+async function dbPostUserWorkouts(req, res){
+    log('/api/workouts/data', 2)
+    let uid = await getUserId(req, res)
+    let sql = 'SELECT workout.id, workout.duration, workout.workout_name, exercise.set_data, exercise_template.name FROM exercise INNER JOIN workout ON exercise.workout_id = workout.id INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE DATE_FORMAT( workout.date, "%Y-%m-%d") = ? AND workout.user_id = ?'
+    let result = await validateAndQuery(req, sql, ["date"], res, [uid])
+    if (result && result.length > 0){
+        let workoutsArray = result.map((x) => x)
+        responseJson(res, SUCCESS, {data: workoutsArray})
+    }
+    else responseFail(res, result)
+}
+
+async function dbPostSavedWorkoutTemplates(req, res){
+    log('/api/templates/workouts', 2)
+    let uid = await getUserId(req, res)
+    let sql = 'SELECT workout_template.id, workout_template.name, workout_template.comment FROM workout_template WHERE workout_template.user_id = ?'
+    let result = await validateAndQuery(req, sql, [], res, [uid])
+
+    let templates = []
+    for (const template of result) {
+        sql = 'SELECT exercise_template_id, set_data, comment FROM workout_template_exercises WHERE workout_template_id=?'
+        let result_exercise =  await validateAndQuery(req, sql, [], res, [template.id])
+        templates.push({name:template.name, comment:template.comment, data:result_exercise})
+    }
+    responseJson(res, SUCCESS, {templates: templates})
+}
+
+async function dbPostExerciseTemplates(req, res){
+    log('/api/templates/exercises', 2)
+    let sql = 'SELECT id, name, `type`, muscles FROM exercise_template'
+    let result = await validateAndQuery(req, sql, [], res, [])
+    let exerciesArray = result.map((x) => x)
+    responseJson(res, SUCCESS, {data: exerciesArray})
+}
+
+async function dbPostSaveWorkoutTemplate(req, res){
+    log('/api/templates/save_workout', 2)
+    // TODO: validity check on data, so insert can't fail on only some of the data
+    let uid = await getUserId(req, res)
+    let sql = 'INSERT INTO workout_template (name, comment, user_id) VALUES (?, ?, ?)'
+    let result = await validateAndQuery(req, sql, ["name", "comment"], res, [uid])
+    if (result === false) return
+    
+    const workoutTemplateId = result.insertId;
+    for (let exercise of req.body.data){
+        let sql = 'INSERT INTO workout_template_exercises (workout_template_id, exercise_template_id, set_data, comment) VALUES (?, ?, ?, ?)'
+        if ((await validateAndQuery(req, sql, [], res, [workoutTemplateId, exercise.id, JSON.stringify(exercise.set_data), exercise.comment])) === false) return
+    }
+    responseSuccess(res)
+}
+
+async function dbPostSaveExerciseTemplate(req, res){
+    log('/api/templates/save_exercise', 2)
+    // if (!validateOne(req.body.type, 'type')) throwDBError('Invalid data for field [type]')
+    let uid = await getUserId(req, res)
+    let sql = 'INSERT INTO exercise_template (name, \`type\`, muscles, user_id) VALUES (?, ?, ?, ?)'
+    let result = await validateAndQuery(req, sql, ["name", "type"], res, [ JSON.stringify(req.body.muscles), uid])
+
+    if (result) responseJson(res, SUCCESS, {id: result.insertId})
+    else responseFail(res, result)
+}
