@@ -187,10 +187,10 @@ class Navbar extends Component {
           <div className='navBar'>
           <Link to="/" draggable='false' className='flexify-logo'><img className='interactable' src={logo} style={{position: 'fixed', top: -15, left: -110, transform: 'scale(0.3)'}} draggable='false'/></Link> 
             <div>
-              {this.state.theme == 'light' && <Icon_dark className='interactable' onClick={this.changeTheme}/>}
-              {this.state.theme == 'dark' && <Icon_light className='interactable' onClick={this.changeTheme}/>}
+              {this.state.theme == 'light' && <Icon_dark style={{visibility: 'hidden'}}/>}
+              {this.state.theme == 'dark' && <Icon_light style={{visibility: 'hidden'}}/>}
             </div>
-            <div style={{color: 'white', position: 'relative', top: -40, left: 50, marginBottom: -40, width: 50, height: 50}} >
+            <div style={{color: 'white', position: 'relative', top: -40, left: 20, marginBottom: -40, width: 50, height: 50}} >
               {this.state.language == 'HU' && <Icon_hu style={{width: 30, height: 30}} onClick={() => this.switchLanguage()} className='interactable'/>}
               {this.state.language == 'EN' && <Icon_en style={{width: 30, height: 30}} onClick={() => this.switchLanguage()} className='interactable'/>}
             </div>
