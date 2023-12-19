@@ -152,7 +152,7 @@ class DietPage extends Component {
             </ul>
             <Icon_add className='interactable' onClick={this.addCaloriesManually}/>
           </div>
-          <div className='anim add-calorie load-anim' style={{position: 'absolute', top: 300}}>
+          <div className='anim add-food load-anim' style={{position: 'absolute', top: 300}}>
             <h1 style={{color: 'white', fontSize: 25, width:'100%', margin: 0}}>Add Food</h1>
             <input id='food-querry' placeholder='Example: 10g Chicken'></input><Icon_search className='interactable' onClick={this.searchFood}/>
             <ul style={{textAlign: 'start', color: 'white'}}>

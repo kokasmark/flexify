@@ -60,6 +60,11 @@ class AccountPage extends Component {
       }
       console.log(localStorage.getItem('anatomy'))
   }
+  changeTheme(e){
+    const themes = [["#3C6FAA","305886","1F2229"],["#1DB954","14863c","191414"]]
+    document.documentElement.style.setProperty('--contrast', themes[e.value][0]);
+    document.documentElement.style.setProperty('--contrast', themes[e.value][1]);
+  }
   render() {
     return (
       <div className='page'>
@@ -74,6 +79,13 @@ class AccountPage extends Component {
           <p>Anatomy:</p>
           <div className='interactable' style={{position: 'relative', top: -40, left: 80, fontWeight: 'bold'}}>
           {this.state.anatomy == "Masculine" ? <p onClick={()=>this.anatomySelect("Feminine")}>Masculine</p> : <p onClick={()=>this.anatomySelect("Masculine")}>Feminine</p>}
+          </div>
+          <div>
+            <p>Theme</p>
+            <select>
+              <option>Flexify blue</option>
+              <option>Flexify green</option>
+            </select>
           </div>
         </div>
         <NavBarWrapper />

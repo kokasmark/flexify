@@ -83,7 +83,7 @@ class BrowsePage extends Component {
                     <div className='browse-muscle' style={{ position: 'absolute' }}>
                         <MusclesView ref={this.muscleRef}chooseCallback={this.chooseMuscleGroup} />
                     </div>
-                    {this.state.choosenGroup != '' ?<div key={this.state.choosenGroup} className='workouts anim' style={{ position: 'relative', left: 800, top: 175 }}>
+                    {this.state.choosenGroup != '' ?<div key={this.state.choosenGroup} className='workouts anim browse-cards' style={{ position: 'relative', left: 800, top: 175 }}>
                     <h1 style={{marginBottom: 20, color: 'white'}}>{this.state.choosenGroup.charAt(0).toUpperCase() + this.state.choosenGroup.slice(1)}  {GetString("workouts")}</h1>
                     {this.state.templates.map((template, index) => (
                       <div>

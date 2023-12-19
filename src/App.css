@@ -1,5 +1,4 @@
 :root {
-  --main: #1F1F1F;
   --contrast: #3C6FAA;
   --darker-contrast: #305886;
   --bg: #1F2229;
@@ -180,8 +179,104 @@
   }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
-@media only screen and (min-width: 600px) {
- 
+@media only screen and (min-width: 600px) and (max-width: 768px){
+  .home-calendar{
+    transform: scale(0.8) !important;
+    position: relative;
+    left: -100px !important;
+    top: -770px !important;
+  }
+  .muscle-container-home{
+    transform: scale(0.8) !important;
+    position: relative;
+    top: -600px !important;
+    right: 40px !important;
+  }
+  .home-chart{
+    transform: scale(0.8) !important;
+    position: relative;
+    top: 450px !important;
+    left: 150px !important;
+  }
+  .navbar-welcome{
+      position: relative;
+      transform: scale(0.8) !important;
+      left: 30px !important;
+  }
+  .navbar-welcome-container svg{
+    visibility: hidden;
+  }
+  .navbar-streak{
+    position: relative !important;
+    left: 100px !important;
+  }
+  .flexify-logo{
+    visibility: hidden;
+  }
+  .plan-calendar{
+    position: relative;
+    left: 0px !important;
+  }
+  .plan-chart{
+    position: relative;
+    left: -160px !important;
+    top: 400px !important;
+  }
+  .create-templates{
+    position: relative !important;
+    left: 50px !important;
+  }
+  .create-drop{
+    position: relative;
+    top: -450px !important;
+    left: -70px !important;
+  }
+  .create-container{
+    position: absolute;
+    top: -200px !important;
+    overflow-y: visible;
+    overflow-x: hidden;
+    width: 100% !important;
+    height: 120% !important;
+  }
+  .create-container::-webkit-scrollbar {
+    display: none;
+  }
+  .browse-container{
+    position: absolute;
+    top: 0px !important;
+    left: -320px !important;
+    overflow-y: visible;
+    overflow-x: hidden;
+    width: 150% !important;
+    height: 120% !important;
+  }
+  .browse-cards{
+    position: relative;
+    left: 700px !important;
+  }
+  .browse-container h1{
+    width: 300px !important;
+  }
+  .dietpage-chart{
+    position: relative;
+    left: -150px !important;
+  }
+  .add-calorie{
+    transform: scale(0.8);
+    position: relative;
+    top: 0px !important;
+    left: -220px !important;
+    top: 480px !important;
+  }
+  .add-food{
+    transform: scale(0.8);
+    position: relative;
+    top: 0px !important;
+    left: -220px !important;
+    top: 480px !important;
+    margin-left: 300px !important;
+  }
 }
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {}
@@ -272,8 +367,8 @@ body{
 .timePeriod p{
   display: inline-block;
   color: white;
-  margin: 4px 10px 4px 10px;
-  width: 80px;
+  margin: 4px 30px 4px 20px;
+  width: fit-content;
 }
 .navBar{
   position: fixed;
@@ -358,6 +453,21 @@ body{
   border-radius: 10px;
   justify-content: center;
   text-align: center;
+}
+.add-food{
+  position: absolute; 
+  top:-50px; 
+  left: -500px;
+  width:300px; 
+  height: 300px;
+  background-color: var(--contrast); 
+  border-radius: 10px;
+  justify-content: center;
+  text-align: center;
+}
+.add-food input{
+  border: none;
+  border-radius: 5px;
 }
 .add-calorie input{
   border: none;

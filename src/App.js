@@ -102,7 +102,7 @@ class App extends Component {
 
 
             <div style={{ position: 'relative', float: 'right', right: -420, top: 300, zIndex: -1 }} className='home-chart'>
-              <DietChart noDataStyle={{ position: 'relative', top: 200, right: 200 }} hideInfo />
+              <DietChart noDataStyle={{ position: 'relative', top: 200, right: 50 }} hideInfo />
             </div>
           </div>
           <div className='muscle-container-home' style={{ position: 'relative', top: -810 }}>

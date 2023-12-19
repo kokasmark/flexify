@@ -194,11 +194,11 @@ class Navbar extends Component {
               {this.state.language == 'HU' && <Icon_hu style={{width: 30, height: 30}} onClick={() => this.switchLanguage()} className='interactable'/>}
               {this.state.language == 'EN' && <Icon_en style={{width: 30, height: 30}} onClick={() => this.switchLanguage()} className='interactable'/>}
             </div>
-            <div style={{position: 'relative', left: '40%', top: -60}}>
+            <div className='navbar-streak' style={{position: 'relative', left: '40%', top: -60}}>
               <Icon_streak className='anim-heartbeat'/>
               <p style={{display: 'inline-block', color: 'white', margin: 5}}>{GetString("streak-start")}<b style={{color: 'var(--heat-orange)'}}>{this.state.streak}</b> {GetString("streak-end")}</p>
 
-              <div style={{color: 'white', position: 'relative', top: -50, left: '43%'}}>
+              <div className='navbar-welcome-container' style={{color: 'white', position: 'relative', top: -50, left: '43%'}}>
               
               <Link to='/account'><Icon_user style={{position: 'relative', left: 200, width: 40, height: 40, margin: 5, paddingLeft: 10}} className='interactable'/></Link>
               <p className='navbar-welcome' style={{display: 'inline-block', marginLeft: -10}}>{GetString("navbar-welcome")} <b>{this.state.username}</b></p>
