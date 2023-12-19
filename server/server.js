@@ -6,7 +6,7 @@ var moment = require('moment')
 
 
 // use DEBUG_MODE to send back error messages to client
-// LOGGING_LEVEL 0 = nothing, 1 = connect to db, new connections, db errors; 2=function calls, 3=sql commands, query responses, -1 = temporary
+// LOGGING_LEVEL 0 = errors, 1 = connect to db, new connections, db errors; 2=function calls, 3=sql commands, query responses, -1 = temporary
 const RESPONSE_DEBUG_MODE = true;
 const LOGGING_LEVEL = 3;
 
@@ -107,7 +107,6 @@ function throwErrorOnMissingPostFields(data, required, res){
 
 async function dbQuery(sql, vars){
     let q_result = (await connection.promise().query(sql, vars))[0]
-    log(q_result)
     log('sql: ' + sql, 3)
     log('vars: ' + vars, 3)
     log('result: ' + q_result, 3)
@@ -143,31 +142,38 @@ async function getUserId(req, res){
 
 
 // response functions
-const ERROR = 0;
-const SUCCESS = 1;
+const ERROR = false;
+const SUCCESS = true;
+
+function responseJson(res, success, data={}){
+    data["success"] = success
+    try{
+        res.json(data)
+    }
+    catch (e){
+        log("Error trying to respond", 0)
+        log(e, 0)
+    }
+}
 
 function responseTemplate(res, result, data){
-    let json = {success: true}
+    let json = {}
     data.map((x) => json[x] = result[x])
-    res.json(json)
+    responseJson(res, SUCCESS, json)
 }
 
 function responseFail(res, result){
-    if (result !== false) res.json({success:false})
+    if (result !== false) responseJson(res, ERROR, {})
 }
 
 function responseSuccess(res){
-    res.json({success:true})
-}
-function response(res, success=SUCCESS){
-    if (success == SUCCESS) responseSuccess(res)
-    else responseFail(res)
+    responseJson(res, SUCCESS, {})
 }
 
 function throwDBError(error, res){
     let msg = 'Internal Server Error';
     if (RESPONSE_DEBUG_MODE) msg += ': ' + error;
-    res.json({success: false, message: msg});  
+    responseJson(res, ERROR, {message: msg});  
 }
 
 
@@ -200,7 +206,7 @@ async function updateUserToken(req, uid, res){
   
 
 // logging functions
-let log_colors = ["", "\x1b[90m", "\x1b[36m", "\x1b[33m", "\x1b[32m", "\x1b[47m\x1b[30m"]
+let log_colors = ["\x1b[31m", "\x1b[90m", "\x1b[36m", "\x1b[33m", "\x1b[32m", "\x1b[47m\x1b[30m"]
 function log(message, level=-1){
     if (LOGGING_LEVEL >= level){
         process.stdout.write(log_colors.at(level) + "[" + moment().format('YYYY-MM-DD hh:mm:ss') + "]:" + "\x1b[0m ")
@@ -230,7 +236,7 @@ async function dbPostUserLogin(req, res){
 
     if (await compareHash(req.body.password, password_hash)){
         let token = await updateUserToken(req, uid, res)
-        res.json({success: true, token: token})
+        responseJson(res, SUCCESS, token)
     }
     else{
         throwDBError('Invalid username or password', res)
@@ -247,7 +253,7 @@ async function dbPostUserRegister(req, res){
     if (result){
         let uid = result.insertId
         let token = await updateUserToken(req, uid, res)
-        res.json({success: true, token: token})
+        responseJson(res, SUCCESS, {token: token})
     }
     else responseFail(res, result)
 }
@@ -259,7 +265,7 @@ async function dbPostUserMuscles(req, res){
     let result = await validateAndQuery(req, sql, [], res, [uid])
     if (result){
         const muscles = result.map(entry => entry.muscles);
-        res.json({ success: true, muscles});
+        responseJson(res, SUCCESS, muscles)
     }
     else responseFail(res, result)
 }
@@ -293,7 +299,7 @@ async function dbPostUserDietDates(req, res){
     let result = await validateAndQuery(req, sql, [], res, [uid])
     if (result){
         const dates = result.map((row) => row.date); // Extract dates from the result
-        res.json({success: true, dates: dates})
+        responseJson(res, SUCCESS, {dates: dates})
     }
     else responseFail(res, result)
 }
@@ -323,7 +329,7 @@ async function dbPostUserDates(req, res){
     let result = await validateAndQuery(req, sql, ["date"], res, [uid])
     if (result){
         let dateArray = result.map((x) => x.date)
-        res.json({success: true, dates: dateArray})
+        responseJson(res, SUCCESS, {dates: dateArray})
     }
     else responseFail(res, result)
 }
@@ -335,7 +341,7 @@ async function dbPostUserWorkouts(req, res){
     let result = await validateAndQuery(req, sql, ["date"], res, [uid])
     if (result && result.length > 0){
         let workoutsArray = result.map((x) => x)
-        res.json({ success: true, data: workoutsArray });
+        responseJson(res, SUCCESS, {data: workoutsArray})
     }
     else responseFail(res, result)
 }
@@ -352,7 +358,7 @@ async function dbPostSavedWorkoutTemplates(req, res){
         let result_exercise =  await validateAndQuery(req, sql, [], res, [template.id])
         templates.push({name:template.name, comment:template.comment, data:result_exercise})
     }
-    res.json({success: true, templates: templates})
+    responseJson(res, SUCCESS, {templates: templates})
 }
 
 async function dbPostExerciseTemplates(req, res){
@@ -360,7 +366,7 @@ async function dbPostExerciseTemplates(req, res){
     let sql = 'SELECT id, name, `type`, muscles FROM exercise_template'
     let result = await validateAndQuery(req, sql, [], res, [])
     let exerciesArray = result.map((x) => x)
-    res.json({success: true, data: exerciesArray})
+    responseJson(res, SUCCESS, {data: exerciesArray})
 }
 
 async function dbPostSaveWorkoutTemplate(req, res){
@@ -384,10 +390,8 @@ async function dbPostSaveExerciseTemplate(req, res){
     // if (!validateOne(req.body.type, 'type')) throwDBError('Invalid data for field [type]')
     let uid = await getUserId(req, res)
     let sql = 'INSERT INTO exercise_template (name, \`type\`, muscles, user_id) VALUES (?, ?, ?, ?)'
-
     let result = await validateAndQuery(req, sql, ["name", "type"], res, [ JSON.stringify(req.body.muscles), uid])
-    if (result) {
-        res.json({success: true, id: result.insertId})
-    }
+
+    if (result) responseJson(res, SUCCESS, {id: result.insertId})
     else responseFail(res, result)
 }
