@@ -46,7 +46,8 @@
   .home-chart{
     margin-top: 0 !important;
     position: relative;
-    left: 90vw;
+    left: auto !important;
+    margin-right: 22vw;
     top: 650px !important;
     transform: scale(0.7);
   }

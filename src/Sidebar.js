@@ -33,38 +33,38 @@ export default class Sidebar extends Component {
         <div>
           <div className='sidebar'>
             <ul style={{ listStyle: 'none' }}>
-                <li className='interactable' style={{ marginLeft: -33 }}>
-                    <Link to="/"><Icon_home style={{width: 48, height: 48}}/>
-                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>{GetString('page-home')}</p></Link>
-                </li>
-                <li className='interactable' style={{ marginLeft: -29 }}>
-                    <Link to="/plan"><Icon_calendar style={{width: 40, height: 40}}/>
-                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300', marginLeft: 2}}>{GetString('page-plan')}</p></Link>
-                </li>
-                <li className='interactable' style={{ marginLeft: -33 }}>
-                    <Link to="/create"><Icon_add style={{width: 48, height: 48}}/>
-                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>{GetString('page-create')}</p></Link>
-                </li>
-                <li className='interactable' style={{ marginLeft: -33 }}>
-                    <Link to="/browse"><Icon_search style={{width: 48, height: 48}}/>
-                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>{GetString('page-browse')}</p></Link>
-                </li>
-                <li className='interactable' style={{ marginLeft: -55, marginBottom:-40 }}>
-                    <Link to="/diet"><Icon_chart style={{width: 90, height: 90}}/>
-                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300', position: 'relative', top: -20, left: -20 }}>{GetString('page-diet')}</p></Link>
-                </li>
-                <li className='interactable' style={{ marginLeft: -33 }}>
-                    <Link to="/saved"><Icon_saved style={{width: 48, height: 48}}/>
-                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>{GetString('page-saved')}</p></Link>
-                </li>
-                <li className='interactable' style={{ marginLeft: -33 }}>
-                    <Link to="/account"><Icon_user style={{width: 48, height: 48}}/>
-                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>{GetString('page-account')}</p></Link>
-                </li>
-                <li className='interactable sidebar-sign-out' style={{ marginLeft: -33, marginTop: 300  }}>
-                    <Link to="/login" onClick={this.signOut}><Icon_sign_out style={{width: 40, height: 40, marginRight: 10}}/>
-                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>Sign out</p></Link>
-                </li>
+            <Link to="/"><li className='interactable' style={{ marginLeft: -33 }}>
+                    <Icon_home style={{width: 48, height: 48}}/>
+                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>{GetString('page-home')}</p>
+                </li></Link>
+                <Link to="/plan"><li className='interactable' style={{ marginLeft: -29 }}>
+                    <Icon_calendar style={{width: 40, height: 40}}/>
+                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300', marginLeft: 2}}>{GetString('page-plan')}</p>
+                </li></Link>
+                <Link to="/create"><li className='interactable' style={{ marginLeft: -33 }}>
+                    <Icon_add style={{width: 48, height: 48}}/>
+                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>{GetString('page-create')}</p>
+                </li></Link>
+                <Link to="/browse"><li className='interactable' style={{ marginLeft: -33 }}>
+                   <Icon_search style={{width: 48, height: 48}}/>
+                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>{GetString('page-browse')}</p>
+                </li></Link>
+                <Link to="/diet"><li className='interactable' style={{ marginLeft: -55, height: 50 }}>
+                    <Icon_chart style={{width: 90, height: 90}}/>
+                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300', position: 'relative', top: -20, left: -20 }}>{GetString('page-diet')}</p>
+                </li></Link>
+                <Link to="/saved"><li className='interactable' style={{ marginLeft: -33 }}>
+                   <Icon_saved style={{width: 48, height: 48}}/>
+                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>{GetString('page-saved')}</p>
+                </li></Link>
+                <Link to="/account"><li className='interactable' style={{ marginLeft: -33 }}>
+                    <Icon_user style={{width: 48, height: 48}}/>
+                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>{GetString('page-account')}</p>
+                </li></Link>
+                <Link to="/login" onClick={this.signOut}><li className='interactable sidebar-sign-out' style={{ marginLeft: -33, marginTop: 300  }}>
+                    <Icon_sign_out style={{width: 40, height: 40, marginRight: 10}}/>
+                    <p style={{ display: 'inline-block', color: 'white', fontWeight: '300' }}>Sign out</p>
+                </li></Link>
             </ul>
           </div>
 
