@@ -11,6 +11,7 @@ import CreatePage from './CreatePage';
 import DietPage from './DietPage';
 import SignUpWrapper from './SignUpPage';
 import SignInWrapper from './SignInPage';
+import AdminPageWrapper from './AdminPage';
 import AccountPage from './AccountPage';
 import SavedPage from './SavedPage';
 import CreatePageWrapper from './CreatePage';
@@ -28,6 +29,8 @@ root.render(
 
     <Route exact={true} path="/login" element={<SignInWrapper />} />
     <Route exact={true} path="/signup" element={<SignUpWrapper />} />
+
+    <Route exact={true} path="/admin" element={<AdminPageWrapper />} />
   </Routes>
 </BrowserRouter>
 );
