@@ -37,6 +37,7 @@ app.post('/api/diet/add', (req, res) => dbPostUserDietAdd(req, res));
 
 app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
 app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
+app.post('/api/workouts/save', (req, res) => dbPostSaveWorkout(req, res));
 
 app.post('/api/templates/workouts', (req, res) => dbPostSavedWorkoutTemplates(req, res));
 app.post('/api/templates/exercises', (req, res) => dbPostExerciseTemplates(req, res));
@@ -357,6 +358,31 @@ async function dbPostUserWorkouts(req, res){
         responseJson(res, SUCCESS, {data: workoutsArray})
     }
     else responseFail(res, result)
+}
+
+async function dbPostSaveWorkout(req, res){
+    log('/api/workouts/save', 2)
+    let uid = await getUserId(req, res)
+    if (uid === false) return
+    log(Object.keys(req.body), -1)
+    if (throwErrorOnMissingPostFields(req.body, ["exercises"])){
+        responseFail(res)
+         return
+    }
+    let sql = 'INSERT INTO workout (date, workout_name, duration, user_id) VALUES (?, ?, ?, ?)'
+    let result = await validateAndQuery(req, sql, ["date", "workout_name", "duration"], res, [uid])
+    log(result.insertId, -1)
+
+    if (!result){
+        responseFail(res, result)
+        return
+    }
+    let workout_id = result.insertId
+    for (let exercise of req.body.exercises){
+        sql = "INSERT INTO exercise (exercise_template_id, workout_id, set_data) VALUES (?, ?, ?)"
+        result = await validateAndQuery(req, sql, [], res, [exercise.exercise_template_id, workout_id, JSON.stringify(exercise.set_data)])
+    };
+    responseSuccess(res)
 }
 
 async function dbPostSavedWorkoutTemplates(req, res){
