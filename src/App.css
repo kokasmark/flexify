@@ -178,6 +178,10 @@
     left:-160px !important;
     transform: scale(0.8);
   }
+  .sidebar:hover{
+    position: fixed;
+    right: -200px;
+  }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) and (max-width: 768px){
