@@ -375,9 +375,9 @@ class CreatePage extends Component {
               id={`create-reps-${index}`}
               onChange={(event) => this.handleRepsChange(event, index)}
             />
-            <ol style={{ maxHeight: 200, height: 200, marginTop: 20, overflow: 'auto' }}>
+            <ol style={{ maxHeight: 200, height: 200, marginTop: 20, overflow: 'auto', width: "100%"}}>
               {Array.from({ length: this.state.exercises[index] }).map((_, liIndex) => (
-                <li key={liIndex} style={{ textAlign: 'start' }}>
+                <li key={liIndex} style={{ textAlign: 'start', margin: 5 }}>
                   {template.type === 'rep' && <Icon_reps style={{ width: 20, height: 20 }} />}
                   {template.type === 'time' && <Icon_duration style={{ width: 20, height: 20 }} />}
                   <input id={index + '-' + liIndex + '-rep'} style={{ width: 50 }} placeholder={template.type === 'time' && 'sec'} />

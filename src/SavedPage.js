@@ -71,7 +71,7 @@ class SavedPage extends Component {
               <Link to={{ pathname: '/create', search: template.name }} style={{position: 'relative', top: -50, left: 120}}><Icon_copy title='Duplicate Workout' className='interactable'/></Link>
               <div style={{position: 'relative', top: -40}}>
               <Card.Text >{template.comment}</Card.Text>
-              <ol style={{maxHeight: 200}}>
+              <ol style={{maxHeight: 180, overflowY: 'scroll', overflowX: 'hidden'}}>
                 {template.data.map((data, olIndex) => (
 
                   <div className='interactable' key={index} onClick={()=> this.setState({opened: this.state.opened == index+'-'+olIndex? -1:index+'-'+olIndex})}>
