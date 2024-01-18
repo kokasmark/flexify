@@ -128,10 +128,12 @@ export default class MusclesView extends Component {
       return data;
   }
   async rotate(){
-    this.setState({animation: 'fade-out'})
-    await new Promise(r => setTimeout(r, 200))
-    this.setState({front: !this.state.front});
-    this.setState({animation: 'fade-in'})
+    if(this.state.animation == 'fade-in'){
+      this.setState({animation: 'fade-out'})
+      await new Promise(r => setTimeout(r, 200))
+      this.setState({front: !this.state.front});
+      this.setState({animation: 'fade-in'})
+    }
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.front !== this.state.front) {

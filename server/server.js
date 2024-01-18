@@ -403,7 +403,7 @@ async function dbPostSavedWorkoutTemplates(req, res){
 
 async function dbPostExerciseTemplates(req, res){
     log('/api/templates/exercises', 2)
-    let sql = 'SELECT id, name, `type`, muscles FROM exercise_template'
+    let sql = 'SELECT id, name, `type`, muscles,gifUrl FROM exercise_template'
     let result = await validateAndQuery(req, sql, [], res, [])
     let exerciesArray = result.map((x) => x)
     responseJson(res, SUCCESS, {data: exerciesArray})

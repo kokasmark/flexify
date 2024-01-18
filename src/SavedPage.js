@@ -62,7 +62,7 @@ class SavedPage extends Component {
       <div className='page'>
 
         <div className='saved-card-container load-anim' style={{position: 'absolute', top: 100, marginLeft: 150, borderRadius: 10, 
-        height: 800, padding: 20, overflowY: 'auto', backgroundColor: 'var(--darker-contrast)'}}>
+        height: 800, padding: 20, overflowY: 'auto'}}>
         {this.state.savedTemplates.map((template, index) => (
           <Card key={index} style={{ width: 300, height: 350, textAlign: 'center', boxShadow: '5px 5px 10px var(--shadow)' }}>
 

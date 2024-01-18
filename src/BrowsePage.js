@@ -15,7 +15,8 @@ class BrowsePage extends Component {
   muscleRef = React.createRef();
     state = {
         choosenGroup: '',
-        templates: []
+        templates: [],
+        viewedGif: ''
     }
     chooseMuscleGroup = (g) => {
         if (g != null && g.name != '') {
@@ -93,7 +94,7 @@ class BrowsePage extends Component {
                     onMouseLeave={()=>this.colorAffectedMuscles(template.muscles, true)}
                     className="animated-card interactable" style={{ maxWidth: 240, marginTop: -20 }}>
                     <Icon_save className='interactable' style={{position: 'relative', height: 30, width:30, top: 35, left: '85%'}}/>
-                        <Card.Body>
+                        <Card.Body onMouseEnter={()=>this.setState({viewedGif: template.gifUrl})} onMouseLeave={()=>this.setState({viewedGif: ''})}>
                             <Card.Title>{template.name}</Card.Title>                            
                             <Card.Text>
                                 This workout will work on your:
@@ -107,7 +108,8 @@ class BrowsePage extends Component {
                     </Card>}</div>
                   ))}
                         
-                        <Button className='anim' style={{backgroundColor: 'var(--contrast)', border: 'none',margin: 30}}>{GetString("browse-suggest")}</Button>
+                        
+                        <img className='exercise-gif' style={{}}src={this.state.viewedGif}></img>
                     </div> : <h1  style={{ position: 'relative', left: 700, top: 250, color: 'white', width: 1000 }}>{GetString("browse-choose-a-muscle")}</h1>}
                 </div>
 

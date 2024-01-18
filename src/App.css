@@ -567,6 +567,26 @@ body{
 
   animation: opacity-fade-in 1s ease;
 }
+.exercise-card{
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+iframe
+{
+    display: none;/*Fix for react error popup*/
+}
+.exercise-gif{
+  position: relative;
+  display: inline-block;
+  right: 50%;
+  top: -300px;
+  mix-blend-mode:multiply;
+  background-color: var(--contrast);
+  width: 500px;
+  filter: saturate(5);
+}
+
 @keyframes page-transition {
   0% {
     transform: scale(.90);

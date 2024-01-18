@@ -406,7 +406,7 @@ class CreatePage extends Component {
                     onDrop={this.drop} onMouseEnter={() => this.colorAffectedMuscles(template.muscles, false)} onMouseLeave={() => this.colorAffectedMuscles(template.muscles, true)} onClick={() => this.selectTemplate(template.name, template.type, template.id)} key={index} style={{
                       backgroundColor: 'var(--contrast)', borderRadius: 5, marginLeft: 'auto', marginRight: 'auto', width: '80%', marginTop: 20
                       , height: 60, textAlign: 'center', boxShadow: '5px 5px 15px var(--bg)'
-                    }} className='interactable load-anim'>
+                    }} className='interactable load-anim exercise-card'>
                     <h2>{template.name}</h2>
                     <p style={{ marginTop: -10, fontSize: 11 }}>({template.muscles.replaceAll("[", "").replaceAll("]", "").replaceAll('"', "")})</p>
                   </div>}

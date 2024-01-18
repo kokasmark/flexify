@@ -88,6 +88,7 @@ class App extends Component {
   }
   render() {
     this.colorMuscles(this.state.muscles);
+    console.reportErrorsAsExceptions = false;
     return (
       <div className='page'>
         <div className='container'>
