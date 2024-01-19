@@ -97,19 +97,12 @@ class BrowsePage extends Component {
                         <Card.Body onMouseEnter={()=>this.setState({viewedGif: template.gifUrl})} onMouseLeave={()=>this.setState({viewedGif: ''})}>
                             <Card.Title>{template.name}</Card.Title>                            
                             <Card.Text>
-                                This workout will work on your:
-                                <ul>
-                                {JSON.parse(template.muscles).map((muscle, index) => (
-                                  <li>{muscle}</li>
-                                ))}
-                                </ul>
+                            <img style={{width: "80%", mixBlendMode: "multiply"}}src={template.gifUrl}></img>
                             </Card.Text>
                         </Card.Body>
                     </Card>}</div>
                   ))}
-                        
-                        
-                        <img className='exercise-gif' style={{}}src={this.state.viewedGif}></img>
+                      
                     </div> : <h1  style={{ position: 'relative', left: 700, top: 250, color: 'white', width: 1000 }}>{GetString("browse-choose-a-muscle")}</h1>}
                 </div>
 
