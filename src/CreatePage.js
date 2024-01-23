@@ -83,6 +83,14 @@ class CreatePage extends Component {
   }
   handleRepsChange = (event, index, gvalue) => {
     const value  = gvalue != null ? gvalue : event.target.value;
+    if ( value < 0){
+      value = 0;
+      document.getElementById(`create-reps-${index}`).value = 0;
+    }
+    if ( value > 20){
+      value = 20;
+      document.getElementById(`create-reps-${index}`).value = 20;
+    }
     this.setState((prevState) => {
       const updatedExercises = [...prevState.exercises];
       updatedExercises[index] = Number(value); // Store the length for the specific card
@@ -203,11 +211,15 @@ class CreatePage extends Component {
     }
   }
   addCard(template = null) {
-    this.setState((prevState) => ({
-      exerciseNum: prevState.exerciseNum + 1,
-      exercises: [...prevState.exercises, 0],
-      exerciseTemplates: template ? [...prevState.exerciseTemplates, template] : [...prevState.exerciseTemplates, { name: 'Empty', type: 'rep' }]
-    }));
+      if(this.state.exerciseNum < 50){
+          this.setState((prevState) => ({
+        exerciseNum: prevState.exerciseNum + 1,
+        exercises: [...prevState.exercises, 0],
+        exerciseTemplates: template ? [...prevState.exerciseTemplates, template] : [...prevState.exerciseTemplates, { name: 'Empty', type: 'rep' }]
+      }));
+    }else{
+      swal("Error!", "Too many exercise cards!\n(limit: 50)","error")
+    }
   }
   selectTemplate(name, type, id) {
     // Create a new card data object with the given name and type
@@ -304,7 +316,8 @@ class CreatePage extends Component {
       const updatedTemplates = [...prevState.exerciseTemplates];
       const movedCard = updatedTemplates.splice(index, 1)[0];
       updatedTemplates.push(movedCard);
-      return { exerciseTemplates: updatedTemplates };
+      
+      return { exerciseTemplates: updatedTemplates};
     });
 
   };
@@ -366,10 +379,13 @@ class CreatePage extends Component {
   setRepsCount(index, change){
     var i = document.getElementById(`create-reps-${index}`);
     var v = Number(i.value) + Number(change);
-    if(v > 0){
-      i.value = v;
+    if(v < 0){
+      i.value = 0;
+    }
+    else if(v > 20){
+      i.value = 20;
     }else{
-      i.value = 0
+      i.value = v;
     }
     this.handleRepsChange(null, index,v)
   }
@@ -381,10 +397,11 @@ class CreatePage extends Component {
             {template.name != 'Empty' ? <Card.Title>{template.name}</Card.Title> : <Card.Title><input placeholder='name' /></Card.Title>}
             <p style={{display: 'inline-block', margin: 10}} className='interactable' onClick={()=> this.setRepsCount(index,-1)}>-</p>
             <input
-              style={{ width: 50 }}
+              style={{ width: 50, textAlign: 'center' }}
               placeholder='0'
               id={`create-reps-${index}`}
               onChange={(event) => this.handleRepsChange(event, index)}
+              onKeyPress={(e) => !/[0-9]/.test(e.key) && e.preventDefault()}
             />
             <p style={{display: 'inline-block', margin:5}} className='interactable' onClick={()=> this.setRepsCount(index,1)}>+</p>
             <ol style={{ maxHeight: 200, height: 200, marginTop: 20, overflow: 'auto', width: "100%"}}>
@@ -392,8 +409,8 @@ class CreatePage extends Component {
                 <li key={liIndex} style={{ textAlign: 'start', margin: 5 }}>
                   {template.type === 'rep' && <Icon_reps style={{ width: 20, height: 20 }} />}
                   {template.type === 'time' && <Icon_duration style={{ width: 20, height: 20 }} />}
-                  <input id={index + '-' + liIndex + '-rep'} style={{ width: 50 }} placeholder={template.type === 'time' && 'sec'} />
-                  {template.type === 'rep' && <div style={{ display: 'inline-block' }}><Icon_weight style={{ width: 20, height: 20 }} /> <input id={index + '-' + liIndex + '-weight'} placeholder='kg' style={{ width: 50 }} /></div>}
+                  <input id={index + '-' + liIndex + '-rep'} style={{ width: 50 }} placeholder={template.type === 'time' && 'sec'} onKeyPress={(e) => !/[0-9]/.test(e.key) && e.preventDefault()}/>
+                  {template.type === 'rep' && <div style={{ display: 'inline-block' }}><Icon_weight style={{ width: 20, height: 20 }} /> <input id={index + '-' + liIndex + '-weight'} placeholder='kg' style={{ width: 50 }} onKeyPress={(e) => !/[0-9]/.test(e.key) && e.preventDefault()}/></div>}
                 </li>
               ))}
             </ol>
