@@ -82,7 +82,7 @@ class CreatePage extends Component {
       .catch(error => console.log('error', error));
   }
   handleRepsChange = (event, index, gvalue) => {
-    const { value } = gvalue == null ? event.target : gvalue;
+    const value  = gvalue != null ? gvalue : event.target.value;
     this.setState((prevState) => {
       const updatedExercises = [...prevState.exercises];
       updatedExercises[index] = Number(value); // Store the length for the specific card
@@ -363,18 +363,30 @@ class CreatePage extends Component {
   componentDidMount() {
     this.getSavedTemplates();
   }
+  setRepsCount(index, change){
+    var i = document.getElementById(`create-reps-${index}`);
+    var v = Number(i.value) + Number(change);
+    if(v > 0){
+      i.value = v;
+    }else{
+      i.value = 0
+    }
+    this.handleRepsChange(null, index,v)
+  }
   render() {
     const exerciseCards = this.state.exerciseTemplates.map((template, index) => (
       <div key={index} className='create-workout-card-parent'>
         <Card style={{ width: 300, border: 'white', boxShadow: '2px 2px 5px var(--shadow)' }} className='create-workout-card'>
           <Card.Body>
             {template.name != 'Empty' ? <Card.Title>{template.name}</Card.Title> : <Card.Title><input placeholder='name' /></Card.Title>}
+            <p style={{display: 'inline-block', margin: 10}} className='interactable' onClick={()=> this.setRepsCount(index,-1)}>-</p>
             <input
               style={{ width: 50 }}
-              placeholder=''
+              placeholder='0'
               id={`create-reps-${index}`}
               onChange={(event) => this.handleRepsChange(event, index)}
             />
+            <p style={{display: 'inline-block', margin:5}} className='interactable' onClick={()=> this.setRepsCount(index,1)}>+</p>
             <ol style={{ maxHeight: 200, height: 200, marginTop: 20, overflow: 'auto', width: "100%"}}>
               {Array.from({ length: this.state.exercises[index] }).map((_, liIndex) => (
                 <li key={liIndex} style={{ textAlign: 'start', margin: 5 }}>

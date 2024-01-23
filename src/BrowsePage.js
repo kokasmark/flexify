@@ -84,7 +84,7 @@ class BrowsePage extends Component {
                     <div className='browse-muscle' style={{ position: 'absolute' }}>
                         <MusclesView ref={this.muscleRef}chooseCallback={this.chooseMuscleGroup} />
                     </div>
-                    {this.state.choosenGroup != '' ?<div key={this.state.choosenGroup} className='workouts anim browse-cards' style={{ position: 'relative', left: 800, top: 175 }}>
+                    {this.state.choosenGroup != '' ?<div key={this.state.choosenGroup} className='workouts anim browse-cards' style={{ position: 'relative', left: 800, top: 100 }}>
                     <h1 style={{marginBottom: 20, color: 'white'}}>{this.state.choosenGroup.charAt(0).toUpperCase() + this.state.choosenGroup.slice(1)}  {GetString("workouts")}</h1>
                     {this.state.templates.map((template, index) => (
                       <div>
@@ -97,7 +97,7 @@ class BrowsePage extends Component {
                         <Card.Body onMouseEnter={()=>this.setState({viewedGif: template.gifUrl})} onMouseLeave={()=>this.setState({viewedGif: ''})}>
                             <Card.Title>{template.name}</Card.Title>                            
                             <Card.Text>
-                            <img style={{width: "80%", mixBlendMode: "multiply"}}src={template.gifUrl}></img>
+                            <img style={{width: "80%",marginLeft:'10%', mixBlendMode: "multiply"}}src={require("./assets/exercises/"+template.gifUrl+".gif")}></img>
                             </Card.Text>
                         </Card.Body>
                     </Card>}</div>
