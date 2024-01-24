@@ -52,9 +52,19 @@ class App extends Component {
     }
 
     // Map the average counts to the range [0, 3] and update muscle groups
+    var tipIndex = 0;
     for (const muscleName in averageCounts) {
       const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3)));
       this.muscleViewRef.current.updateMuscleGroup(muscleName, mappedValue);
+
+      /*console.log(muscleName,this.muscleViewRef.current.findMuscleIndex(muscleName))
+      document.body.innerHTML += `<p style='position: absolute; top: ${300+50*tipIndex}px; ${tipIndex%2==0 ? 'right: 400px;' : 'left: 400px;'} color: white;' id='tip-${tipIndex}'>${muscleName}</p>`
+      this.connect(document.getElementById(this.muscleViewRef.current.findMuscleIndex(muscleName)), document.getElementById(`tip-${tipIndex}`),"#fff",3)
+      
+      tipIndex++;
+      
+      First try for tips on the homepage
+      */
     }
   }
 
@@ -85,14 +95,44 @@ class App extends Component {
   }
   componentDidMount() {
     this.getMusclesTrained();
+    //this.connect(document.getElementById("32"), document.getElementById("45"),"#fff",3)
   }
+  getOffset( el ) {
+    var rect = el.getBoundingClientRect();
+    return {
+        left: rect.left-10,
+        top: rect.top-10,
+        width: rect.width || el.offsetWidth,
+        height: rect.height || el.offsetHeight
+    };
+}
+connect(div1, div2, color, thickness) { // draw a line connecting elements
+  var off1 = this.getOffset(div1);
+  var off2 = this.getOffset(div2);
+  // bottom right
+  var x1 = off1.left + off1.width;
+  var y1 = off1.top + off1.height;
+  // top right
+  var x2 = off2.left + off2.width;
+  var y2 = off2.top;
+  // distance
+  var length = Math.sqrt(((x2-x1) * (x2-x1)) + ((y2-y1) * (y2-y1)));
+  // center
+  var cx = ((x1 + x2) / 2) - (length / 2);
+  var cy = ((y1 + y2) / 2) - (thickness / 2);
+  // angle
+  var angle = Math.atan2((y1-y2),(x1-x2))*(180/Math.PI);
+  // make hr
+  var htmlLine = "<div style='z-index: 1;padding:0px; margin:0px; height:" + thickness + "px; background-color:" + color + "; line-height:1px; position:absolute; left:" + cx + "px; top:" + cy + "px; width:" + length + "px; -moz-transform:rotate(" + angle + "deg); -webkit-transform:rotate(" + angle + "deg); -o-transform:rotate(" + angle + "deg); -ms-transform:rotate(" + angle + "deg); transform:rotate(" + angle + "deg);' />";
+  //
+  // alert(htmlLine);
+  document.body.innerHTML += htmlLine;
+}
   render() {
     this.colorMuscles(this.state.muscles);
-    console.reportErrorsAsExceptions = false;
     return (
       <div className='page'>
         <div className='container'>
-          <div>
             <div className='timePeriod load-anim'>
               <p className='interactable'>{GetString("home-period")[0]}</p>
               <p className='interactable'>{GetString("home-period")[1]}</p>
@@ -102,16 +142,12 @@ class App extends Component {
             </div>
 
 
-            <div style={{ position: 'relative', float: 'right', right: -420, top: 300, zIndex: -1 }} className='home-chart'>
-              <DietChart noDataStyle={{ position: 'relative', top: 200, right: 50 }} hideInfo />
-            </div>
-          </div>
-          <div className='muscle-container-home' style={{ position: 'relative', top: -810 }}>
+            
+
+          <div className='muscle-container-home' style={{ position: 'relative', top: -10 }}>
             <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles} />
           </div>
-          <div className='load-anim home-calendar' style={{ position: 'relative', left: 0, top: -600 }}>
-            <WorkoutCalendar ref={this.calendarRef} parent={this} />
-          </div>
+
         </div>
 
 

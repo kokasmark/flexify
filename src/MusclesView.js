@@ -68,7 +68,10 @@ export default class MusclesView extends Component {
         }
       }
     }
-}
+  }
+  findMuscleIndex = (group) =>{
+    return this.getGroup()[group][0]
+  }
   createMuscleData(){
     var mData = []
     for(var i = 0; i < 220; i++){

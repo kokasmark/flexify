@@ -357,6 +357,9 @@ body{
   width: 1028px;
   height: 1024px;
 }
+.muscle{
+  z-index: 0 !important;
+}
 .muscles path:not(.rotate){
   cursor: pointer;
   fill: var(--heat-blue);
@@ -372,11 +375,15 @@ body{
   top: 150px;
   box-shadow: 0px 5px 5px var(--shadow);
   transition: .5s ease;
+  z-index: 900;
 }
 .timePeriod p{
+  text-align: center;
   display: inline-block;
   color: white;
-  margin: 4px 30px 4px 20px;
+  width: 100px !important;
+  margin-top: 2.5px;
+  height: 20px;
   width: fit-content;
 }
 .navBar{
