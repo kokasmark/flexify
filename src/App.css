@@ -289,6 +289,9 @@
 @media only screen and (min-width: 992px) {}
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {}
+.highlight{
+  box-shadow: 0px 0px 20px #ffffff !important;
+}
 .load-anim{
   animation: page-transition .6s;
   transition: .5s ease;
@@ -347,6 +350,7 @@ body{
 }
 .interactable:hover{
   transform: scale(1.025);
+  text-shadow: 0 0 5px #fff;
 }
 .muscles{
   margin: auto;
@@ -541,6 +545,16 @@ body{
   overflow: auto;
   max-height: 625px;
   box-shadow: 5px 5px 5px var(--shadow);
+}
+.create-workout-indicate{
+  background-color: var(--contrast);
+  border-radius: 10px;
+  width: 650px;
+  position: relative;
+  left: 100px !important;
+  overflow: auto;
+  max-height: 625px;
+  box-shadow: 0px 0px 20px #ffffff;
 }
 .workouts .animated-card {
   animation: grow 0.2s ease-in;

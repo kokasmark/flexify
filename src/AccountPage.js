@@ -94,7 +94,7 @@ class AccountPage extends Component {
   render() {
     return (
       <div className='page'>
-        <div className='load-anim account-details' style={{color: 'white', textAlign: 'start', paddingTop: 140, paddingLeft: 50, 
+        <div className='load-anim account-details' style={{color: 'white', textAlign: 'start', paddingTop: 100, paddingLeft: 50, 
         position: 'relative', top: 300, background: 'var(--contrast)',width: 300, height: 400, borderRadius: 10, left: '42%',boxShadow: '5px 5px 5px var(--shadow)'}}>
           <Icon_user/>
           <p style={{display: 'inline-block', fontWeight: 'bold'}}>{this.state.username}</p>

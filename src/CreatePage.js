@@ -228,12 +228,6 @@ class CreatePage extends Component {
       type: type,
       id: id
     };
-
-    // Update the state to include the new card
-    this.setState((prevState) => ({
-      exercises: [...prevState.exercises, 0], // Assuming 0 initial exercises for the new card
-      exerciseTemplates: [...prevState.exerciseTemplates, newCard],
-    }));
   }
   deleteCard(index) {
     this.setState((prevState) => {
@@ -280,28 +274,7 @@ class CreatePage extends Component {
     this.setState({ currentTemplateGrabbed: template })
   };
   dragEnd = (e) => {
-    this.setState({
-      offsetX: 0,
-      offsetY: 0,
-    });
-
-    // Get the position of the drop
-    const dropX = e.clientX;
-    const dropY = e.clientY;
-
-    // Get the position of the create-workout component
-    const workoutRect = this.containerRef.current.getBoundingClientRect();
-
-    // Check if the drop occurred within the create-workout component
-    if (
-      dropX >= workoutRect.left &&
-      dropX <= workoutRect.right &&
-      dropY >= workoutRect.top &&
-      dropY <= workoutRect.bottom
-    ) {
-
-      this.setState({ currentTemplateGrabbed: '' })
-    }
+    this.setState({ currentTemplateGrabbed: '' })
   };
   dragOver = (e) => {
     e.preventDefault();
@@ -432,6 +405,7 @@ class CreatePage extends Component {
                 {template.muscles.includes(this.state.choosenGroup) &&
                   <div ref={this.cardRef} draggable
                     onDragStart={(e) => this.dragStart(e, index, template)}
+                    onDragEnd={(e) =>this.dragEnd(e)}
                     onDrop={this.drop} onMouseEnter={() => this.colorAffectedMuscles(template.muscles, false)} onMouseLeave={() => this.colorAffectedMuscles(template.muscles, true)} onClick={() => this.selectTemplate(template.name, template.type, template.id)} key={index} style={{
                       backgroundColor: 'var(--contrast)', borderRadius: 5, marginLeft: 'auto', marginRight: 'auto', width: '80%', marginTop: 20
                       , height: 60, textAlign: 'center', boxShadow: '5px 5px 15px var(--bg)'
@@ -443,8 +417,8 @@ class CreatePage extends Component {
             ))}
           </div>
           <div onDragOver={this.dragOver}
-            onDrop={this.createWorkoutDrop} className='create-drop' style={{ color: 'white', position: 'relative', top: -1100, left: 1050 }}>
-            <div className='create-workout anim' ref={this.containerRef} style={exerciseCards.length == 0 ? { position: 'relative', left: 50, height: 200, textAlign: 'center' }
+            onDrop={this.createWorkoutDrop} className='create-drop' style={{ color: 'white', position: 'relative', top: -1100, left: 1050, outline: "#fff"}}>
+            <div className={`create-workout anim ${this.state.currentTemplateGrabbed != '' ? 'highlight' : ''}`} ref={this.containerRef} style={exerciseCards.length == 0 ? { position: 'relative', left: 50, height: 200, textAlign: 'center' }
               : { position: 'relative', left: 50, textAlign: 'center' }}>
               <input id='create-name' style={{ display: 'inline-block' }} placeholder='Name'></input>
               <Icon_save className='interactable' title='Save Workout' onClick={() => this.saveWorkout()} />
