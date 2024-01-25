@@ -607,7 +607,9 @@ iframe
   width: 500px;
   filter: saturate(5);
 }
-
+.home-tip{
+  animation: grow 0.5s ease-in;
+}
 @keyframes page-transition {
   0% {
     transform: scale(.90);

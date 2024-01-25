@@ -107,7 +107,7 @@ connect(div1, div2, color, thickness) { // draw a line connecting elements
             
 
           <div className='muscle-container-home' style={{ position: 'relative', top: -10 }}>
-            <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles} />
+            <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles} showTips/>
           </div>
         </div>
 

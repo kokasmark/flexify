@@ -1,13 +1,15 @@
 import './App.css';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { ReactComponent as Muscles } from './assets/muscles.svg';
 import { ReactComponent as MusclesBack } from './assets/muscles-back.svg';
 import { ReactComponent as W_Muscles } from './assets/women-muscles.svg';
 import { ReactComponent as W_MusclesBack } from './assets/women-muscles-back.svg';
 import { ReactComponent as Icon_rotate } from './assets/icon-rotate.svg';
+import icon_lightbulb from './assets/icon-lightbulb.png'
 
 
 export default class MusclesView extends Component {
+  tipsRef = React.createRef();
   state = {
     front: true,
     men: true,
@@ -54,7 +56,8 @@ export default class MusclesView extends Component {
     },
     muscleData: [],
     frontLastKey: 138,
-    animation: 'fade-in'
+    animation: 'fade-in',
+    tips: ["----"]
   }
   getGroup() {
     return this.state.men == true ? this.state.groups.men : this.state.groups.women;
@@ -137,45 +140,56 @@ export default class MusclesView extends Component {
       await new Promise(r => setTimeout(r, 200))
       this.setState({ front: !this.state.front });
       this.setState({ animation: 'fade-in' })
+
     }
   }
-  Draw(){
+  Draw() {
     var muscles = this.props.muscles;
-        const muscleCounts = {};
-        var count = 0;
-        // Assuming 'muscles' is an array of muscle objects
-        for (var i = 0; i < muscles.length; i++) {
-          var muscleData = JSON.parse(muscles[i]);
-          for (var ii = 0; ii < muscleData.length; ii++) {
-            var name = muscleData[ii]; // Assuming the muscle is the first element in the array
-            count++;
-            // Count the occurrences of each muscle
-            muscleCounts[name] = (muscleCounts[name] || 0) + 1;
-          }
+    const muscleCounts = {};
+    var count = 0;
+    // Assuming 'muscles' is an array of muscle objects
+    for (var i = 0; i < muscles.length; i++) {
+      var muscleData = JSON.parse(muscles[i]);
+      for (var ii = 0; ii < muscleData.length; ii++) {
+        var name = muscleData[ii]; // Assuming the muscle is the first element in the array
+        count++;
+        // Count the occurrences of each muscle
+        muscleCounts[name] = (muscleCounts[name] || 0) + 1;
+      }
 
+    }
+
+    // Calculate the average count for each muscle group
+    const averageCounts = {};
+
+    for (const muscleName in muscleCounts) {
+      const totalOccurrences = muscleCounts[muscleName];
+      const averageCount = totalOccurrences / count; // Adjust the denominator if needed
+      averageCounts[muscleName] = averageCount;
+    }
+    let t = []
+    for (const muscleName in averageCounts) {
+      const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3 + 1)));
+      this.updateMuscleGroup(muscleName, mappedValue);
+      if (document.getElementById(this.findMuscleIndex(muscleName)) != null) {
+        switch (mappedValue) {
+          case 1:
+            t.push(`Consider incorporating more exercises targeting your ${muscleName} for balanced development.`)
+            break;
+          case 2:
+            t.push(`You are maintaining a good balance in exercising your ${muscleName}. Keep it up!`)
+            break;
+          case 3:
+            t.push(`Your ${muscleName} are over exercised! Let it rest a bit to enchance muscle growth!`)
+            break;
+          default:
+            break;
         }
 
-        // Calculate the average count for each muscle group
-        const averageCounts = {};
-
-        for (const muscleName in muscleCounts) {
-          const totalOccurrences = muscleCounts[muscleName];
-          const averageCount = totalOccurrences / count; // Adjust the denominator if needed
-          averageCounts[muscleName] = averageCount;
-        }
-
-        var tipIndex = 0;
-        // Map the average counts to the range [0, 3] and update muscle groups
-        for (const muscleName in averageCounts) {
-          const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3)));
-          this.updateMuscleGroup(muscleName, mappedValue);
-          if (document.getElementById(this.findMuscleIndex(muscleName)) != null) {
-            document.body.innerHTML += `<p style='position: absolute; top: ${300 + 50 * tipIndex}px; ${tipIndex % 2 == 0 ? 'right: 400px;' : 'left: 400px;'} color: white;' id='tip-${tipIndex}'>${muscleName}</p>`
-            this.connect(document.getElementById(this.findMuscleIndex(muscleName)), document.getElementById(`tip-${tipIndex}`), "#fff", 1)
-            tipIndex++;
-          }
-
-        }
+      }
+      this.setState({ tips: t })
+      console.log(this.state.tips)
+    }
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.front !== this.state.front) {
@@ -183,41 +197,11 @@ export default class MusclesView extends Component {
         this.Draw()
       }
     }
-    if(this.props.muscles != prevProps.muscles){
+    if (this.props.muscles != prevProps.muscles) {
       this.Draw()
     }
   }
-  getOffset(el) {
-    var rect = el.getBoundingClientRect();
-    return {
-      left: rect.left - 10,
-      top: rect.top - 10,
-      width: rect.width || el.offsetWidth,
-      height: rect.height || el.offsetHeight
-    };
-  }
-  connect(div1, div2, color, thickness) { // draw a line connecting elements
-    var off1 = this.getOffset(div1);
-    var off2 = this.getOffset(div2);
-    // bottom right
-    var x1 = off1.left + off1.width;
-    var y1 = off1.top + off1.height;
-    // top right
-    var x2 = off2.left + off2.width;
-    var y2 = off2.top;
-    // distance
-    var length = Math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
-    // center
-    var cx = ((x1 + x2) / 2) - (length / 2);
-    var cy = ((y1 + y2) / 2) - (thickness / 2);
-    // angle
-    var angle = Math.atan2((y1 - y2), (x1 - x2)) * (180 / Math.PI);
-    // make hr
-    var htmlLine = "<div style='z-index: 1;padding:0px; margin:0px; height:" + thickness + "px; background-color:" + color + "; line-height:1px; position:absolute; left:" + cx + "px; top:" + cy + "px; width:" + length + "px; -moz-transform:rotate(" + angle + "deg); -webkit-transform:rotate(" + angle + "deg); -o-transform:rotate(" + angle + "deg); -ms-transform:rotate(" + angle + "deg); transform:rotate(" + angle + "deg);' />";
-    //
-    // alert(htmlLine);
-    document.body.innerHTML += htmlLine;
-  }
+
   componentDidMount() {
     this.setState({ men: (localStorage.getItem('anatomy') != null ? (localStorage.getItem('anatomy') == "Masculine" ? true : false) : true) })
     this.createMuscleData();
@@ -236,7 +220,14 @@ export default class MusclesView extends Component {
 
           <Icon_rotate className='interactable' style={{ transform: 'scale(2)', position: 'relative', top: -175, left: 500, fill: '#fff !important' }} onClick={() => this.rotate()} />
         </div>
-
+        {this.props.showTips != null && <div className='tips-container' style={{ position: 'relative', top: -800, left: 650 }}>
+          {this.state.tips.map((tip, index) => (
+            <div style={{ color: 'white', position: 'relative', left: index % 2 == 0 ? -550 : 200, width: 400, marginTop: 50 }} className='interactable anim home-tip'>
+              <img style={{ width: 100, filter: 'invert(1)', marginTop: -50 }} src={icon_lightbulb} />
+              <p style={{ display: 'inline-block', width: 250 }} key={index}>{tip}</p>
+            </div>
+          ))}
+        </div>}
       </div>
     );
   }
