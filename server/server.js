@@ -99,7 +99,8 @@ function validatePostRequest(data, required){
     return true    
 }
 
-function throwErrorOnMissingPostFields(data, required, res){
+function throwErrorOnMissingPostFields(data, required, res, user_id=false){
+    if (user_id && validatePostRequest(data, ["token"], res)) return false;
     if (validatePostRequest(data, required, res)) return false;
 
     throwDBError( `Missing POST field(s). Required: ${required}`, res);
@@ -115,11 +116,18 @@ async function dbQuery(sql, vars){
     return q_result
 }
 
-async function validateAndQuery(req, sql, vars, res, nocheck_vars=undefined, single=false){
+async function validateAndQuery(req, sql, vars, res, nocheck_vars=undefined, single=false, user_id=false){
     let data = req.body
-    if (throwErrorOnMissingPostFields(data, vars, res)) return false
+    if (throwErrorOnMissingPostFields(data, vars, res, user_id)) return false
+    
     vars = vars.map((x) => data[x])
     if (nocheck_vars) nocheck_vars.map((x) => vars.push(x))
+
+    if (user_id){
+        await dbQuery('CALL getUserId(?, @user_id);', [data.token])
+        let position = sql.lastIndexOf('?')
+        sql = [sql.slice(0, position), '@user_id;', sql.slice(position + 1)].join('')
+    }
     
     try{
         if (single) return (await dbQuery(sql, vars))[0]
@@ -221,11 +229,12 @@ function log(message, level=-1){
 // db business logic
 async function dbPostUserDetails(req, res){
     log('/api/user', 2)
-    let uid = await getUserId(req, res);
-    if (uid === false) return
+    // let uid = await getUserId(req, res);
+    // if (uid === false) return
     let sql = 'SELECT username, email FROM user WHERE id=?'
 
-    let result = await validateAndQuery(req, sql, [], res, [uid], single=true)
+    // let result = await validateAndQuery(req, sql, [], res, [uid], single=true)
+    let result = await validateAndQuery(req, sql, [], res, [], single=true, user_id=true)
     responseTemplate(res, result, ["username", "email"])
 }
 
