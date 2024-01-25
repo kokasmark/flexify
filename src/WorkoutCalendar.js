@@ -38,7 +38,6 @@ export default class WorkoutCalendar extends Component {
     fetch("http://localhost:3001/api/workouts/date", requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if (r.success) {
           this.setState({ workouts: r.dates });
@@ -62,10 +61,8 @@ export default class WorkoutCalendar extends Component {
     fetch("http://localhost:3001/api/workouts/data", requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if (r.success) {
-          console.log(r.data)
           this.setState({ workoutsData: r.data });
         } else {
 
@@ -87,7 +84,6 @@ export default class WorkoutCalendar extends Component {
     fetch("http://localhost:3001/api/diet/get_dates", requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if (r.success) {
           
@@ -95,7 +91,6 @@ export default class WorkoutCalendar extends Component {
           r.dates.forEach(date => {
             dates.push(new Date(date).toISOString().split('T')[0]+1)
           });
-          console.log(dates)
           this.setState({dietDates: dates });
         } else {
 

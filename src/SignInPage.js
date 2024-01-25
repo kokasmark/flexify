@@ -44,7 +44,6 @@ class SignInPage extends Component {
     fetch(`http://${host}:3001/api/login`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if (r.success) {
           localStorage.setItem('loginToken', r.token);

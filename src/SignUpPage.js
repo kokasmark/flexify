@@ -38,7 +38,6 @@ class SignUpPage extends Component {
     fetch(`http://${host}:3001/api/signup`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if(r.success){
           console.log('Validating');

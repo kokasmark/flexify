@@ -39,7 +39,6 @@ class SavedPage extends Component {
     fetch(`http://${host}:3001/api/templates/workouts`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if (r.success) {
           this.setState({ savedTemplates: r.templates })
@@ -51,11 +50,6 @@ class SavedPage extends Component {
   }
   componentDidMount() {
     this.getSavedTemplates();
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.savedTemplates !== this.state.savedTemplates) {
-      console.log(this.state.savedTemplates)
-    }
   }
   render() {
     return (
