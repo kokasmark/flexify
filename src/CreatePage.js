@@ -24,7 +24,6 @@ const CreatePageWrapper = () => {
   const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
-    console.log(location.search);
     if (location.search && location.search !== '') {
       setSearchValue(location.search);
     }
@@ -71,7 +70,6 @@ class CreatePage extends Component {
     fetch(`http://${host}:3001/api/templates/workouts`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if (r.success) {
           this.setState({ savedTemplates: r.templates })
@@ -112,7 +110,6 @@ class CreatePage extends Component {
     fetch(`http://${host}:3001/api/templates/exercises`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if (r.success) {
           this.setState({ getTemplates: r.data });
@@ -316,7 +313,6 @@ class CreatePage extends Component {
       }
       data.push({ id: this.state.exerciseTemplates[i].exercise_template_id, set_data: set_data, comment: this.state.exerciseTemplates[i].name })
     }
-    console.log(data)
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -332,11 +328,9 @@ class CreatePage extends Component {
       redirect: 'follow'
     };
 
-    console.log(data, '\n', raw)
     fetch(`http://${host}:3001/api/templates/save_workout`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if (r.success) {
           swal(GetString("alert-workout-saved")[0], `${document.getElementById('create-name').value}` + GetString("alert-workout-saved")[1], "success")

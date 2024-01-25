@@ -20,7 +20,6 @@ class BrowsePage extends Component {
     }
     chooseMuscleGroup = (g) => {
         if (g != null && g.name != '') {
-          console.log(JSON.parse(this.state.templates[0].muscles), g.name)
           try { this.setState({ choosenGroup: g.name }) } catch { }
           for (var i = 0; i < 220; i++) {
             if (g.group.includes(i)) {
@@ -48,7 +47,6 @@ class BrowsePage extends Component {
       fetch(`http://${host}:3001/api/templates/exercises`, requestOptions)
         .then(response => response.text())
         .then((response) => {
-          console.log(response)
           var r = JSON.parse(response);
           if (r.success) {
             this.setState({ templates: r.data });
