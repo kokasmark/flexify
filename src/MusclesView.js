@@ -57,7 +57,7 @@ export default class MusclesView extends Component {
     muscleData: [],
     frontLastKey: 138,
     animation: 'fade-in',
-    tips: ["----"]
+    tips: ["Little bit empty... Explore the site and create a workout!"]
   }
   getGroup() {
     return this.state.men == true ? this.state.groups.men : this.state.groups.women;
