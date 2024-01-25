@@ -177,7 +177,7 @@ class CreatePage extends Component {
           document.getElementById('create-name').value = matchingWorkout.name + ' Copy';
 
           for (var i = 0; i < matchingWorkout.data.length; i++) {
-            this.addCard({ name: matchingWorkout.data[i].comment, type: JSON.parse(matchingWorkout.data[i].set_data)[0].reps != 0 ? 'rep' : 'time' })
+            this.addCard({ name: matchingWorkout.data[i].comment, type: JSON.parse(matchingWorkout.data[i].set_data)[0].reps != 0 ? 'rep' : 'time', exercise_template_id: matchingWorkout.data[i].exercise_template_id})
           }
         }
       } else {
@@ -314,7 +314,7 @@ class CreatePage extends Component {
           set_data.push({ time: document.getElementById(i + "-" + ii + "-rep").value, weight: 0, reps: 0 })
         }
       }
-      data.push({ id: this.state.exerciseTemplates[i].id, set_data: set_data, comment: this.state.exerciseTemplates[i].name })
+      data.push({ id: this.state.exerciseTemplates[i].exercise_template_id, set_data: set_data, comment: this.state.exerciseTemplates[i].name })
     }
     console.log(data)
 

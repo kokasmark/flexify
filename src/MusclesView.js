@@ -171,16 +171,17 @@ export default class MusclesView extends Component {
     for (const muscleName in averageCounts) {
       const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3 + 1)));
       this.updateMuscleGroup(muscleName, mappedValue);
+      const colors = ['var(--heat-blue)', 'var(--heat-yellow)', 'var(--heat-orange)', 'var(--heat-red)'];
       if (document.getElementById(this.findMuscleIndex(muscleName)) != null) {
         switch (mappedValue) {
           case 1:
-            t.push(`Consider incorporating more exercises targeting your ${muscleName} for balanced development.`)
+            t.push(`Consider incorporating more exercises targeting your <strong style="color: ${colors[mappedValue]}">${muscleName}</strong> for balanced development.`)
             break;
           case 2:
-            t.push(`You are maintaining a good balance in exercising your ${muscleName}. Keep it up!`)
+            t.push(`You are maintaining a good balance in exercising your <strong style="color: ${colors[mappedValue]}">${muscleName}</strong>. Keep it up!`)
             break;
           case 3:
-            t.push(`Your ${muscleName} are over exercised! Let it rest a bit to enchance muscle growth!`)
+            t.push(`Your <strong style="color: ${colors[mappedValue]}">${muscleName}</strong> are over exercised! Let it rest a bit to enchance muscle growth!`)
             break;
           default:
             break;
@@ -224,7 +225,7 @@ export default class MusclesView extends Component {
           {this.state.tips.map((tip, index) => (
             <div style={{ color: 'white', position: 'relative', left: index % 2 == 0 ? -550 : 200, width: 400, marginTop: 50 }} className='interactable anim home-tip'>
               <img style={{ width: 100, filter: 'invert(1)', marginTop: -50 }} src={icon_lightbulb} />
-              <p style={{ display: 'inline-block', width: 250 }} key={index}>{tip}</p>
+              <div style={{ display: 'inline-block', width: 250 }} key={index} dangerouslySetInnerHTML={{ __html: tip }}></div>
             </div>
           ))}
         </div>}
