@@ -35,8 +35,7 @@ class AccountPage extends Component {
 
     fetch(`http://${host}:3001/api/user`, requestOptions)
       .then(response => response.text())
-      .then((response) => {
-        console.log(response)
+      .then((response) => {      
         var r = JSON.parse(response);
         if(r.success){
          this.setState({username: r.username, email: r.email});
@@ -58,7 +57,6 @@ class AccountPage extends Component {
         localStorage.setItem('anatomy', 'Feminine');
         this.setState({anatomy: 'Feminine'})
       }
-      console.log(localStorage.getItem('anatomy'))
   }
   changeTheme(e){
     const themes = [["#3C6FAA","#305886","#1F2229"],["#1DB954","#14863c","#191414"],["#515a5e","#41484d","#3a3d45"], ["#b94a68", "#991f35", "#671226"]]

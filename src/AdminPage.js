@@ -35,7 +35,6 @@ class AdminPage extends Component {
     fetch(`http://${host}:3001/api/user`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if(r.success){
           const exists = this.state.admins.some(v => (v === r.username));

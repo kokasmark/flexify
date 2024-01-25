@@ -46,7 +46,6 @@ class App extends Component {
     fetch(`http://${host}:3001/api/home/muscles`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if (r.success) {
           this.setState({ muscles: r.muscles });
