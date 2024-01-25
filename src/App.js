@@ -28,44 +28,7 @@ class App extends Component {
     }
   }
   colorMuscles(muscles) {
-    const muscleCounts = {};
-    var count = 0;
-    // Assuming 'muscles' is an array of muscle objects
-    for (var i = 0; i < muscles.length; i++) {
-      var muscleData = JSON.parse(muscles[i]);
-      for (var ii = 0; ii < muscleData.length; ii++) {
-        var name = muscleData[ii]; // Assuming the muscle is the first element in the array
-        count++;
-        // Count the occurrences of each muscle
-        muscleCounts[name] = (muscleCounts[name] || 0) + 1;
-      }
-
-    }
-
-    // Calculate the average count for each muscle group
-    const averageCounts = {};
-
-    for (const muscleName in muscleCounts) {
-      const totalOccurrences = muscleCounts[muscleName];
-      const averageCount = totalOccurrences / count; // Adjust the denominator if needed
-      averageCounts[muscleName] = averageCount;
-    }
-
-    // Map the average counts to the range [0, 3] and update muscle groups
-    var tipIndex = 0;
-    for (const muscleName in averageCounts) {
-      const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3)));
-      this.muscleViewRef.current.updateMuscleGroup(muscleName, mappedValue);
-
-      /*console.log(muscleName,this.muscleViewRef.current.findMuscleIndex(muscleName))
-      document.body.innerHTML += `<p style='position: absolute; top: ${300+50*tipIndex}px; ${tipIndex%2==0 ? 'right: 400px;' : 'left: 400px;'} color: white;' id='tip-${tipIndex}'>${muscleName}</p>`
-      this.connect(document.getElementById(this.muscleViewRef.current.findMuscleIndex(muscleName)), document.getElementById(`tip-${tipIndex}`),"#fff",3)
-      
-      tipIndex++;
-      
-      First try for tips on the homepage
-      */
-    }
+    
   }
 
   getMusclesTrained() {
@@ -141,13 +104,11 @@ connect(div1, div2, color, thickness) { // draw a line connecting elements
               <p className='interactable'>{GetString("home-period")[4]}</p>
             </div>
 
-
             
 
           <div className='muscle-container-home' style={{ position: 'relative', top: -10 }}>
             <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles} />
           </div>
-
         </div>
 
 
