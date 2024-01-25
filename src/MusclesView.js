@@ -189,7 +189,6 @@ export default class MusclesView extends Component {
 
       }
       this.setState({ tips: t })
-      console.log(this.state.tips)
     }
   }
   componentDidUpdate(prevProps, prevState) {

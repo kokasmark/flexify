@@ -32,7 +32,6 @@ export default class DietChart extends Component {
     fetch(`http://${host}:3001/api/diet`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if(r.success){
           this.setState({carbs: this.state.carbs+r.carbs,fat: this.state.fat+r.fat,protein: this.state.protein+r.protein})
@@ -61,7 +60,6 @@ export default class DietChart extends Component {
     fetch(`http://${host}:3001/api/diet/date`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if(r.success){
           this.setState({carbs: this.state.carbs+r.carbs,fat: this.state.fat+r.fat,protein: this.state.protein+r.protein})

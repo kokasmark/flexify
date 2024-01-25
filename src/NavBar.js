@@ -65,7 +65,6 @@ class Navbar extends Component {
       
     }
   
-    console.log("Streak:", streak);
     this.setState({ streak: streak });
   }
   
@@ -85,7 +84,6 @@ class Navbar extends Component {
     fetch(`http://${host}:3001/api/workouts/date`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if (r.success) {
           this.setState({ dates: r.dates });
@@ -116,7 +114,6 @@ class Navbar extends Component {
     fetch(`http://${host}:3001/api/user`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if(r.success){
          this.setState({username: r.username, email: r.email});
@@ -155,17 +152,6 @@ class Navbar extends Component {
     }
   }
   switchLanguage(){
-    /*swal("Change language?", "This will reload the page! All unsaved changes will be deleted!", "warning").then((result)=> {
-
-      console.log(result)
-      if(result){
-        localStorage.setItem('lang',localStorage.getItem('lang') == 'HU' ? 'EN':'HU');
-   
-        console.log('Switching language');
-        window.location.reload();
-      }
-    
-    });*/
     swal({
       title: GetString("alert-change-language")[0],
       text: GetString("alert-change-language")[1],

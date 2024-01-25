@@ -23,7 +23,6 @@ class DietPage extends Component {
     var c = document.getElementById('add-carbs').value == "" ? 0:parseInt(document.getElementById('add-carbs').value);
     var f =document.getElementById('add-fat').value == "" ? 0: parseInt(document.getElementById('add-fat').value);
     var p = document.getElementById('add-proteins').value == "" ? 0:parseInt(document.getElementById('add-proteins').value);
-    console.log(c, f, p)
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -39,7 +38,6 @@ class DietPage extends Component {
     fetch(`http://${host}:3001/api/diet/add`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if(r.success){
           this.setState({carbs: this.state.carbs + c,fat: this.state.fat + f,proteins: this.state.proteins + p})
@@ -79,7 +77,6 @@ class DietPage extends Component {
         return response.json();
       })
       .then(data => {
-        console.log(data[0]);
         var d = data[0];
         document.getElementById('food-calories').innerHTML = "Calories: "+ d.calories;
         document.getElementById('food-fat').innerHTML = "Fat: "+ d.fat_total_g;
@@ -114,7 +111,6 @@ class DietPage extends Component {
     fetch(`http://${host}:3001/api/diet/add`, requestOptions)
       .then(response => response.text())
       .then((response) => {
-        console.log(response)
         var r = JSON.parse(response);
         if(r.success){
           this.setState({carbs: this.state.carbs + c,fat: this.state.fat + f,proteins: this.state.proteins + p})

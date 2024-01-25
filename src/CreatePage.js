@@ -149,7 +149,6 @@ class CreatePage extends Component {
 
     if (prevState.importedWorkout != this.state.importedWorkout) {
       if (!this.state.importDone) {
-        console.log(this.state.importedWorkout.data[0].set_data)
         for (var i = 0; i < this.state.importedWorkout.data.length; i++) {
           document.getElementById(`create-reps-${i}`).value = JSON.parse(this.state.importedWorkout.data[i].set_data).length;
 
