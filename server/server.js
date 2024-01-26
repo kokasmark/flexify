@@ -167,6 +167,10 @@ function responseJson(res, success, data={}){
 }
 
 function responseTemplate(res, result, data){
+    if (result === false || result === undefined) {
+        responseJson(res, ERROR)
+        return
+    }
     let json = {}
     data.map((x) => json[x] = result[x])
     responseJson(res, SUCCESS, json)
