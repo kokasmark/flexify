@@ -16,11 +16,18 @@ class BrowsePage extends Component {
     state = {
         choosenGroup: '',
         templates: [],
-        viewedGif: ''
+        viewedGif: '',
+        nameOfGroup: ''
     }
     chooseMuscleGroup = (g) => {
         if (g != null && g.name != '') {
-          try { this.setState({ choosenGroup: g.name }) } catch { }
+          try { 
+            var n = GetString('muscle-'+g.name);
+            console.log(n)
+            var name = n.charAt(0).toUpperCase() + n.slice(1)
+            this.setState({ choosenGroup: g.name,nameOfGroup: name }) 
+
+          } catch { }
           for (var i = 0; i < 220; i++) {
             if (g.group.includes(i)) {
               try { document.getElementById(i).style.fill = 'var(--heat-orange)'; } catch { continue; }
@@ -83,7 +90,7 @@ class BrowsePage extends Component {
                         <MusclesView ref={this.muscleRef}chooseCallback={this.chooseMuscleGroup} />
                     </div>
                     {this.state.choosenGroup != '' ?<div key={this.state.choosenGroup} className='workouts anim browse-cards' style={{ position: 'relative', left: 800, top: 100 }}>
-                    <h1 style={{marginBottom: 20, color: 'white'}}>{this.state.choosenGroup.charAt(0).toUpperCase() + this.state.choosenGroup.slice(1)}  {GetString("workouts")}</h1>
+                    <h1 style={{marginBottom: 20, color: 'white'}}>{this.state.nameOfGroup}  {GetString("exercises")}</h1>
                     {this.state.templates.map((template, index) => (
                       <div>
                     {JSON.parse(template.muscles).includes(this.state.choosenGroup) &&

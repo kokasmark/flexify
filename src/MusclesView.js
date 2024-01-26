@@ -176,13 +176,13 @@ export default class MusclesView extends Component {
       if (document.getElementById(this.findMuscleIndex(muscleName)) != null) {
         switch (mappedValue) {
           case 1:
-            t.push(GetString("tip-level-1").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${muscleName}</strong>`))
+            t.push(GetString("tip-level-1").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`))
             break;
           case 2:
-            t.push(GetString("tip-level-2").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${muscleName}</strong>`))
+            t.push(GetString("tip-level-2").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`))
             break;
           case 3:
-            t.push(GetString("tip-level-3").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${muscleName}</strong>`))
+            t.push(GetString("tip-level-3").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`))
             break;
           default:
             break;
