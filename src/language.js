@@ -96,7 +96,20 @@ function GetString(name){
         "alert-change-language":{
             "HU": ["Nyelv megváltoztatása?", "Ez a művelet újra fogja tölteni az oldalt! Minden mentetlen változtatás törlödik!", "Ne változtassa!", "Változtassa!"],
             "EN": ["Change language?", "This will reload the page! All unsaved changes will be deleted!","No, dont change it!", "Yes, change it!"]
+        },
+        "tip-level-1":{
+            "HU":"Fontolja meg több olyan gyakorlat beiktatását, amelyek megcélozzák a/az !muscle! a kiegyensúlyozott fejlődés érdekében.",
+            "EN":"Consider incorporating more exercises targeting your !muscle! for balanced development."
+        },
+        "tip-level-2":{
+            "HU":"Jó egyensúlyt tartasz fenn a/az !muscle! gyakorlása során. Csak így tovább!",
+            "EN":"You are maintaining a good balance in exercising your !muscle!. Keep it up!"
+        },
+        "tip-level-3":{
+            "HU":"A/Az !muscle! túl vannak edzve! Hagyd pihenni egy kicsit, hogy fokozd az izomnövekedést!",
+            "EN":"Your !muscle! are over exercised! Let it rest a bit to enchance muscle growth!"
         }
+
     };
     return strings[name][localStorage.getItem('lang') != null ? localStorage.getItem('lang') : 'HU']
 }

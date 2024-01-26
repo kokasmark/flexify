@@ -6,6 +6,7 @@ import { ReactComponent as W_Muscles } from './assets/women-muscles.svg';
 import { ReactComponent as W_MusclesBack } from './assets/women-muscles-back.svg';
 import { ReactComponent as Icon_rotate } from './assets/icon-rotate.svg';
 import icon_lightbulb from './assets/icon-lightbulb.png'
+import GetString from './language';
 
 
 export default class MusclesView extends Component {
@@ -175,13 +176,13 @@ export default class MusclesView extends Component {
       if (document.getElementById(this.findMuscleIndex(muscleName)) != null) {
         switch (mappedValue) {
           case 1:
-            t.push(`Consider incorporating more exercises targeting your <strong style="color: ${colors[mappedValue]}">${muscleName}</strong> for balanced development.`)
+            t.push(GetString("tip-level-1").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${muscleName}</strong>`))
             break;
           case 2:
-            t.push(`You are maintaining a good balance in exercising your <strong style="color: ${colors[mappedValue]}">${muscleName}</strong>. Keep it up!`)
+            t.push(GetString("tip-level-2").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${muscleName}</strong>`))
             break;
           case 3:
-            t.push(`Your <strong style="color: ${colors[mappedValue]}">${muscleName}</strong> are over exercised! Let it rest a bit to enchance muscle growth!`)
+            t.push(GetString("tip-level-3").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${muscleName}</strong>`))
             break;
           default:
             break;
