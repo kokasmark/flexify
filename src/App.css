@@ -356,9 +356,11 @@ body{
   margin: auto;
   width: 1028px;
   height: 1024px;
+  filter: drop-shadow(5px 5px 2px rgb(0 0 0 / 0.4));
 }
 .muscle{
   z-index: 0 !important;
+  
 }
 .muscles path:not(.rotate){
   cursor: pointer;
@@ -609,6 +611,20 @@ iframe
 }
 .home-tip{
   animation: grow 0.5s ease-in;
+  filter: drop-shadow(5px 5px 2px rgb(0 0 0 / 0.4));
+}
+.home-tip img{
+  filter: invert(86%) sepia(25%) saturate(6802%) hue-rotate(343deg) brightness(106%) contrast(97%) drop-shadow(5px 5px 2px rgb(0 0 0 / 0.4)) !important;
+}
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  background-color: var(--contrast);
+  color: white;
+  padding-top: 10px;
 }
 @keyframes page-transition {
   0% {

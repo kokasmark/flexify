@@ -220,7 +220,7 @@ export default class MusclesView extends Component {
 
           <Icon_rotate className='interactable' style={{ transform: 'scale(2)', position: 'relative', top: -175, left: 500, fill: '#fff !important' }} onClick={() => this.rotate()} />
         </div>
-        {this.props.showTips != null && <div className='tips-container' style={{ position: 'relative', top: -800, left: 650 }}>
+        {this.props.showTips != null && <div className={'tips-container '+ this.state.animation} style={{ position: 'relative', top: -800, left: 650 }}>
           {this.state.tips.map((tip, index) => (
             <div style={{ color: 'white', position: 'relative', left: index % 2 == 0 ? -550 : 200, width: 400, marginTop: 50 }} className='interactable anim home-tip'>
               <img style={{ width: 100, filter: 'invert(1)', marginTop: -50 }} src={icon_lightbulb} />
