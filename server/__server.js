@@ -278,18 +278,22 @@ async function dbPostUserMuscles(req, res){
 
 async function dbPostUserDiet(req, res){
     log('/api/diet', 2)
-    let sql = 'SELECT protein, carbs, fat FROM diet WHERE user_id = ? AND date=CURDATE()'
-    let result = await validateAndQuery(req, res, sql, [], [], single=true, user_id=true)
-    if (result){
-        responseTemplate(res, result, ["protein", "carbs", "fat"])
-    }
-    else responseFail(res, result)
+    dbPostUserDietOnDate(req, res, today=true)
 }
 
-async function dbPostUserDietOnDate(req, res){
+async function dbPostUserDietOnDate(req, res, today=false){
     log('/api/diet/date', 2)
-    let sql = 'SELECT calories, protein, carbs, fat FROM diet WHERE date=? AND user_id=?'
-    let result = await validateAndQuery(req, res, sql, ["date"], [], single=true, user_id=true)
+
+    let result = undefined
+    if (today){
+        let sql = 'SELECT protein, carbs, fat FROM calendar WHERE date=CURDATE() AND user_id=?'
+        result = await validateAndQuery(req, res, sql, [], [], single=true, user_id=true)
+    }
+    else{
+        let sql = 'SELECT protein, carbs, fat FROM calendar WHERE date=? AND user_id=?'
+        result = await validateAndQuery(req, res, sql, ["date"], [], single=true, user_id=true)
+    }
+
     if (result){
         responseTemplate(res, result, ["protein", "carbs", "fat"])
     }
@@ -298,7 +302,7 @@ async function dbPostUserDietOnDate(req, res){
 
 async function dbPostUserDietDates(req, res){
     log('/api/diet/get_dates', 2)
-    let sql = `SELECT date FROM diet  WHERE user_id = ?`;
+    let sql = `SELECT date FROM calendar WHERE user_id = ? AND (protein != 0 OR carbs != 0 OR fat != 0)`;
     let result = await validateAndQuery(req, res, sql, [], [], single=false, user_id=true)
     if (result){
         const dates = result.map((row) => row.date); // Extract dates from the result
@@ -309,16 +313,16 @@ async function dbPostUserDietDates(req, res){
 
 async function dbPostUserDietAdd(req, res){
     log('/api/diet/add', 2)
-    let sql_current = 'SELECT id FROM diet WHERE user_id = ? AND date=CURDATE()'
+    let sql_current = 'SELECT id FROM calendar WHERE user_id = ? AND date=CURDATE()'
     let result = await validateAndQuery(req, res, sql_current, [], [], single=true, user_id=true)
     if (result){
         // having entry for today, add values
-        let sql_new = `UPDATE diet SET carbs=carbs+?, fat=fat+?, protein=protein+? WHERE id=?`
+        let sql_new = `UPDATE calendar SET carbs=carbs+?, fat=fat+?, protein=protein+? WHERE id=?`
         validateAndQuery(req, res, sql_new, ["carbs", "fat", "protein"], [result.id], single=true)
     }
     else{
         // no entry for today, create new
-        let sql_new = `INSERT INTO diet (carbs, fat, protein, user_id) VALUES (?, ?, ?, ?)`
+        let sql_new = `INSERT INTO calendar (date, carbs, fat, protein, user_id) VALUES (CURDATE(), ?, ?, ?, ?)`
         validateAndQuery(req, res, sql_new, ["carbs", "fat", "protein"], [], single=true, user_id=true)
     }
     responseSuccess(res)
