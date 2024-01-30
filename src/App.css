@@ -4,7 +4,7 @@
   --bg: #1F2229;
   --shadow:rgb(20, 20, 20);
 
-  --heat-yellow: rgb(251, 176, 33);
+  --heat-yellow: rgb(253, 217, 54);
   --heat-red: rgb(238, 62, 50);
   --heat-orange: rgb(246, 136, 56);
   --heat-blue:  var(--contrast);
@@ -629,16 +629,21 @@ iframe
 .plate-container{
   width: 100%;
   height: 80%;
-  margin-top: 20%;
+  margin-top: 15%;
+  margin-left: -5%;
 }
 .diet-plate h1{
   color: white;
   padding: 50px;
+  padding-left: 0px;
   margin-top: -90px;
+  width: 100%;
+  text-align: center;
 }
 .diet-plate{
   display: inline-block;
   margin-left: 9%;
+  margin-top: 50px;
 }
 .diet-plate .food-particles{
   position: relative;
@@ -649,7 +654,6 @@ iframe
 .diet-plate .food-particles img{
   width: 50px;
   margin: -25px;
-
   filter: invert(1);
 }
 .diet-plate img{
@@ -659,6 +663,16 @@ iframe
 .food-particle{
   animation: falling 1s ease-in;
   filter: invert(1) drop-shadow(5px 5px 1px rgb(0 0 0 / 0.8)) !important;
+  z-index: -1;
+}
+.diet-plate .hide{
+  background-color: var(--bg);
+  width: 300px;
+  height: 200px;
+  margin-top: -420px;
+}
+.plate-selected{
+  width: 100%;
 }
 @keyframes page-transition {
   0% {

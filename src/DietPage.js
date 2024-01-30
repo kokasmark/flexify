@@ -125,15 +125,18 @@ class DietPage extends Component {
       })
       .catch(error => console.log('error', error));
   }
-  manageParticles(calories,index) {
-    var numOfParticles = Math.floor((calories / 3000) * 20);
+  manageParticles(calories,index, average, icons) {
+    var numOfParticles = Math.floor((calories / 2000) *20);
     var parent = document.getElementById("particle-container-"+index);
-    document.getElementById("kcal-"+index).innerHTML = `${calories}kcal`
-    let icons = ["icon-cake", "icon-cake", "icon-orange", "icon-pizza"];
+    var kcalText = document.getElementById("kcal-"+index);
+    var colors = ["var(--heat-yellow)","var(--heat-orange)","var(--heat-red)"]
+
+    kcalText.innerHTML = `${calories}kcal`;
+    kcalText.style.color = Math.floor((calories / average)) > colors.length ? "var(--heat-red)": colors[Math.floor((calories / average))]
   
     var maxParticlesInTopRow = 6;
     var offsetMultiplier = 30;
-    var constantOffset = 50; // Adjust this value based on your requirements
+    var constantOffset = 40; // Adjust this value based on your requirements
     var verticalOffset = Math.max(0, (numOfParticles - 6) * 10);
   
     for (var i = 0; i < numOfParticles; i++) {
@@ -178,42 +181,58 @@ class DietPage extends Component {
   
   
   componentDidMount() {
-    this.manageParticles(Math.floor(Math.random()*3000),0)
-    this.manageParticles(Math.floor(Math.random()*3000),1)
-    this.manageParticles(Math.floor(Math.random()*3000),2)
-    this.manageParticles(Math.floor(Math.random()*3000),3)
+    this.manageParticles(Math.floor(Math.random()*2000),0,400*2,["icon-apple", "icon-croissant", "icon-egg", "icon-sausage"])
+    this.manageParticles(Math.floor(Math.random()*2000),1,600*2,["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"])
+    this.manageParticles(Math.floor(Math.random()*2000),2,600*2,["icon-apple", "icon-croissant", "icon-egg", "icon-sausage"])
+    this.manageParticles(Math.floor(Math.random()*2000),3,150*2,["icon-apple", "icon-croissant", "icon-egg", "icon-sausage"])
   }
   render() {
     return (
       <div className='page'>
         <div className='plate-container'>
-          <div className='diet-plate'>
+          <div className='diet-plate interactable'>
             <img src={require("./assets/foods/icon-plate.png")}></img>
-            <h1 id="kcal-0">0000kcal</h1>
+            <h1>Breakfast</h1>
+            
             <div className='food-particles' id="particle-container-0">
 
             </div>
+            <div className='hide'></div>
+            
+            <h1 id="kcal-0">0000kcal</h1>
           </div>
-          <div className='diet-plate'>
+          <div className='diet-plate interactable'>
             <img src={require("./assets/foods/icon-plate.png")}></img>
-            <h1 id="kcal-1">0000kcal</h1>
+            <h1>Lunch</h1>
+            
             <div className='food-particles' id="particle-container-1">
 
             </div>
+            <div className='hide'></div>
+            
+            <h1 id="kcal-1">0000kcal</h1>
           </div>
-          <div className='diet-plate'>
+          <div className='diet-plate interactable'>
             <img src={require("./assets/foods/icon-plate.png")}></img>
-            <h1 id="kcal-2">0000kcal</h1>
+            <h1>Dinner</h1>
+            
             <div className='food-particles' id="particle-container-2">
 
             </div>
+            <div className='hide'></div>
+            
+            <h1 id="kcal-2">0000kcal</h1>
           </div>
-          <div className='diet-plate'>
+          <div className='diet-plate interactable'>
             <img src={require("./assets/foods/icon-plate.png")}></img>
-            <h1 id="kcal-3">0000kcal</h1>
+            <h1>Snacks</h1>
+            
             <div className='food-particles' id="particle-container-3">
 
             </div>
+            <div className='hide'></div>
+            
+            <h1 id="kcal-3">0000kcal</h1>
           </div>
         </div>
         <NavBarWrapper />
