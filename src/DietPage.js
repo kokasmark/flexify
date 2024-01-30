@@ -3,20 +3,18 @@ import './App.css';
 import { Component } from 'react';
 import { ReactComponent as Icon_add } from './assets/icon-add.svg';
 import { ReactComponent as Icon_search } from './assets/icon-search.svg';
+import { ReactComponent as Icon_remove } from './assets/icon-remove.svg';
 import Sidebar from './Sidebar';
-import Navbar from './NavBar';
-import { PieChart } from 'react-minimal-pie-chart';
 import AuthRedirect from './authRedirect';
-import DietChart from './DietChart';
 import NavBarWrapper from './NavBar';
 import { host } from './constants'
-import { kMaxLength } from 'buffer';
 class DietPage extends Component {
   state = {
     carbs: 0,
     fat: 0,
     proteins: 0,
-    calories: 3000
+    calories: 3000,
+    selectedMeal: null,
   }
 
 
@@ -135,7 +133,7 @@ class DietPage extends Component {
     kcalText.style.color = Math.floor((calories / average)) > colors.length ? "var(--heat-red)": colors[Math.floor((calories / average))]
   
     var maxParticlesInTopRow = 6;
-    var offsetMultiplier = 30;
+    var offsetMultiplier = 35;
     var constantOffset = 40; // Adjust this value based on your requirements
     var verticalOffset = Math.max(0, (numOfParticles - 6) * 10);
   
@@ -162,7 +160,7 @@ class DietPage extends Component {
       const leftPosition = `${column * offsetMultiplier + leftOffset}px`;
       const topPosition = `${row * offsetMultiplier - verticalOffset}px`;
   
-      imageElement.style.rotate = `${(Math.random() - 0.5) * 30}deg`;
+      imageElement.style.rotate = `${(Math.random() - 0.5) * 10}deg`;
       imageElement.style.left = leftPosition;
       imageElement.style.top = topPosition;
 
@@ -183,14 +181,14 @@ class DietPage extends Component {
   componentDidMount() {
     this.manageParticles(Math.floor(Math.random()*2000),0,400*2,["icon-apple", "icon-croissant", "icon-egg", "icon-sausage"])
     this.manageParticles(Math.floor(Math.random()*2000),1,600*2,["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"])
-    this.manageParticles(Math.floor(Math.random()*2000),2,600*2,["icon-apple", "icon-croissant", "icon-egg", "icon-sausage"])
-    this.manageParticles(Math.floor(Math.random()*2000),3,150*2,["icon-apple", "icon-croissant", "icon-egg", "icon-sausage"])
+    this.manageParticles(Math.floor(Math.random()*2000),2,600*2,["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"])
+    this.manageParticles(Math.floor(Math.random()*2000),3,150*2,["icon-chips", "icon-cupcake", "icon-popcorn", "icon-apple"])
   }
   render() {
     return (
       <div className='page'>
-        <div className='plate-container'>
-          <div className='diet-plate interactable'>
+        <div className='plate-container' style={{filter: this.state.selectedMeal != null ? 'blur(3px)' : ''}}>
+          <div className='diet-plate interactable' onClick={()=>this.setState({selectedMeal: {name: 'Breakfast', icon: require('./assets/foods/icon-egg.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Breakfast</h1>
             
@@ -201,7 +199,7 @@ class DietPage extends Component {
             
             <h1 id="kcal-0">0000kcal</h1>
           </div>
-          <div className='diet-plate interactable'>
+          <div className='diet-plate interactable' onClick={()=>this.setState({selectedMeal: {name: 'Lunch', icon: require('./assets/foods/icon-hamburger.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Lunch</h1>
             
@@ -212,7 +210,7 @@ class DietPage extends Component {
             
             <h1 id="kcal-1">0000kcal</h1>
           </div>
-          <div className='diet-plate interactable'>
+          <div className='diet-plate interactable' onClick={()=>this.setState({selectedMeal: {name: 'Dinner', icon: require('./assets/foods/icon-steak.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Dinner</h1>
             
@@ -223,7 +221,7 @@ class DietPage extends Component {
             
             <h1 id="kcal-2">0000kcal</h1>
           </div>
-          <div className='diet-plate interactable'>
+          <div className='diet-plate interactable' onClick={()=>this.setState({selectedMeal: {name: 'Snacks', icon: require('./assets/foods/icon-cupcake.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Snacks</h1>
             
@@ -235,6 +233,21 @@ class DietPage extends Component {
             <h1 id="kcal-3">0000kcal</h1>
           </div>
         </div>
+
+        {this.state.selectedMeal != null && <div className='diet-add-popup highlight' onClick={()=>this.setState({selectedMeal: null})}>
+          <img src={this.state.selectedMeal.icon} style={{marginTop: 50}}/>
+          <h1>{this.state.selectedMeal.name}</h1>
+          <div style={{width: '100%', marginLeft: '7.5%'}}>
+            <input style={{width: '60%', marginLeft: '-14%'}} placeholder='What did you eat?'></input>
+            <input style={{width: '10%', marginLeft: '1%'}} placeholder='100g'></input>
+          </div>
+          <ul>
+            <li>
+              <p style={{display: 'inline'}}>Pancake 100g</p><Icon_remove className='interactable remove'/>
+            </li>
+          </ul>
+          <button className='interactable'><Icon_add/> Add to {this.state.selectedMeal.name}</button>
+        </div>}
         <NavBarWrapper />
         <Sidebar />
       </div>

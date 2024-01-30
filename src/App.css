@@ -650,6 +650,7 @@ iframe
   top: -240px;
   width: 200px;
   height: 200px;
+  left: -15px;
 }
 .diet-plate .food-particles img{
   width: 50px;
@@ -661,7 +662,7 @@ iframe
   filter: brightness(0) saturate(100%) invert(42%) sepia(29%) saturate(1034%) hue-rotate(172deg) brightness(89%) contrast(89%) drop-shadow(5px 5px 10px rgb(0 0 0 / 0.8));
 }
 .food-particle{
-  animation: falling 1s ease-in;
+  animation: falling 2s;
   filter: invert(1) drop-shadow(5px 5px 1px rgb(0 0 0 / 0.8)) !important;
   z-index: -1;
 }
@@ -673,6 +674,59 @@ iframe
 }
 .plate-selected{
   width: 100%;
+}
+.diet-add-popup{
+  position:absolute;
+  height: 50%;
+  width: 30%;
+  top: 25%;
+  left: 35%;
+  background-color: var(--bg);
+  border-radius: 10px;
+  text-align: center;
+}
+.diet-add-popup img{
+  filter: invert(1) drop-shadow(5px 5px 1px rgb(0 0 0 / 0.8)) !important;
+}
+.diet-add-popup h1{
+  color: white;
+  text-shadow: 3px 5px rgb(0 0 0 / 0.4);
+}
+.diet-add-popup input{
+  width: 300px;
+  background: var(--shadow);
+  border: none;
+  box-shadow: 0px 5px 5px var(--shadow);
+  border-radius: 5px;
+  color: white;
+}
+.diet-add-popup input::placeholder{
+  text-align: center;
+}
+.diet-add-popup button{
+  border: none;
+  background-color: var(--contrast);
+  border-radius: 10px;
+  box-shadow: 0px 5px 5px var(--shadow);
+  color: white;
+}
+.diet-add-popup ul{
+  list-style: none !important;
+  margin-top: 30px;
+}
+.diet-add-popup li{
+  color: white;
+  background-color: var(--shadow);
+  padding: 5px 5px 5px 5px;
+  margin-left: 35%;
+  width: fit-content;
+  border-radius: 10px;
+}
+.diet-add-popup li svg{
+  margin-left: 10px;
+}
+.interactable.remove:hover circle{
+  stroke: red !important;
 }
 @keyframes page-transition {
   0% {
