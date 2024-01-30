@@ -58,37 +58,6 @@ class AccountPage extends Component {
         this.setState({anatomy: 'Feminine'})
       }
   }
-  changeTheme(e){
-    const themes = [["#3C6FAA","#305886","#1F2229"],["#1DB954","#14863c","#191414"],["#515a5e","#41484d","#3a3d45"], ["#b94a68", "#991f35", "#671226"]]
-    switch(e.target.value){
-      default:
-        document.documentElement.style.setProperty('--contrast', themes[0][0]);
-        document.documentElement.style.setProperty('--darker-contrast', themes[0][1]);
-        document.documentElement.style.setProperty('--bg', themes[0][2]);
-        break;
-      case "Flexify Blue":
-        document.documentElement.style.setProperty('--contrast', themes[0][0]);
-        document.documentElement.style.setProperty('--darker-contrast', themes[0][1]);
-        document.documentElement.style.setProperty('--bg', themes[0][2]);
-        break;
-      case "Flexify Green":
-        document.documentElement.style.setProperty('--contrast', themes[1][0]);
-        document.documentElement.style.setProperty('--darker-contrast', themes[1][1]);
-        document.documentElement.style.setProperty('--bg', themes[1][2]);
-        break;
-      case "Flexify Gray":
-        document.documentElement.style.setProperty('--contrast', themes[2][0]);
-        document.documentElement.style.setProperty('--darker-contrast', themes[2][1]);
-        document.documentElement.style.setProperty('--bg', themes[2][2]);
-        break;
-      case "Flexify Crimson":
-        document.documentElement.style.setProperty('--contrast', themes[3][0]);
-        document.documentElement.style.setProperty('--darker-contrast', themes[3][1]);
-        document.documentElement.style.setProperty('--bg', themes[3][2]);
-        break;
-    }
-   
-  }
   render() {
     return (
       <div className='page'>
@@ -103,15 +72,6 @@ class AccountPage extends Component {
           <p>Anatomy:</p>
           <div className='interactable' style={{position: 'relative', top: -40, left: 80, fontWeight: 'bold'}}>
           {this.state.anatomy == "Masculine" ? <p onClick={()=>this.anatomySelect("Feminine")}>Masculine</p> : <p onClick={()=>this.anatomySelect("Masculine")}>Feminine</p>}
-          </div>
-          <div>
-            <p>Theme</p>
-            <select onChange={(e) => this.changeTheme(e)}>
-              <option>Flexify Blue</option>
-              <option>Flexify Green</option>
-              <option>Flexify Gray</option>
-              <option>Flexify Crimson</option>
-            </select>
           </div>
         </div>
         <NavBarWrapper />

@@ -9,24 +9,25 @@ import { PieChart } from 'react-minimal-pie-chart';
 import AuthRedirect from './authRedirect';
 import DietChart from './DietChart';
 import NavBarWrapper from './NavBar';
-import {host} from './constants'
+import { host } from './constants'
+import { kMaxLength } from 'buffer';
 class DietPage extends Component {
   state = {
     carbs: 0,
     fat: 0,
     proteins: 0,
-    calories: 0
+    calories: 3000
   }
 
 
-  addCaloriesManually = () =>{
-    var c = document.getElementById('add-carbs').value == "" ? 0:parseInt(document.getElementById('add-carbs').value);
-    var f =document.getElementById('add-fat').value == "" ? 0: parseInt(document.getElementById('add-fat').value);
-    var p = document.getElementById('add-proteins').value == "" ? 0:parseInt(document.getElementById('add-proteins').value);
+  addCaloriesManually = () => {
+    var c = document.getElementById('add-carbs').value == "" ? 0 : parseInt(document.getElementById('add-carbs').value);
+    var f = document.getElementById('add-fat').value == "" ? 0 : parseInt(document.getElementById('add-fat').value);
+    var p = document.getElementById('add-proteins').value == "" ? 0 : parseInt(document.getElementById('add-proteins').value);
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({token: localStorage.getItem('loginToken'), carbs: c, fat: f, protein: p, location: "web"});
+    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), carbs: c, fat: f, protein: p, location: "web" });
 
     var requestOptions = {
       method: 'POST',
@@ -39,19 +40,19 @@ class DietPage extends Component {
       .then(response => response.text())
       .then((response) => {
         var r = JSON.parse(response);
-        if(r.success){
-          this.setState({carbs: this.state.carbs + c,fat: this.state.fat + f,proteins: this.state.proteins + p})
+        if (r.success) {
+          this.setState({ carbs: this.state.carbs + c, fat: this.state.fat + f, proteins: this.state.proteins + p })
 
-          this.setState({calories: ((this.state.carbs+c) * 4)+((this.state.fat+f) * 9)+((this.state.proteins+p) * 4)})
-        }else{
-          
+          this.setState({ calories: ((this.state.carbs + c) * 4) + ((this.state.fat + f) * 9) + ((this.state.proteins + p) * 4) })
+        } else {
+
         }
       })
       .catch(error => console.log('error', error));
 
-   
+
   }
-  searchFood = () =>{
+  searchFood = () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("X-Api-Key", "CPyB7czRU+gk5oSYCEuxPA==QmXFanfZcubFgroY")
@@ -78,28 +79,30 @@ class DietPage extends Component {
       })
       .then(data => {
         var d = data[0];
-        document.getElementById('food-calories').innerHTML = "Calories: "+ d.calories;
-        document.getElementById('food-fat').innerHTML = "Fat: "+ d.fat_total_g;
-        document.getElementById('food-carbs').innerHTML ="Carbs: "+ d.carbohydrates_total_g;
-        document.getElementById('food-protein').innerHTML ="Protein: "+ d.protein_g;
+        document.getElementById('food-calories').innerHTML = "Calories: " + d.calories;
+        document.getElementById('food-fat').innerHTML = "Fat: " + d.fat_total_g;
+        document.getElementById('food-carbs').innerHTML = "Carbs: " + d.carbohydrates_total_g;
+        document.getElementById('food-protein').innerHTML = "Protein: " + d.protein_g;
       })
       .catch(error => {
         // Handle errors here
         console.error('Fetch error:', error);
       });
-    
 
-   
+
+
   }
-  addFood(){
-    var p = Number(document.getElementById('food-protein').innerHTML.replace("Protein: ",''));
-    var c = Number(document.getElementById('food-carbs').innerHTML.replace("Carbs: ",''));
-    var f = Number(document.getElementById('food-fat').innerHTML.replace("Fat: ",''));
-    
+  addFood() {
+    var p = Number(document.getElementById('food-protein').innerHTML.replace("Protein: ", ''));
+    var c = Number(document.getElementById('food-carbs').innerHTML.replace("Carbs: ", ''));
+    var f = Number(document.getElementById('food-fat').innerHTML.replace("Fat: ", ''));
+
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({token: localStorage.getItem('loginToken'), carbs: c
-    , fat: f, protein: p, location: "web"});
+    var raw = JSON.stringify({
+      token: localStorage.getItem('loginToken'), carbs: c
+      , fat: f, protein: p, location: "web"
+    });
 
     var requestOptions = {
       method: 'POST',
@@ -112,52 +115,105 @@ class DietPage extends Component {
       .then(response => response.text())
       .then((response) => {
         var r = JSON.parse(response);
-        if(r.success){
-          this.setState({carbs: this.state.carbs + c,fat: this.state.fat + f,proteins: this.state.proteins + p})
+        if (r.success) {
+          this.setState({ carbs: this.state.carbs + c, fat: this.state.fat + f, proteins: this.state.proteins + p })
 
-          this.setState({calories: ((this.state.carbs+c) * 4)+((this.state.fat+f) * 9)+((this.state.proteins+p) * 4)})
-        }else{
-          
+          this.setState({ calories: ((this.state.carbs + c) * 4) + ((this.state.fat + f) * 9) + ((this.state.proteins + p) * 4) })
+        } else {
+
         }
       })
       .catch(error => console.log('error', error));
   }
+  manageParticles(calories,index) {
+    var numOfParticles = Math.floor((calories / 3000) * 20);
+    var parent = document.getElementById("particle-container-"+index);
+    document.getElementById("kcal-"+index).innerHTML = `${calories}kcal`
+    let icons = ["icon-cake", "icon-cake", "icon-orange", "icon-pizza"];
+  
+    var maxParticlesInTopRow = 6;
+    var offsetMultiplier = 30;
+    var constantOffset = 50; // Adjust this value based on your requirements
+    var verticalOffset = Math.max(0, (numOfParticles - 6) * 10);
+  
+    for (var i = 0; i < numOfParticles; i++) {
+      const food_icon = icons[Math.floor(Math.random() * icons.length)];
+  
+      // Create a new image element
+      const imageElement = document.createElement("img");
+  
+      // Set the source dynamically
+      imageElement.src = require(`./assets/foods/${food_icon}.png`);
+  
+      // Set style
+      imageElement.style.position = 'relative';
+  
+      // Calculate row and column for the pyramid effect
+      const row = Math.floor((-1 + Math.sqrt(1 + 8 * i)) / 2);
+      const column = i - row * (row + 1) / 2;
+  
+      // Calculate left offset for centering the row
+      const leftOffset = (maxParticlesInTopRow - row) * 0.5 * offsetMultiplier + constantOffset;
+  
+      // Set position based on row and column
+      const leftPosition = `${column * offsetMultiplier + leftOffset}px`;
+      const topPosition = `${row * offsetMultiplier - verticalOffset}px`;
+  
+      imageElement.style.rotate = `${(Math.random() - 0.5) * 30}deg`;
+      imageElement.style.left = leftPosition;
+      imageElement.style.top = topPosition;
+
+      imageElement.className = "food-particle"
+  
+      parent.appendChild(imageElement);
+  
+      // Adjust maxParticlesInRow for each row
+      if (column === maxParticlesInTopRow - 1) {
+        maxParticlesInTopRow--;
+      }
+    }
+  }
+  
+  
+  
+  
+  componentDidMount() {
+    this.manageParticles(Math.floor(Math.random()*3000),0)
+    this.manageParticles(Math.floor(Math.random()*3000),1)
+    this.manageParticles(Math.floor(Math.random()*3000),2)
+    this.manageParticles(Math.floor(Math.random()*3000),3)
+  }
   render() {
     return (
       <div className='page'>
-        <div style={{ position: 'relative', left: '39vw', top: 250 }} className='chart'>
-          <div className='dietpage-chart' style={{position:'relative', left:0, top: 0}}>
-            <DietChart/>
+        <div className='plate-container'>
+          <div className='diet-plate'>
+            <img src={require("./assets/foods/icon-plate.png")}></img>
+            <h1 id="kcal-0">0000kcal</h1>
+            <div className='food-particles' id="particle-container-0">
+
+            </div>
           </div>
-        
-          <div className='anim add-calorie load-anim'>
-            <h1 style={{color: 'white', fontSize: 25, width:'100%', margin: 0}}>Add Calories Manually</h1>
-            <ul style={{listStyle: 'none'}}>
-              <li style={{marginBottom: 10, marginLeft: -25, marginTop: 40}}>
-                <input placeholder='Carbs' id='add-carbs'></input>
-                <p style={{color: 'white', display: 'inline-block', marginLeft: 5}}>g</p>
-              </li>
-              <li style={{marginBottom: 10, marginLeft: -25}}>
-                <input placeholder='Fat' id='add-fat'></input>
-                <p style={{color: 'white', display: 'inline-block', marginLeft: 5}}>g</p>
-              </li>
-              <li style={{marginBottom: 10, marginLeft: -25}}>
-                <input placeholder='Proteins' id='add-proteins'></input>
-                <p style={{color: 'white', display: 'inline-block', marginLeft: 5}}>g</p>
-              </li>
-            </ul>
-            <Icon_add className='interactable' onClick={this.addCaloriesManually}/>
+          <div className='diet-plate'>
+            <img src={require("./assets/foods/icon-plate.png")}></img>
+            <h1 id="kcal-1">0000kcal</h1>
+            <div className='food-particles' id="particle-container-1">
+
+            </div>
           </div>
-          <div className='anim add-food load-anim' style={{position: 'absolute', top: 300}}>
-            <h1 style={{color: 'white', fontSize: 25, width:'100%', margin: 0}}>Add Food</h1>
-            <input id='food-querry' placeholder='Example: 10g Chicken'></input><Icon_search className='interactable' onClick={this.searchFood}/>
-            <ul style={{textAlign: 'start', color: 'white'}}>
-              <li><p id='food-calories'></p></li>
-              <li><p id='food-fat'></p></li>
-              <li><p id='food-protein'></p></li>
-              <li><p id='food-carbs'></p></li>
-            </ul>
-            <Icon_add className='interactable' onClick={this.addFood}/>
+          <div className='diet-plate'>
+            <img src={require("./assets/foods/icon-plate.png")}></img>
+            <h1 id="kcal-2">0000kcal</h1>
+            <div className='food-particles' id="particle-container-2">
+
+            </div>
+          </div>
+          <div className='diet-plate'>
+            <img src={require("./assets/foods/icon-plate.png")}></img>
+            <h1 id="kcal-3">0000kcal</h1>
+            <div className='food-particles' id="particle-container-3">
+
+            </div>
           </div>
         </div>
         <NavBarWrapper />
