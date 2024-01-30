@@ -611,6 +611,7 @@ iframe
 }
 .home-tip{
   animation: grow 0.5s ease-in;
+  
   filter: drop-shadow(5px 5px 2px rgb(0 0 0 / 0.4));
 }
 .home-tip img{
@@ -662,8 +663,7 @@ iframe
   filter: brightness(0) saturate(100%) invert(42%) sepia(29%) saturate(1034%) hue-rotate(172deg) brightness(89%) contrast(89%) drop-shadow(5px 5px 10px rgb(0 0 0 / 0.8));
 }
 .food-particle{
-  animation: falling 2s;
-  filter: invert(1) drop-shadow(5px 5px 1px rgb(0 0 0 / 0.8)) !important;
+  filter: invert(1) drop-shadow(0px 0px 10px rgb(0 0 0)) !important;
   z-index: -1;
 }
 .diet-plate .hide{
@@ -687,6 +687,9 @@ iframe
 }
 .diet-add-popup img{
   filter: invert(1) drop-shadow(5px 5px 1px rgb(0 0 0 / 0.8)) !important;
+}
+.diet-add-popup img::before{
+  opacity: 0;
 }
 .diet-add-popup h1{
   color: white;
@@ -727,6 +730,12 @@ iframe
 }
 .interactable.remove:hover circle{
   stroke: red !important;
+}
+@keyframes fallingAnimation {
+  to {
+      transform: translateY(0);
+      opacity: 1;
+  }
 }
 @keyframes page-transition {
   0% {

@@ -163,11 +163,16 @@ class DietPage extends Component {
       imageElement.style.rotate = `${(Math.random() - 0.5) * 10}deg`;
       imageElement.style.left = leftPosition;
       imageElement.style.top = topPosition;
+      imageElement.style.opacity = '0';
 
       imageElement.className = "food-particle"
-  
+      imageElement.style.animation = `falling 1s ease-out ${Math.random()}s forwards`;
       parent.appendChild(imageElement);
-  
+      
+
+      imageElement.addEventListener('animationend', () => {
+        imageElement.style.opacity = '1';
+    });
       // Adjust maxParticlesInRow for each row
       if (column === maxParticlesInTopRow - 1) {
         maxParticlesInTopRow--;
