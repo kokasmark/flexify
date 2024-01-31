@@ -742,6 +742,46 @@ iframe
 .interactable.remove:hover circle{
   stroke: red !important;
 }
+.workout-card .start-workout{
+  border: none;
+  background-color: var(--contrast);
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px #fff;
+  color: white;
+  padding: 5px 20px 5px 20px;
+}
+.workout-container{
+  height: 40%;
+  width: 40%;
+  margin-top: 10%;
+  margin-left: 30%;
+  text-align: center;
+  color: white;
+}
+.workout-container h1{
+  font-size: 72px;
+}
+.workout-container .workout-gif{
+  height: 300px;
+  width: 300px;
+  background-color: var(--contrast);
+  border-radius: 10px;
+  box-shadow: 0px 10px 10px var(--shadow);
+  margin-left: 235px;
+  margin-top: 50px;
+}
+.workout-container .workout-gif img{
+  mix-blend-mode: multiply;
+  width: inherit;
+  height: inherit;
+}
+.workout-container .workout-settings{
+  display: flex;
+  margin-left: 30%;
+}
+.workout-container .workout-settings p{
+  margin: 30px;
+}
 @keyframes fallingAnimation {
   to {
       transform: translateY(0);

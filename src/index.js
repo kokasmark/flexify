@@ -15,6 +15,7 @@ import AdminPageWrapper from './AdminPage';
 import AccountPage from './AccountPage';
 import SavedPage from './SavedPage';
 import CreatePageWrapper from './CreatePage';
+import WorkoutPageWrapper from './WorkoutPage';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter history={history}>
@@ -26,6 +27,7 @@ root.render(
     <Route exact={true} path="/diet" element={<DietPage />} />
     <Route exact={true} path="/saved" element={<SavedPage />} />
     <Route exact={true} path="/account" element={<AccountPage />} />
+    <Route exact={true} path="/workout" element={<WorkoutPageWrapper />} />
 
     <Route exact={true} path="/login" element={<SignInWrapper />} />
     <Route exact={true} path="/signup" element={<SignUpWrapper />} />

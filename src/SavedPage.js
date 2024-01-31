@@ -4,9 +4,7 @@ import { Component } from 'react';
 
 import Sidebar from './Sidebar';
 
-
 import 'react-calendar/dist/Calendar.css';
-
 
 import AuthRedirect from './authRedirect';
 import { Card } from 'react-bootstrap';
@@ -18,6 +16,7 @@ import { ReactComponent as Icon_copy } from './assets/icon-copy.svg';
 import { Link } from 'react-router-dom';
 
 import {host} from './constants'
+
 
 class SavedPage extends Component {
   state = {
@@ -58,7 +57,7 @@ class SavedPage extends Component {
         <div className='saved-card-container load-anim' style={{position: 'absolute', top: 100, marginLeft: 150, borderRadius: 10, 
         height: "90%", padding: 20, overflowY: 'auto'}}>
         {this.state.savedTemplates.map((template, index) => (
-          <Card key={index} style={{ width: 300, height: 350, textAlign: 'center', boxShadow: '5px 5px 10px var(--shadow)' }}>
+          <Card key={index} style={{ width: 300, height: 350, textAlign: 'center', boxShadow: '5px 5px 10px var(--shadow)' }} className='workout-card'>
 
             <Card.Body>
               <Card.Title>{template.name}</Card.Title>
@@ -91,6 +90,7 @@ class SavedPage extends Component {
                 ))}
               </ol>
               </div>
+              <Link to={{ pathname: '/workout'}} onClick={()=>localStorage.setItem("started-workout", JSON.stringify(template))}><div className='start-workout interactable'>Start</div></Link>
             </Card.Body>
           </Card>
 
