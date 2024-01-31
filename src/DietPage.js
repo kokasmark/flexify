@@ -8,6 +8,7 @@ import Sidebar from './Sidebar';
 import AuthRedirect from './authRedirect';
 import NavBarWrapper from './NavBar';
 import { host } from './constants'
+import swal from 'sweetalert';
 class DietPage extends Component {
   state = {
     carbs: 0,
@@ -15,45 +16,21 @@ class DietPage extends Component {
     proteins: 0,
     calories: 3000,
     selectedMeal: null,
+    meals: {
+      Breakfast: {totalCalories: 0, average: 300, icons: ["icon-apple", "icon-croissant", "icon-egg", "icon-sausage"],foods: []},
+      Lunch:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
+      Dinner:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
+      Snacks:  {totalCalories: 0, average: 300, icons: ["icon-chips", "icon-cupcake", "icon-popcorn", "icon-apple"],foods: []}
+    }
   }
 
-
-  addCaloriesManually = () => {
-    var c = document.getElementById('add-carbs').value == "" ? 0 : parseInt(document.getElementById('add-carbs').value);
-    var f = document.getElementById('add-fat').value == "" ? 0 : parseInt(document.getElementById('add-fat').value);
-    var p = document.getElementById('add-proteins').value == "" ? 0 : parseInt(document.getElementById('add-proteins').value);
-
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), carbs: c, fat: f, protein: p, location: "web" });
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
-    fetch(`http://${host}:3001/api/diet/add`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        var r = JSON.parse(response);
-        if (r.success) {
-          this.setState({ carbs: this.state.carbs + c, fat: this.state.fat + f, proteins: this.state.proteins + p })
-
-          this.setState({ calories: ((this.state.carbs + c) * 4) + ((this.state.fat + f) * 9) + ((this.state.proteins + p) * 4) })
-        } else {
-
-        }
-      })
-      .catch(error => console.log('error', error));
-
-
-  }
-  searchFood = () => {
+  addFood = (meal) => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("X-Api-Key", "CPyB7czRU+gk5oSYCEuxPA==QmXFanfZcubFgroY")
+
+    var foodName = document.getElementById('food-name').value;
+    var foodAmount = document.getElementById('food-amount').value
 
     var requestOptions = {
       method: 'GET',
@@ -61,13 +38,11 @@ class DietPage extends Component {
       mode: 'no-cors'
     };
 
-    var query = document.getElementById('food-querry').value;
+    var query = `${foodAmount} ${foodName}`;
 
     fetch('https://api.api-ninjas.com/v1/nutrition?query=' + query, {
       method: 'GET',
-      headers: {
-        'X-Api-Key': 'CPyB7czRU+gk5oSYCEuxPA==QmXFanfZcubFgroY',
-      },
+      headers: myHeaders,
     })
       .then(response => {
         if (!response.ok) {
@@ -77,10 +52,18 @@ class DietPage extends Component {
       })
       .then(data => {
         var d = data[0];
-        document.getElementById('food-calories').innerHTML = "Calories: " + d.calories;
-        document.getElementById('food-fat').innerHTML = "Fat: " + d.fat_total_g;
-        document.getElementById('food-carbs').innerHTML = "Carbs: " + d.carbohydrates_total_g;
-        document.getElementById('food-protein').innerHTML = "Protein: " + d.protein_g;
+        console.log(d)
+        if(d != undefined){
+        this.setState((prevState) => {
+          var updatedMeals = { ...prevState.meals };
+          updatedMeals[meal].totalCalories = updatedMeals[meal].totalCalories + Math.ceil(d.calories);
+          updatedMeals[meal].foods.push({name: foodName, amount: Number(d.serving_size_g), calories:  Math.ceil(d.calories)})
+          this.manageParticles(meal, updatedMeals[meal].totalCalories)
+          return { meals: updatedMeals };
+        });
+      }else{
+        swal('Oops!', 'Cannont find food or beverage named: '+foodName, "error")
+      }
       })
       .catch(error => {
         // Handle errors here
@@ -90,45 +73,17 @@ class DietPage extends Component {
 
 
   }
-  addFood() {
-    var p = Number(document.getElementById('food-protein').innerHTML.replace("Protein: ", ''));
-    var c = Number(document.getElementById('food-carbs').innerHTML.replace("Carbs: ", ''));
-    var f = Number(document.getElementById('food-fat').innerHTML.replace("Fat: ", ''));
-
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({
-      token: localStorage.getItem('loginToken'), carbs: c
-      , fat: f, protein: p, location: "web"
-    });
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
-    fetch(`http://${host}:3001/api/diet/add`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        var r = JSON.parse(response);
-        if (r.success) {
-          this.setState({ carbs: this.state.carbs + c, fat: this.state.fat + f, proteins: this.state.proteins + p })
-
-          this.setState({ calories: ((this.state.carbs + c) * 4) + ((this.state.fat + f) * 9) + ((this.state.proteins + p) * 4) })
-        } else {
-
-        }
-      })
-      .catch(error => console.log('error', error));
-  }
-  manageParticles(calories,index, average, icons) {
+  manageParticles(meal, calories) {
+    var average = this.state.meals[meal].average;
+    var icons = this.state.meals[meal].icons;
     var numOfParticles = Math.floor((calories / 2000) *20);
-    var parent = document.getElementById("particle-container-"+index);
-    var kcalText = document.getElementById("kcal-"+index);
+    numOfParticles = numOfParticles < 21 ? numOfParticles : 20;
+    var parent = document.getElementById("particle-container-"+meal);
+    console.log(parent)
+    var kcalText = document.getElementById("kcal-"+meal);
     var colors = ["var(--heat-yellow)","var(--heat-orange)","var(--heat-red)"]
 
+    parent.innerHTML = '';
     kcalText.innerHTML = `${calories}kcal`;
     kcalText.style.color = Math.floor((calories / average)) > colors.length ? "var(--heat-red)": colors[Math.floor((calories / average))]
   
@@ -179,79 +134,84 @@ class DietPage extends Component {
       }
     }
   }
-  
-  
-  
-  
-  componentDidMount() {
-    this.manageParticles(Math.floor(Math.random()*2000),0,400*2,["icon-apple", "icon-croissant", "icon-egg", "icon-sausage"])
-    this.manageParticles(Math.floor(Math.random()*2000),1,600*2,["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"])
-    this.manageParticles(Math.floor(Math.random()*2000),2,600*2,["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"])
-    this.manageParticles(Math.floor(Math.random()*2000),3,150*2,["icon-chips", "icon-cupcake", "icon-popcorn", "icon-apple"])
+  removeFood(meal, index){
+    this.setState((prevState) => {
+      var updatedMeals = { ...prevState.meals };
+      updatedMeals[meal].totalCalories -= updatedMeals[meal].foods[index].calories
+      updatedMeals[meal].foods.splice(index,1)
+      this.manageParticles(meal, updatedMeals[meal].totalCalories)
+      return { meals: updatedMeals };
+    });
   }
   render() {
     return (
       <div className='page'>
         <div className='plate-container' style={{filter: this.state.selectedMeal != null ? 'blur(3px)' : ''}}>
-          <div className='diet-plate interactable' onClick={()=>this.setState({selectedMeal: {name: 'Breakfast', icon: require('./assets/foods/icon-egg.png')}})}>
+          <div className='diet-plate interactable' onClick={()=>this.setState({selectedMeal: {name: 'Breakfast', icon: require('./assets/foods/icon-croissant.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Breakfast</h1>
             
-            <div className='food-particles' id="particle-container-0">
+            <div className='food-particles' id="particle-container-Breakfast">
 
             </div>
             <div className='hide'></div>
             
-            <h1 id="kcal-0">0000kcal</h1>
+            <h1 id="kcal-Breakfast">{this.state.meals["Breakfast"].totalCalories}kcal</h1>
           </div>
           <div className='diet-plate interactable' onClick={()=>this.setState({selectedMeal: {name: 'Lunch', icon: require('./assets/foods/icon-hamburger.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Lunch</h1>
             
-            <div className='food-particles' id="particle-container-1">
+            <div className='food-particles' id="particle-container-Lunch">
 
             </div>
             <div className='hide'></div>
             
-            <h1 id="kcal-1">0000kcal</h1>
+            <h1 id="kcal-Lunch">{this.state.meals["Lunch"].totalCalories}kcal</h1>
           </div>
           <div className='diet-plate interactable' onClick={()=>this.setState({selectedMeal: {name: 'Dinner', icon: require('./assets/foods/icon-steak.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Dinner</h1>
             
-            <div className='food-particles' id="particle-container-2">
+            <div className='food-particles' id="particle-container-Dinner">
 
             </div>
             <div className='hide'></div>
             
-            <h1 id="kcal-2">0000kcal</h1>
+            <h1 id="kcal-Dinner">{this.state.meals["Dinner"].totalCalories}kcal</h1>
           </div>
           <div className='diet-plate interactable' onClick={()=>this.setState({selectedMeal: {name: 'Snacks', icon: require('./assets/foods/icon-cupcake.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Snacks</h1>
             
-            <div className='food-particles' id="particle-container-3">
+            <div className='food-particles' id="particle-container-Snacks">
 
             </div>
             <div className='hide'></div>
             
-            <h1 id="kcal-3">0000kcal</h1>
+            <h1 id="kcal-Snacks">{this.state.meals["Snacks"].totalCalories}kcal</h1>
           </div>
         </div>
 
-        {this.state.selectedMeal != null && <div className='diet-add-popup highlight' onClick={()=>this.setState({selectedMeal: null})}>
+        {this.state.selectedMeal != null && <div className='diet-add-popup highlight'>
+          <h2 className='interactable' onClick={()=>this.setState({selectedMeal: null})}>x</h2>
           <img src={this.state.selectedMeal.icon} style={{marginTop: 50}}/>
           <h1>{this.state.selectedMeal.name}</h1>
           <div style={{width: '100%', marginLeft: '7.5%'}}>
-            <input style={{width: '60%', marginLeft: '-14%'}} placeholder='What did you eat?'></input>
-            <input style={{width: '10%', marginLeft: '1%'}} placeholder='100g'></input>
+            <input style={{width: '60%', marginLeft: '-14%'}} placeholder='What did you eat?' id='food-name'></input>
+            <input style={{width: '10%', marginLeft: '1%'}} placeholder='100g' id='food-amount'></input>
           </div>
-          <ul>
-            <li>
-              <p style={{display: 'inline'}}>Pancake 100g</p><Icon_remove className='interactable remove'/>
-            </li>
-          </ul>
-          <button className='interactable'><Icon_add/> Add to {this.state.selectedMeal.name}</button>
+          <div className='foods-added-container'>
+          {this.state.meals[this.state.selectedMeal.name].foods.map((food, index) => (
+            <div key={index} className='foods-added'>
+              <p style={{ display: 'inline' }}>{food.name} {food.amount}g</p>
+              <Icon_remove className='interactable remove' onClick={()=> this.removeFood(this.state.selectedMeal.name,index)}/>
+            </div>
+          ))}
+            
+          </div>
+          <button className='interactable' onClick={()=> this.addFood(this.state.selectedMeal.name)}><Icon_add/> Add to {this.state.selectedMeal.name}</button>
+          
         </div>}
         <NavBarWrapper />
         <Sidebar />

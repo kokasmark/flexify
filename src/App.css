@@ -544,6 +544,8 @@ body{
 
 ::-webkit-scrollbar-track {
   background-color: var(--contrast); /* Set the color of the scrollbar track (the non-draggable part) */
+  border-radius: 10px; 
+
 }
 .create-workout{
   background-color: var(--contrast);
@@ -713,20 +715,29 @@ iframe
   box-shadow: 0px 5px 5px var(--shadow);
   color: white;
 }
-.diet-add-popup ul{
+.diet-add-popup .foods-added-container{
   list-style: none !important;
   margin-top: 30px;
+  height: 100px;
+  overflow-y: auto;
+  width: 100%;
 }
-.diet-add-popup li{
+.diet-add-popup .foods-added{
   color: white;
   background-color: var(--shadow);
   padding: 5px 5px 5px 5px;
-  margin-left: 35%;
+  margin: 5px;
   width: fit-content;
   border-radius: 10px;
+  display: inline-block;
 }
-.diet-add-popup li svg{
+.diet-add-popup .foods-added svg{
   margin-left: 10px;
+}
+.diet-add-popup h2{
+  color: white;
+  position: relative;
+  left: 45%;
 }
 .interactable.remove:hover circle{
   stroke: red !important;
@@ -791,10 +802,10 @@ iframe
 @keyframes falling {
   0% {
     opacity: 0;
-    transform: translateY(-200px);
+    transform: translateY(-200px) rotate(0);
   }
   100% {
     opacity: 1;
-    transform: translateY(0px);
+    transform: translateY(0px) rotate(360);
   }
 }

@@ -139,9 +139,7 @@ export default class MusclesView extends Component {
     if (this.state.animation == 'fade-in') {
       this.setState({ animation: 'fade-out' })
       await new Promise(r => setTimeout(r, 200))
-      this.setState({ front: !this.state.front });
-      this.setState({ animation: 'fade-in' })
-
+      this.setState({ front: !this.state.front, animation: 'fade-in' });
     }
   }
   Draw() {
