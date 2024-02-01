@@ -749,6 +749,7 @@ iframe
   box-shadow: 0px 0px 10px #fff;
   color: white;
   padding: 5px 20px 5px 20px;
+  text-decoration: none;
 }
 .workout-container{
   height: 40%;
@@ -762,13 +763,9 @@ iframe
   font-size: 72px;
 }
 .workout-container .workout-gif{
-  height: 300px;
-  width: 300px;
-  background-color: var(--contrast);
+  height: 100%;
+  width: 100%;
   border-radius: 10px;
-  box-shadow: 0px 10px 10px var(--shadow);
-  margin-left: 235px;
-  margin-top: 50px;
 }
 .workout-container .workout-gif img{
   mix-blend-mode: multiply;
@@ -777,10 +774,78 @@ iframe
 }
 .workout-container .workout-settings{
   display: flex;
-  margin-left: 30%;
+  justify-content: center;
+  margin-top: 5%;
+}
+.workout-container .current-set{
+  margin-top: 5%;
+  margin-bottom: 5%;
 }
 .workout-container .workout-settings p{
-  margin: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.workout-container .workout-settings span{
+  display: flex;
+}
+.workout-container .workout-settings b{
+  font-size: 20px;
+}
+.workout-container .timers{
+  display: flex;
+  justify-content: center;
+}
+.workout-container .timers .workout-timer{
+  height: 100px;
+  width: fit-content;
+}
+.workout-container .timers .duration-timer{
+  margin-top: 30px;
+  margin-left: 50px;
+}
+.workout-container .workout-control-btn{
+  border: none;
+  background-color: var(--contrast);
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px #fff;
+  color: white;
+  padding: 5px 20px 5px 20px;
+  margin: 20px;
+}
+.workout-container .workout-next-btn{
+  filter: invert(1);
+}
+.workout-container .workout-right-panel{
+  position: absolute;
+  top: 40%;
+  right: 10%;
+  z-index: 10;
+}
+.workout-container .workout-paused{
+  opacity: 0.5;
+}
+.workout-container .workout-left-panel{
+  position: absolute;
+  top: 40%;
+  left: 10%;
+}
+.workout-container .workout-middle-panel{
+  position: absolute;
+  width: 60%;
+  top: 5%;
+  left: 20%;
+  right: 20%;
+}
+@keyframes timer {
+  0%{
+    transform: scale(1.0);
+  }
+  90%{
+    transform: scale(1.0);
+  }
+  100%{
+    transform: scale(1.1);
+  }
 }
 @keyframes fallingAnimation {
   to {

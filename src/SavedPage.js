@@ -90,7 +90,7 @@ class SavedPage extends Component {
                 ))}
               </ol>
               </div>
-              <Link to={{ pathname: '/workout'}} onClick={()=>localStorage.setItem("started-workout", JSON.stringify(template))}><div className='start-workout interactable'>Start</div></Link>
+              <Link to={{ pathname: '/workout'}} onClick={()=>localStorage.setItem("started-workout", JSON.stringify(template))} className='start-workout interactable'>Start</Link>
             </Card.Body>
           </Card>
 

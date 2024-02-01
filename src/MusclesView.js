@@ -144,6 +144,7 @@ export default class MusclesView extends Component {
   }
   Draw() {
     var muscles = this.props.muscles;
+    console.log(muscles)
     const muscleCounts = {};
     var count = 0;
     // Assuming 'muscles' is an array of muscle objects
@@ -199,11 +200,27 @@ export default class MusclesView extends Component {
     if (this.props.muscles != prevProps.muscles) {
       this.Draw()
     }
+    if(this.props.autoRotate){
+      this.props.array.forEach(muscle => {
+        this.updateMuscleGroup(muscle, 2)
+      });
+    }
   }
-
+  async AutoRotate(){
+    
+    await new Promise(r => setTimeout(r, 3000))
+    if(this.props.autoRotate == true){
+      this.rotate()
+    }
+    this.AutoRotate()
+    
+  }
   componentDidMount() {
     this.setState({ men: (localStorage.getItem('anatomy') != null ? (localStorage.getItem('anatomy') == "Masculine" ? true : false) : true) })
     this.createMuscleData();
+    if(this.props.autoRotate != null){
+      this.AutoRotate()
+    }
   }
   render() {
     return (
@@ -217,7 +234,7 @@ export default class MusclesView extends Component {
           }
 
 
-          <Icon_rotate className='interactable' style={{ transform: 'scale(2)', position: 'relative', top: -175, left: 500, fill: '#fff !important' }} onClick={() => this.rotate()} />
+          {this.props.autoRotate == null && <Icon_rotate className='interactable' style={{ transform: 'scale(2)', position: 'relative', top: -175, left: 500, fill: '#fff !important' }} onClick={() => this.rotate()} />}
         </div>
         {this.props.showTips != null && <div className={'tips-container '+ this.state.animation} style={{ position: 'relative', top: -800, left: 650 }}>
           {this.state.tips.map((tip, index) => (
