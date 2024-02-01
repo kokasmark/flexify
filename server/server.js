@@ -38,6 +38,8 @@ app.post('/api/diet/add', (req, res) => dbPostUserDietAdd(req, res));
 app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
 app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
 app.post('/api/workouts/save', (req, res) => dbPostSaveWorkout(req, res));
+app.post('/api/exercise/muscles', (req, res) => dbPostGetExerciseMuscles(req, res));
+
 
 app.post('/api/templates/workouts', (req, res) => dbPostSavedWorkoutTemplates(req, res));
 app.post('/api/templates/exercises', (req, res) => dbPostExerciseTemplates(req, res));
@@ -420,5 +422,14 @@ async function dbPostSaveExerciseTemplate(req, res){
     let result = await validateAndQuery(req, res, sql, ["name", "type"], [ JSON.stringify(req.body.muscles)], single=false, user_id=true)
 
     if (result) responseJson(res, SUCCESS, {id: result.insertId})
+    else responseFail(res, result)
+}
+
+async function dbPostGetExerciseMuscles(req, res){
+    log('/api/exercise/muscles', 2)
+    let sql = 'SELECT muscles FROM exercise_template WHERE exercise_template.id = ?'
+    let result = await validateAndQuery(req, res, sql, ["id"], [], single=true, user_id=false)
+
+    if (result) responseJson(res, SUCCESS, {muscles: result.muscles})
     else responseFail(res, result)
 }
