@@ -275,6 +275,13 @@ async function dbPostUserMuscles(req, res){
     }
     else responseFail(res, result)
 }
+app.post('/api/home/muscles_test', (req, res) => dbPostUserMusclesTest(req, res));
+async function dbPostUserMusclesTest(req, res){
+    // TODO: get muscles
+    log('/api/home/muscles_test', 2)
+    let sql = ''
+    result = await validateAndQuery(req, res, sql, [], [], single = false, user_id = true)
+}
 
 async function dbPostUserDiet(req, res){
     log('/api/diet', 2)
