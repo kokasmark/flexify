@@ -22,13 +22,15 @@ class PlanPage extends Component {
   localizer = momentLocalizer(moment)
   state = {
     selectedDate: new Date().toLocaleString('en-us', { month: 'long', day: 'numeric' }),
-    dateForapi: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
+    dateForapi: null,
     dates: [],
     idsInEvents:[],
     events: []
   }
   getWorkouts(date) {
     var myHeaders = new Headers();
+    var d = date.split("-")
+    date = d[0]+(d[1].length <2 ? "-0":"-")+d[1]
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), date: date, location: "web" });
 
@@ -69,7 +71,7 @@ class PlanPage extends Component {
           console.log(r.data)
           this.addEvent(r.data,date);
         } else {
-
+            console.log(r)
         }
       })
       .catch(error => console.log('error', error));
@@ -92,8 +94,16 @@ class PlanPage extends Component {
     });
   }
   componentDidMount(){
-    this.getWorkouts(this.state.dateForApi)
+    this.getWorkouts( new Date().getFullYear() + '-' + (new Date().getMonth() + 1))
     
+  }
+  formatDate(date){
+    var d = date.toString().split("-")
+    var res = date
+    if(d[1].length < 2){
+      res = d[0] + "-"+"0"+d[1]
+    }
+    return res
   }
   componentDidUpdate(prevProps, prevState){
     if(prevState.dates != this.state.dates){
