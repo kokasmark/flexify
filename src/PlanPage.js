@@ -13,12 +13,13 @@ import AuthRedirect from './authRedirect';
 import NavBarWrapper from './NavBar';
 import { Calendar, momentLocalizer } from 'react-big-calendar' 
 import moment from 'moment'
+import 'moment/locale/en-gb';
 
 
-
-
+moment.locale('en-GB');
 
 class PlanPage extends Component {
+  
   localizer = momentLocalizer(moment)
   state = {
     selectedDate: new Date().toLocaleString('en-us', { month: 'long', day: 'numeric' }),
@@ -68,10 +69,8 @@ class PlanPage extends Component {
       .then((response) => {
         var r = JSON.parse(response);
         if (r.success) {
-          console.log(r.data)
           this.addEvent(r.data,date);
         } else {
-            console.log(r)
         }
       })
       .catch(error => console.log('error', error));
@@ -94,16 +93,8 @@ class PlanPage extends Component {
     });
   }
   componentDidMount(){
-    this.getWorkouts( new Date().getFullYear() + '-' + (new Date().getMonth() + 1))
+    this.getWorkouts( new Date().getFullYear() + '-' + (new Date().getMonth()+1))
     
-  }
-  formatDate(date){
-    var d = date.toString().split("-")
-    var res = date
-    if(d[1].length < 2){
-      res = d[0] + "-"+"0"+d[1]
-    }
-    return res
   }
   componentDidUpdate(prevProps, prevState){
     if(prevState.dates != this.state.dates){

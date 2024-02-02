@@ -844,6 +844,25 @@ iframe
   width: 60%;
   color: white !important;
 }
+.calendar .rbc-month-view{
+  box-shadow: 5px 5px 10px var(--shadow);
+}
+.calendar .rbc-today{
+  z-index: 1;
+}
+.calendar .rbc-active{
+  z-index: 1;
+  text-shadow: 0 0 5px #fff;
+  background-color: var(--contrast) !important;
+}
+.calendar .rbc-button-link:hover{
+  text-shadow: 0 0 5px #fff;
+}
+.calendar .rbc-btn-group button:hover{
+  z-index: 1;
+  text-shadow: 0 0 5px #fff;
+  background-color: var(--contrast) !important;
+}
 .calendar button{
   color: white !important;
 }
@@ -860,7 +879,6 @@ iframe
   text-shadow: 0 0 5px #fff;
 }
 .calendar .rbc-event-content{
-  background-color: var(--darker-contrast);
   text-align: center;
   border-radius: 5px;
   font-size: 80%;
@@ -868,6 +886,9 @@ iframe
 .calendar .rbc-timeslot-group{
   background-color: #2d3549;
   border-top: 0px !important;
+}
+.calendar .rbc-off-range-bg{
+  background-color: #202838;
 }
 .calendar .rbc-day-slot .rbc-time-slot {
   border-top: 0px;
