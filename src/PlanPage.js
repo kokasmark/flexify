@@ -1,51 +1,124 @@
 import logo from './logo.svg';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './App.css';
 import React, { Component } from 'react';
 import { ReactComponent as Muscles } from './assets/muscles.svg';
 import Sidebar from './Sidebar';
-import Calendar from 'react-calendar';
+
 
 import 'react-calendar/dist/Calendar.css';
 import Navbar from './NavBar';
 
 import AuthRedirect from './authRedirect';
-import WorkoutCalendar from './WorkoutCalendar';
 import NavBarWrapper from './NavBar';
-import DietChart from './DietChart';
+import { Calendar, momentLocalizer } from 'react-big-calendar' 
+import moment from 'moment'
+
+
+
 
 
 class PlanPage extends Component {
-  dietRef = React.createRef();
+  localizer = momentLocalizer(moment)
   state = {
     selectedDate: new Date().toLocaleString('en-us', { month: 'long', day: 'numeric' }),
-    dateForapi: new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate(),
-    chartShow: true
+    dateForapi: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
+    dates: [],
+    idsInEvents:[],
+    events: []
   }
-  select(e) {
-    this.setState({
-      selectedDate: e.toLocaleString('en-us', { month: 'long', day: 'numeric' }),
-      dateForapi: e.getFullYear() + '-' + (e.getMonth() + 1) + '-' + e.getDate()
-    })
+  getWorkouts(date) {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), date: date, location: "web" });
 
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    fetch("http://localhost:3001/api/workouts/date", requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        var r = JSON.parse(response);
+        if (r.success) {
+          this.setState({ dates: r.dates});
+        } else {
+
+        }
+      })
+      .catch(error => console.log('error', error));
   }
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.dateForapi != this.state.dateForapi) {
-      this.dietRef.current.getUserDietOnDate(this.state.dateForapi);
+  getWorkoutsData(date) {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), date: date , location: "web"});
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    fetch("http://localhost:3001/api/workouts/data", requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        var r = JSON.parse(response);
+        if (r.success) {
+          console.log(r.data)
+          this.addEvent(r.data,date);
+        } else {
+
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
+  addEvent(data,date){
+    this.setState((prevState) => {
+      var updatedEvents = [ ...prevState.events ];
+      var ids = [...prevState.idsInEvents]
+      var d = date.split("-")
+      var day = new Date(data[0].date)
+      const [hours, minutes, seconds] = data[0].duration.split(':').map(Number);
+
+      const newDate = new Date(day.getTime() + hours * 3600 * 1000 + minutes * 60 * 1000 + seconds * 1000);
+      if(!this.state.idsInEvents.includes(data[0].id)){
+        updatedEvents.push({"title": data[0].workout_name, 'start': day,
+        'end': newDate})
+        ids.push(data[0].id)
+      }
+      return { events: updatedEvents, idsInEvents: ids };
+    });
+  }
+  componentDidMount(){
+    this.getWorkouts(this.state.dateForApi)
+    
+  }
+  componentDidUpdate(prevProps, prevState){
+    if(prevState.dates != this.state.dates){
+      this.state.dates.forEach(date => {
+        this.getWorkoutsData(date)
+      });
     }
+    if(prevState.selectedDay != this.state.selectedDay){
+      console.log(this.state.selectedDay)
+    }
+  }
+  navigate(e){
+    this.getWorkouts(e.getFullYear() + '-' + (e.getMonth() + 1))
   }
   render() {
     return (
       <div className='page'>
-        <div style={{position: 'relative', left: 150}}>
-          <div style={{ position: 'absolute', left: 500, top: 300 }} className='load-anim plan-calendar'>
-            <WorkoutCalendar onChange={(e) => this.select(e)} />
-
-          </div>
-          <h1 className='load-anim' style={{ position: 'relative', color: 'white', top: 300, left: 880 }}>{this.state.selectedDate}</h1>
-          <div style={{ position: 'absolute', top: 120, left: 675, zIndex: -1, transform: 'scale(0.5)' }} className='plan-chart'>
-            {this.state.chartShow && <DietChart hideInfo noDataStyle={{position: 'relative', top:200, right: 0}} date={this.dateForapi} ref={this.dietRef} />}
-          </div>
-        </div>
+          <Calendar
+                localizer={this.localizer}
+                startAccessor="start"
+                endAccessor="end"
+                className='calendar'
+                events={this.state.events}
+                onNavigate={(e) => { this.navigate(e) }}
+              />
         <NavBarWrapper />
         <Sidebar />
       </div>

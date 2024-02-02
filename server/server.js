@@ -348,7 +348,7 @@ async function dbPostUserDates(req, res){
 
 async function dbPostUserWorkouts(req, res){
     log('/api/workouts/data', 2)
-    let sql = 'SELECT workout.id, workout.duration, workout.workout_name, exercise.set_data, exercise_template.name FROM exercise INNER JOIN workout ON exercise.workout_id = workout.id INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE DATE_FORMAT( workout.date, "%Y-%m-%d") = ? AND workout.user_id = ?'
+    let sql = 'SELECT workout.id, workout.duration, workout.date, workout.workout_name, exercise.set_data, exercise_template.name FROM exercise INNER JOIN workout ON exercise.workout_id = workout.id INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE DATE_FORMAT( workout.date, "%Y-%m-%d") = ? AND workout.user_id = ?'
     let result = await validateAndQuery(req, res, sql, ["date"], [], single=false, user_id=true)
     if (result && result.length > 0){
         let workoutsArray = result.map((x) => x)
