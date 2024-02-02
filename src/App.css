@@ -679,7 +679,7 @@ iframe
 }
 .diet-add-popup{
   position:absolute;
-  height: 50%;
+  height: fit-content;
   width: 30%;
   top: 25%;
   left: 35%;
@@ -714,6 +714,7 @@ iframe
   border-radius: 10px;
   box-shadow: 0px 5px 5px var(--shadow);
   color: white;
+  margin-bottom: 10px;
 }
 .diet-add-popup .foods-added-container{
   list-style: none !important;
@@ -847,8 +848,9 @@ iframe
 .calendar .rbc-month-view{
   box-shadow: 5px 5px 10px var(--shadow);
 }
-.calendar .rbc-today{
+.calendar .rbc-header.rbc-today{
   z-index: 1;
+  background-color: var(--contrast) !important;
 }
 .calendar .rbc-active{
   z-index: 1;
@@ -862,10 +864,14 @@ iframe
   z-index: 1;
   text-shadow: 0 0 5px #fff;
   background-color: var(--contrast) !important;
-}
+} 
 .calendar button{
   color: white !important;
 }
+.calendar .rbc-day-bg.rbc-today{
+  z-index: 1;
+}
+
 .calendar .rbc-day-bg{
   background-color: #2d3549;
 }
