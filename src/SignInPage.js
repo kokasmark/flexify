@@ -62,7 +62,7 @@ class SignInPage extends Component {
       <div>
 
         <div className='sign-in-panel' style={{ width: 400, height: 500, margin: 'auto', position: 'relative', top: 400, zIndex:10 }}>
-          <img src={logo} style={{ position: 'absolute', marginLeft: -20, marginTop: -100 }} />
+          <img src={logo} style={{marginLeft: 10, marginTop: -100 }} />
           <Icon_user style={{ width: 40, height: 40, marginRight: 10, position: 'relative', left: 5 }} />
           <input id='username' placeholder='Username'></input>
           <br />
@@ -71,24 +71,10 @@ class SignInPage extends Component {
           <div style={{ width: 20, height: 20, position: 'relative', top: -35, left: 340 }} className='interactable' onClick={() => this.setState({ hidePassword: !this.state.hidePassword })}>
             {this.state.hidePassword == false ? <Icon_view style={{ width: 30, height: 30 }} /> : <Icon_hide style={{ width: 30, height: 30 }} />}
           </div>
-          <Button style={{ width: '80%', position: 'relative', left: 5 }} onClick={this.validate}>Sign In</Button>
+          <Button style={{ width: '80%', marginLeft: "5%" }} onClick={this.validate}>Sign In</Button>
+          <Link to='/signup' style={{display: "block",width: '80%', marginLeft: "13%", marginTop:20 }}>Don't have an account?</Link>
         </div>
-        <Link to='/signup' style={{ position: 'relative', left: 880, top: 100, zIndex:10 }}>Don't have an account?</Link>
-        <div style={{ transform: 'rotate3d(1, -1, 1, 45deg)' }}>
-          <img src={screenshot1} style={{ transform: 'scale(0.25)', position: 'relative', top: -850, left: 300, boxShadow: '30px 30px 15px var(--shadow)', filter: 'brightness(1.1)' }} />
-        </div>
-
-        <div style={{ transform: 'rotate3d(-1, -1, 1, -45deg)', position: 'relative', top: -1300, left: -600 }}>
-          <img src={screenshot2} style={{ transform: 'scale(0.28)', boxShadow: '-30px 30px 15px var(--shadow)', filter: 'brightness(1.1)' }} />
-        </div>
-        <div style={{ position: 'relative', top: -1750, left: 1450, color: 'white', width: 400, textAlign: 'right'}}>
-          <h1>Manage</h1>
-          <p>With our application, you can effortlessly manage your diet, track workouts, and plan your fitness journey. Achieve your health goals with precision and simplicity, making every step towards a healthier lifestyle a guided and rewarding experience.</p>
-        </div>
-        <div style={{ position: 'relative', top: -2300, left: 50, color: 'white', width: 400 }}>
-          <h1>Create</h1>
-          <p>Craft your ideal fitness routine effortlessly with our app. Browse, customize, and save exercises with ease. Take control of your workouts, creating plans tailored to your fitness goals.</p>
-        </div>
+        
       </div>
     );
   }
