@@ -89,7 +89,7 @@ class SignInPage extends Component {
       this.setState({ cardIndex: 0 });
     }
     await new Promise((r) =>
-      setTimeout(r, 2000 + (strings[this.state.cardIndex].length * 100))
+      setTimeout(r, 2000 + (strings[(this.state.cardIndex < 2 ? this.state.cardIndex+1 : 0)].length * 100))
     );
     if (this.state.cardIndex == 0) {
       cards[2].current.style.marginTop = "50px";

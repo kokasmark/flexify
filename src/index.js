@@ -16,6 +16,7 @@ import AccountPage from './AccountPage';
 import SavedPage from './SavedPage';
 import CreatePageWrapper from './CreatePage';
 import WorkoutPageWrapper from './WorkoutPage';
+import ResetPage from './ResetPage';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter history={history}>
@@ -31,6 +32,7 @@ root.render(
 
     <Route exact={true} path="/login" element={<SignInWrapper />} />
     <Route exact={true} path="/signup" element={<SignUpWrapper />} />
+    <Route exact={true} path="/reset" element={<ResetPage/>}/>
 
     <Route exact={true} path="/admin" element={<AdminPageWrapper />} />
   </Routes>

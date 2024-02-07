@@ -446,7 +446,7 @@ body{
   padding: 5px;
   animation: shrink 0.2s ease-in;
 }
-.sign-in-panel input{
+input{
   width: 300px;
   background: white;
   border: none;
@@ -938,6 +938,39 @@ iframe
   position: relative;
   left: 0%;
 }
+.reset-panel{
+  width: 25%;
+  height: fit-content;
+  position: absolute;
+  top: 20%;
+  left: 37.5%;
+  background-color: var(--contrast);
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  transition: 0.5s;
+}
+.reset-panel-body{
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20%;
+  margin-bottom: 20%;
+  height: 200px;
+}
+.reset-panel-body input{
+  width: 80%;
+
+}
+.reset-panel-body .btn{
+  width: 250px;
+  height: 50px;
+  margin-top: 50px;
+}
+.reset-panel-body .timer{
+  font-size: 72px;
+}
+
 @keyframes move_up{
   0%{
     margin-top: 50px;
