@@ -47,6 +47,7 @@ app.post('/api/templates/save_exercise', (req, res) => dbPostSaveExerciseTemplat
 
 app.post('/api/reset/validate', (req, res) => resetPasswordValidate(req, res));
 app.post('/api/reset/generate', (req, res) => resetPasswordGenerate(req, res));
+app.post('/api/reset/', (req, res) => resetPassword(req, res));
 
 
 
@@ -442,8 +443,6 @@ async function dbPostGetExerciseMuscles(req, res){
 async function resetPasswordValidate(req, res){
     log('/api/reset/validate', 2)
 
-    let sql = 'DELETE FROM login_reset WHERE created < (CURRENT_TIMESTAMP()  - INTERVAL 10 MINUTE);'
-    await validateAndQuery(req, res, sql, [], [])
 
     sql = 'SELECT user_id FROM login_reset WHERE token = ?;'
     let result = await validateAndQuery(req, res, sql, ['token'], [])
@@ -454,7 +453,11 @@ async function resetPasswordValidate(req, res){
 
 async function resetPasswordGenerate(req, res){
     log('/api/reset/generate', 2)
-    let sql = "SELECT id FROM user WHERE username=? OR email=?"
+
+    let sql = 'DELETE FROM login_reset WHERE created < (CURRENT_TIMESTAMP()  - INTERVAL 10 MINUTE);'
+    await validateAndQuery(req, res, sql, [], [])
+    
+    sql = "SELECT id FROM user WHERE username=? OR email=?"
     let result = await validateAndQuery(req, res, sql, ["user", "user"], [])
     if (!result.length){
         responseFail(res)
@@ -478,6 +481,12 @@ async function resetPassword(req, res){
         responseFail(res, result)
         return
     }
+
     let id = result[0].user_id
-    let hash = generatePasswordHash(req.body)
+    let hash = await generatePasswordHash(req.body.password)
+    sql = 'UPDATE user SET password=? WHERE id=?'
+    await validateAndQuery(req, res, sql, [], [hash, id])
+    sql = 'DELETE FROM login_reset WHERE token = ?;'
+    await validateAndQuery(req, res, sql, ['token'], [])
+    responseSuccess(res)
 }
