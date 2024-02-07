@@ -30,18 +30,16 @@ class ResetPage extends Component {
 
     if (stage == 1) {
       //Check email or username
-      this.setState({ stageOfRecovery: stage, tokenExpiration: new Date(Date.now() + 600000) });
+      this.generateToken();
     }
     if (stage == 2) {
       //Check token
-      this.setState({ stageOfRecovery: stage});
+      this.validateToken()
     }
     if (stage == 3) {
       //Set password
-      this.setState({ stageOfRecovery: stage});
-      swal("Success!", "Your new password is set!","success")
-      const { navigate } = this.props;
-          navigate("/login");
+      this.resetPassword()
+      
     }
   }
 
@@ -76,6 +74,77 @@ class ResetPage extends Component {
     const seconds = remainingTime.getUTCSeconds().toString().padStart(2, '0');
     return `${minutes}:${seconds}`
   }
+  generateToken(){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({user: document.getElementById("user").value});
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    fetch(`http://${host}:3001/api/reset/generate`, requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        var r = JSON.parse(response);
+        if (r.success) {
+          this.setState({ stageOfRecovery: this.state.stageOfRecovery + 1, tokenExpiration: new Date(Date.now() + 600000) });
+        } else {
+          swal("Oops!", "User cannot be found!","error")
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
+  validateToken(){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({token: document.getElementById("token").value});
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    fetch(`http://${host}:3001/api/reset/validate`, requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        var r = JSON.parse(response);
+        if (r.success) {
+          this.setState({ stageOfRecovery: this.state.stageOfRecovery + 1, token: document.getElementById("token").value});
+        } else {
+          swal("Oops!", "Token doesnt match!","error")
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
+  resetPassword(){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({token: this.state.token, password: document.getElementById("password").value});
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    fetch(`http://${host}:3001/api/reset/`, requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        var r = JSON.parse(response);
+        if (r.success) {
+          swal("Success!", "Your new password is set!","success")
+          const { navigate } = this.props;
+          navigate("/login");
+        } else {
+          swal("Oops!", "Token doesnt match!","error")
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
   render() {
     return (
       <div className="page">
@@ -89,7 +158,7 @@ class ResetPage extends Component {
                 <p style={{ marginLeft: -10, marginRight: -10 }}>/</p>
                 <Icon_email style={{ height: 30 }} />
               </div>
-              <input style={{ width: "60%" }} placeholder="Email or Username" className="highlight"></input>
+              <input id="user" style={{ width: "60%" }} placeholder="Email or Username" className="highlight"></input>
             </div>
             <Button className="btn" onClick={() => this.nextStage()}>Send Recovery Email</Button>
           </div>}
@@ -97,7 +166,7 @@ class ResetPage extends Component {
           <p style={{width:"60%", marginLeft: "20%", marginTop: "-20%", marginBottom: 50}}>We have sent an email to you containing a token that you have to copy! It is advised to check the Spam folder too!</p>
             <h1 className="timer">{this.remainingTime()}</h1>
             <div style={{ display: "flex", height: 30 }}>
-              <input style={{ marginLeft: "10%" }} placeholder="Token" className="highlight"></input>
+              <input id="token" style={{ marginLeft: "10%" }} placeholder="Token" className="highlight"></input>
             </div>
             <Button className="btn" onClick={() => this.nextStage()}>Check Token</Button>
           </div>}
@@ -105,7 +174,7 @@ class ResetPage extends Component {
           <p style={{width:"60%", marginLeft: "20%", marginTop: "-20%", marginBottom: 50}}>Try coming up with a password that you can easily remember! A strong password should contain Capital letters, Numbers, Special characters!</p>
             <div style={{ display: "flex", height: 30, marginLeft: "10%" }}>
               <Icon_password style={{ height: 40, marginTop: -5 }}/>
-              <input style={{ marginLeft: "0" }} placeholder="New Password" className="highlight"></input>
+              <input id="password" style={{ marginLeft: "0" }} placeholder="New Password" className="highlight"></input>
             </div>
             <Button className="btn" onClick={() => this.nextStage()}>Reset Password</Button>
           </div>}
