@@ -448,7 +448,7 @@ body{
 }
 .sign-in-panel input{
   width: 300px;
-  background: var(--shadow);
+  background: white;
   border: none;
   border-radius: 5px;
   color: white;

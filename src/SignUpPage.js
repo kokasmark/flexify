@@ -9,7 +9,9 @@ import { ReactComponent as Icon_email } from './assets/icon-email.svg';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import {host} from './constants'
+import {host} from './constants';
+import { TypeAnimation } from "react-type-animation";
+import Card from "react-bootstrap/Card";
 const SignUpWrapper = () => {
   const navigate = useNavigate();
 
@@ -53,25 +55,176 @@ class SignUpPage extends Component {
   }
   render() {
     return (
-      <div>
-
-        <div className='sign-in-panel' style={{ width: 400, height: 500, margin: 'auto', position: 'relative', top: 400 }}>
-          <img src={logo} style={{ position: 'absolute', marginLeft: -20, marginTop: -100 }} />
-          <Icon_user />
-          <input id='username' placeholder='Username'></input>
+      <div className="page">
+        <div
+          className="sign-in-panel"
+          style={{
+            width: 600,
+            height: "100%",
+            position: "absolute",
+            right: 0,
+            top: 0,
+            zIndex: 10,
+            borderLeft: "1px solid #fff",
+            borderRadius: 0,
+            backgroundColor: "var(--contrast)"
+          }}
+        >
+          <div className="sign-in-controls">
+          <img src={logo} style={{marginTop: -100 }} />
+          <br/>
+          <Icon_email
+            style={{
+              width: 40,
+              height: 40,
+              marginRight: 10,
+              position: "relative",
+              left: 5,
+            }}/>
+          <input id="email" placeholder="Email"></input>
+          <br/>
+          <Icon_user
+            style={{
+              width: 40,
+              height: 40,
+              marginRight: 10,
+              position: "relative",
+              left: 5,
+            }}/>
+          <input id="username" placeholder="Username"></input>
           <br />
-          <Icon_email style={{ width: 40, height: 40, marginRight: 10, position: 'relative', left: 5 }} />
-          <input id='email' placeholder='Email'></input>
-          <br />
-          <Icon_key style={{ width: 40, height: 40, marginRight: 10, position: 'relative', left: 5 }} />
-          <input id='password' placeholder='Password' type={this.state.hidePassword == true ? 'password' : 'text'}></input>
-          <div style={{ width: 20, height: 20, position: 'relative', top: -35, left: 340 }} className='interactable' onClick={() => this.setState({ hidePassword: !this.state.hidePassword })}>
-            {this.state.hidePassword == false ? <Icon_view style={{ width: 30, height: 30 }} /> : <Icon_hide style={{ width: 30, height: 30 }} />}
+          <Icon_key
+            style={{
+              width: 40,
+              height: 40,
+              marginRight: 10,
+              position: "relative",
+              left: 5,
+            }}
+          />
+          <input
+            id="password"
+            placeholder="Password"
+            type={this.state.hidePassword == true ? "password" : "text"}
+          ></input>
+          <div
+            style={{
+              width: 20,
+              height: 20,
+              position: "relative",
+              top: -35,
+              left: 440,
+            }}
+            className="interactable"
+            onClick={() =>
+              this.setState({ hidePassword: !this.state.hidePassword })
+            }
+          >
+            {this.state.hidePassword == false ? (
+              <Icon_view style={{ width: 30, height: 30}} />
+            ) : (
+              <Icon_hide style={{ width: 30, height: 30 }} />
+            )}
           </div>
-          <Button style={{ width: '80%', position: 'relative', left: 5 }} onClick={this.validate}>Sign Up</Button>
-
+          <Button
+            style={{ width: "50%", marginLeft: "8%", backgroundColor: "var(--heat-orange)" }}
+            onClick={this.validate}
+          >
+            Sign In
+          </Button>
+          <Link
+            className="interactable"
+            to="/login"
+            style={{
+              display: "block",
+              width: "80%",
+              marginLeft: "13%",
+              marginTop: 20,
+              color: "white"
+            }}
+          >
+            Already have an account?
+          </Link>
+          </div>
         </div>
-        <Link to='/login' style={{ position: 'relative', left: 875, top: 100 }}>Already have an account?</Link>
+        <div style={{position: "absolute",
+              left: "5%",
+              top: "25%"}}>
+        <div style={{ display: "flex", marginBottom: 100}}>
+          <h1
+            style={{
+              fontSize: "5em",
+              color: "white",
+              fontWeight: "500"
+            }}
+          >
+            With Flexify you can
+          </h1>
+          <TypeAnimation
+            sequence={[
+              // Same substring at the start will only be typed out once, initially
+              "Manage",
+              2000, // wait 1s before replacing "Mice" with "Hamsters"
+              "Create",
+              2000,
+              "Monitor",
+              2000,
+            ]}
+            wrapper="span"
+            speed={50}
+            deletionSpeed={50}
+            style={{
+              fontSize: "5em",
+              color: "white",
+              fontWeight: "700",
+              color: "var(--contrast)",
+              marginLeft: 10,
+              marginTop: -10,
+              transition: "0.5s"
+            }}
+            repeat={Infinity}
+            ref={this.typing}
+          />
+        </div>
+        <div className="signIn-cards">
+          <Card style={{ width: "18rem" }} >
+            <Card.Body style={{backgroundColor: "var(--contrast)"}}ref={this.card_manage}>
+              <Card.Text >
+                Take control of your gym life effortlessly with Flexify.
+                Seamlessly organize workouts, track progress, and schedule
+                sessions with ease. Streamline your fitness journey and unlock
+                your full potential with intuitive management tools.
+              </Card.Text>
+            </Card.Body>
+            <img src={require("./assets/icon-progress.png")} style={{width: 80, height: 80, left: 100}}/>
+          </Card>
+          <Card style={{ width: "18rem" }}>
+            <Card.Body style={{backgroundColor: "var(--heat-orange)"}}  ref={this.card_create}>
+              <Card.Text>
+                Craft personalized workouts tailored to your goals and
+                preferences. With Flexify, design routines that suit your needs,
+                whether you're aiming for strength, endurance, or flexibility.
+                Empower yourself to achieve greatness with custom fitness plans
+                built just for you.
+              </Card.Text>
+            </Card.Body>
+            <img src={require("./assets/icon-workout.png")}/>
+          </Card>
+          <Card style={{ width: "18rem" }} >
+            <Card.Body style={{backgroundColor: "var(--heat-red)"}} ref={this.card_monitor}>
+              <Card.Text>
+                Stay on top of your diet and progress effortlessly with Flexify.
+                Monitor nutritional intake, track calorie consumption, and
+                analyze fitness data to optimize your health journey. With
+                real-time insights and comprehensive tracking, achieve your
+                fitness goals faster and more effectively.
+              </Card.Text>
+            </Card.Body>
+            <img src={require("./assets/foods/icon-sandwich.png")}/>
+          </Card>
+          
+        </div>
+        </div>
       </div>
     );
   }
