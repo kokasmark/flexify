@@ -4,7 +4,7 @@
   --bg: #1F2229;
   --shadow:rgb(20, 20, 20);
 
-  --heat-yellow: rgb(253, 217, 54);
+  --heat-yellow: rgb(253, 211, 21);
   --heat-red: rgb(238, 62, 50);
   --heat-orange: rgb(246, 136, 56);
   --heat-blue:  var(--contrast);
@@ -182,6 +182,9 @@
     position: fixed;
     right: -200px;
   }
+  .sign-in-controls{
+    left: 15% !important;
+  }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) and (max-width: 768px){
@@ -281,6 +284,9 @@
     left: -220px !important;
     top: 480px !important;
     margin-left: 300px !important;
+  }
+  .sign-in-controls{
+    left: 15% !important;
   }
 }
 /* Medium devices (landscape tablets, 768px and up) */
@@ -444,7 +450,6 @@ body{
   width: 300px;
   background: var(--shadow);
   border: none;
-  box-shadow: 0px 5px 5px var(--shadow);
   border-radius: 5px;
   color: white;
 }
@@ -898,6 +903,48 @@ iframe
 }
 .calendar .rbc-day-slot .rbc-time-slot {
   border-top: 0px;
+}
+.signIn-cards{
+  display: flex;
+  margin-left:0px;
+}
+.signIn-cards img{
+  width: 100px;
+  height: 100px;
+  filter: invert(1);
+  position: absolute !important;
+  top: 210px;
+  left: 90px;
+  z-index: -10;
+}
+.signIn-cards .card{
+  display: inline-block;
+  position: relative;
+  margin-left: 50px;
+  margin-top: 0px;
+  transition: 0.5s;
+}
+.signIn-cards .card-body{
+  height: 250px !important;
+  box-shadow: 5px 5px 5px var(--shadow);
+  margin-top: 50px;
+}
+.signIn-cards .card-text{
+  color: white;
+  font-weight: 500;
+}
+.sign-in-controls{
+  margin-top: 400px;
+  position: relative;
+  left: 0%;
+}
+@keyframes move_up{
+  0%{
+    margin-top: 50px;
+  }
+  100%{
+    margin-top: -50px;
+  }
 }
 @keyframes timer {
   0%{
