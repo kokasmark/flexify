@@ -186,6 +186,19 @@ class SignInPage extends Component {
           >
             Don't have an account?
           </Link>
+          <Link
+            className="interactable"
+            to="/reset"
+            style={{
+              display: "block",
+              width: "80%",
+              marginLeft: "13%",
+              marginTop: 5,
+              color: "white"
+            }}
+          >
+            Forgot password?
+          </Link>
           </div>
         </div>
         <div style={{position: "absolute",

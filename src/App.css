@@ -955,12 +955,14 @@ iframe
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 20%;
-  margin-bottom: 20%;
-  height: 200px;
+  margin-bottom: 0px;
+  height: fit-content;
+  text-align: center;
+  margin-bottom: 15%;
+  animation: page-transition 0.2s ease-in;
 }
 .reset-panel-body input{
   width: 80%;
-
 }
 .reset-panel-body .btn{
   width: 250px;
