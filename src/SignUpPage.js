@@ -1,5 +1,5 @@
 import './App.css';
-import { Component } from 'react';
+import React,{ Component } from 'react';
 import logo from './assets/logo.webp';
 import { ReactComponent as Icon_user } from './assets/icon-user.svg';
 import { ReactComponent as Icon_key } from './assets/icon-key.svg';
@@ -19,9 +19,13 @@ const SignUpWrapper = () => {
 };
 
 class SignUpPage extends Component {
-
+  card_manage = React.createRef();
+  card_create = React.createRef();
+  card_monitor = React.createRef();
+  typing = React.createRef();
   state = {
-    hidePassword: true
+    hidePassword: true,
+    cardIndex: 1
   }
   validate = () => {
     var myHeaders = new Headers();
@@ -52,6 +56,37 @@ class SignUpPage extends Component {
       })
       .catch(error => console.log('error', error));
     
+  }
+  async moveCard() {
+    const cards = [this.card_manage, this.card_create, this.card_monitor];
+    const colors = ["var(--contrast)","var(--heat-orange)","var(--heat-red)"]
+    const strings = ["Manage", "Create", "Monitor"];
+    this.typing.current.style.color = colors[this.state.cardIndex]
+    try {
+      cards[this.state.cardIndex].current.style.marginTop = "-50px";
+      cards[this.state.cardIndex - 1].current.style.marginTop = "50px";
+      
+    } catch {}
+    if (this.state.cardIndex < 2) {
+      this.setState({ cardIndex: this.state.cardIndex + 1 });
+    } else {
+      this.setState({ cardIndex: 0 });
+    }
+    await new Promise((r) =>
+      setTimeout(r, 2000 + (strings[this.state.cardIndex].length * 100))
+    );
+    if (this.state.cardIndex == 0) {
+      cards[2].current.style.marginTop = "50px";
+    }
+    this.moveCard();
+  }
+  async startMoveCard() {
+    this.card_manage.current.style.marginTop = "-50px";
+    await new Promise((r) => setTimeout(r, 2000  + (("Manage").length * 100)));
+    this.moveCard();
+  }
+  componentDidMount() {
+    this.startMoveCard();
   }
   render() {
     return (

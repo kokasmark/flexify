@@ -266,6 +266,7 @@ class SignInPage extends Component {
           
         </div>
         </div>
+        <p style={{color: "white", position: "absolute", bottom: 0, marginLeft:20}}>&copy; Körmendi Dávid Ákos, Muth Márk, Kokas Márk</p>
       </div>
     );
   }
