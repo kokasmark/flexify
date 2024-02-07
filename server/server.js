@@ -40,12 +40,13 @@ app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
 app.post('/api/workouts/save', (req, res) => dbPostSaveWorkout(req, res));
 app.post('/api/exercise/muscles', (req, res) => dbPostGetExerciseMuscles(req, res));
 
-
 app.post('/api/templates/workouts', (req, res) => dbPostSavedWorkoutTemplates(req, res));
 app.post('/api/templates/exercises', (req, res) => dbPostExerciseTemplates(req, res));
 app.post('/api/templates/save_workout', (req, res) => dbPostSaveWorkoutTemplate(req, res));
 app.post('/api/templates/save_exercise', (req, res) => dbPostSaveExerciseTemplate(req, res));
 
+app.post('/api/reset/validate', (req, res) => resetPasswordValidate(req, res));
+app.post('/api/reset/generate', (req, res) => resetPasswordGenerate(req, res));
 
 
 
@@ -204,6 +205,10 @@ async function compareHash(password, hash){
 
 function generateUserToken(){
     return require('crypto').randomBytes(32).toString('hex');
+}
+
+function generateResetToken(){
+    return require('crypto').randomBytes(16).toString('hex');
 }
 
 async function updateUserToken(req, res, uid){
@@ -432,4 +437,47 @@ async function dbPostGetExerciseMuscles(req, res){
 
     if (result) responseJson(res, SUCCESS, {muscles: result.muscles})
     else responseFail(res, result)
+}
+
+async function resetPasswordValidate(req, res){
+    log('/api/reset/validate', 2)
+
+    let sql = 'DELETE FROM login_reset WHERE created < (CURRENT_TIMESTAMP()  - INTERVAL 10 MINUTE);'
+    await validateAndQuery(req, res, sql, [], [])
+
+    sql = 'SELECT user_id FROM login_reset WHERE token = ?;'
+    let result = await validateAndQuery(req, res, sql, ['token'], [])
+
+    if (result.length) responseSuccess(res)
+    else responseFail(res, result)
+}
+
+async function resetPasswordGenerate(req, res){
+    log('/api/reset/generate', 2)
+    let sql = "SELECT id FROM user WHERE username=? OR email=?"
+    let result = await validateAndQuery(req, res, sql, ["user", "user"], [])
+    if (!result.length){
+        responseFail(res)
+        return
+    }
+
+    let id = result[0].id
+    let token = generateResetToken()
+    sql = "INSERT INTO login_reset (user_id, token) VALUES (?, ?)"
+    result = await validateAndQuery(req, res, sql, [], [id, token])
+    
+    responseJson(res, SUCCESS, {token: token})
+}
+
+async function resetPassword(req, res){
+    log('/api/reset/', 2)
+    validatePostRequest(req.body, ["password"])
+    sql = 'SELECT user_id FROM login_reset WHERE token = ?;'
+    let result = await validateAndQuery(req, res, sql, ['token'], [])
+    if (!result.length){
+        responseFail(res, result)
+        return
+    }
+    let id = result[0].user_id
+    let hash = generatePasswordHash(req.body)
 }
