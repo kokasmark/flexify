@@ -116,7 +116,7 @@ class SignInPage extends Component {
             right: 0,
             top: 0,
             zIndex: 10,
-            borderLeft: "1px solid #fff",
+            borderLeft: "0px solid #fff",
             borderRadius: 0,
             backgroundColor: "var(--contrast)"
           }}
