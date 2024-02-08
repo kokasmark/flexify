@@ -4,7 +4,6 @@ const cors = require('cors');
 const bcrypt = require("bcrypt");
 var moment = require('moment');
 
-
 // use DEBUG_MODE to send back error messages to client
 // LOGGING_LEVEL 0 = errors, 1 = connect to db, new connections, db errors; 2=function calls, 3=sql commands, query responses, -1 = temporary
 const RESPONSE_DEBUG_MODE = true;
@@ -467,23 +466,24 @@ async function resetPasswordGenerate(req, res){
     let id = result[0].id
     let token = generateResetToken()
     
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ email: result[0].email, username: result[0].username, token: token });
+    var request = require('request');
+    var options = {
+    'method': 'POST',
+    'url': 'https://mail-flexify.koyeb.app/api/mail',
+    'headers': {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        "username": result[0].username,
+        "email": result[0].email,
+        "token": token
+    })
 
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
     };
-
-    fetch(`https://mail-flexify.koyeb.app/api/mail`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        
-      })
-      .catch(error => console.log('error', error));
+    request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log(response.body);
+    });
   
     sql = "INSERT INTO login_reset (user_id, token) VALUES (?, ?)"
     result = await validateAndQuery(req, res, sql, [], [id, token])
