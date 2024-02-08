@@ -3,8 +3,6 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const bcrypt = require("bcrypt");
 var moment = require('moment');
-var mailer = require("./mail_service.js");
-var mail_template = require("./mail_template.js")
 
 
 // use DEBUG_MODE to send back error messages to client
@@ -469,16 +467,24 @@ async function resetPasswordGenerate(req, res){
     let id = result[0].id
     let token = generateResetToken()
     
-    const options = {
-        from: "Flexify Team <flexify.team2024@gmail.com>", // sender address
-        to: result[0].email, // receiver email
-        subject: "Reset Password Token - Flexify", // Subject line
-        html: mail_template(result[0].username,token),
-    }
-    mailer(options, (info) => {
-        console.log("Email sent successfully");
-        console.log("MESSAGE ID: ", info.messageId);
-    });
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({ email: result[0].email, username: result[0].username, token: token });
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch(`https://mail-flexify.koyeb.app/api/mail`, requestOptions)
+      .then(response => response.text())
+      .then((response) => {
+        
+      })
+      .catch(error => console.log('error', error));
+  
     sql = "INSERT INTO login_reset (user_id, token) VALUES (?, ?)"
     result = await validateAndQuery(req, res, sql, [], [id, token])
     
