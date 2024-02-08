@@ -2,7 +2,9 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const bcrypt = require("bcrypt");
-var moment = require('moment')
+var moment = require('moment');
+var mailer = require("./mail_service.js");
+var mail_template = require("./mail_template.js")
 
 
 // use DEBUG_MODE to send back error messages to client
@@ -457,7 +459,7 @@ async function resetPasswordGenerate(req, res){
     let sql = 'DELETE FROM login_reset WHERE created < (CURRENT_TIMESTAMP()  - INTERVAL 10 MINUTE);'
     await validateAndQuery(req, res, sql, [], [])
     
-    sql = "SELECT id FROM user WHERE username=? OR email=?"
+    sql = "SELECT id, username,email FROM user WHERE username=? OR email=?"
     let result = await validateAndQuery(req, res, sql, ["user", "user"], [])
     if (!result.length){
         responseFail(res)
@@ -466,6 +468,17 @@ async function resetPasswordGenerate(req, res){
 
     let id = result[0].id
     let token = generateResetToken()
+    
+    const options = {
+        from: "Flexify Team <flexify.team2024@gmail.com>", // sender address
+        to: result[0].email, // receiver email
+        subject: "Reset Password Token - Flexify", // Subject line
+        html: mail_template(result[0].username,token),
+    }
+    mailer(options, (info) => {
+        console.log("Email sent successfully");
+        console.log("MESSAGE ID: ", info.messageId);
+    });
     sql = "INSERT INTO login_reset (user_id, token) VALUES (?, ?)"
     result = await validateAndQuery(req, res, sql, [], [id, token])
     
