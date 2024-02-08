@@ -20,7 +20,9 @@ const SignInWrapper = () => {
 
   return <SignInPage navigate={navigate} />;
 };
-
+setTimeout(() => {
+  window.location.reload(false);
+}, 300000);
 class SignInPage extends Component {
   card_manage = React.createRef();
   card_create = React.createRef();

@@ -17,7 +17,9 @@ const SignUpWrapper = () => {
 
   return <SignUpPage navigate={navigate} />;
 };
-
+setTimeout(() => {
+  window.location.reload(false);
+}, 300000);
 class SignUpPage extends Component {
   card_manage = React.createRef();
   card_create = React.createRef();
