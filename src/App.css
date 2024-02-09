@@ -972,7 +972,15 @@ iframe
 .reset-panel-body .timer{
   font-size: 72px;
 }
-
+.type-animation{
+  font-size: 5em;
+  color: white;
+  font-weight: 700;
+  color: var(--contrast);
+  margin-left: 10px;
+  margin-top: -10px;
+  transition: 0.5s
+}
 @keyframes move_up{
   0%{
     margin-top: 50px;

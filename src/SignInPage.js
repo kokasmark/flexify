@@ -229,15 +229,7 @@ class SignInPage extends Component {
             wrapper="span"
             speed={50}
             deletionSpeed={50}
-            style={{
-              fontSize: "5em",
-              color: "white",
-              fontWeight: "700",
-              color: "var(--contrast)",
-              marginLeft: 10,
-              marginTop: -10,
-              transition: "0.5s"
-            }}
+            className="type-animation"
             repeat={Infinity}
             ref={this.typing}
           />
