@@ -93,6 +93,7 @@ class SignInPage extends Component {
   }
   componentDidMount() {
     this.pollForChanges();
+    this.card_manage.current.style.transform = "translateY(-100px)";
   }
   componentWillUnmount() {
     // Stop polling when component unmounts
@@ -135,7 +136,7 @@ class SignInPage extends Component {
           }}
         >
           <div className="sign-in-controls">
-          <img src={logo} style={{marginTop: -100 }} />
+          <img src={logo} style={{marginTop: -100, marginLeft: 20 }} />
           <div> </div>
           <Icon_user
             style={{
@@ -243,7 +244,6 @@ class SignInPage extends Component {
             className="type-animation"
             repeat={Infinity}
             ref={this.typing}
-            id="type"
           />
         </div>
         <div className="signIn-cards">

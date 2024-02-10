@@ -81,6 +81,7 @@ class SignUpPage extends Component {
   componentWillUnmount() {
     // Stop polling when component unmounts
     clearInterval(this.pollInterval);
+    this.card_manage.current.style.transform = "translateY(-100px)";
   }
 
   pollForChanges = () => {
@@ -118,7 +119,7 @@ class SignUpPage extends Component {
           }}
         >
           <div className="sign-in-controls">
-          <img src={logo} style={{marginTop: -100 }} />
+          <img src={logo} style={{marginTop: -100, marginLeft: 20 }} />
           <br/>
           <Icon_email
             style={{
