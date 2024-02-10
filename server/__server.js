@@ -297,11 +297,17 @@ async function dbPostUserMusclesTest(req, res){
             else Exercises.set(d.exercise_id, (Exercises.get(d.exercise_id))+1);
         });
     });
-    const AveragedExercises = Exercises
-    Exercises.forEach((e, i) => {
-        AveragedExercises.set(i, e/Exercises.size)
+    const AveragedExercises = new Map()
+    sql = 'SELECT name, id FROM exercise'
+    result = await validateAndQuery(req, res, sql, [], [], single = false, user_id = false)
+    result.forEach(results => {
+        Exercises.forEach((e, i) => {
+            if (results.id == i) {
+            AveragedExercises.set(results.name, e/Exercises.size)
+            }
+        })
     })
-      
+    log(AveragedExercises)  
 }
 
 async function dbPostUserDiet(req, res){
