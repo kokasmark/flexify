@@ -20,9 +20,6 @@ const SignInWrapper = () => {
 
   return <SignInPage navigate={navigate} />;
 };
-setTimeout(() => {
-  window.location.reload(false);
-}, 300000);
 class SignInPage extends Component {
   card_manage = React.createRef();
   card_create = React.createRef();
@@ -75,14 +72,14 @@ class SignInPage extends Component {
       })
       .catch((error) => console.log("error", error));
   };
-  async moveCard() {
+  moveCard() {
     const cards = [this.card_manage, this.card_create, this.card_monitor];
     const colors = ["var(--contrast)","var(--heat-orange)","var(--heat-red)"]
-    const strings = ["Manage", "Create", "Monitor"];
+    const strings = ["Manage", "Create", "Track"];
     this.typing.current.style.color = colors[this.state.cardIndex]
     try {
-      cards[this.state.cardIndex].current.style.marginTop = "-50px";
-      cards[this.state.cardIndex - 1].current.style.marginTop = "50px";
+      cards[this.state.cardIndex].current.style.transform = "translateY(-100px)";
+      cards[this.state.cardIndex - 1].current.style.transform = "translateY(0px)";
       
     } catch {}
     if (this.state.cardIndex < 2) {
@@ -90,22 +87,36 @@ class SignInPage extends Component {
     } else {
       this.setState({ cardIndex: 0 });
     }
-    await new Promise((r) =>
-      setTimeout(r, 2000 + (strings[(this.state.cardIndex < 2 ? this.state.cardIndex+1 : 0)].length * 100))
-    );
     if (this.state.cardIndex == 0) {
-      cards[2].current.style.marginTop = "50px";
+      cards[2].current.style.transform = "translateY(0px)";
     }
-    this.moveCard();
-  }
-  async startMoveCard() {
-    this.card_manage.current.style.marginTop = "-50px";
-    await new Promise((r) => setTimeout(r, 2000  + (("Manage").length * 100)));
-    this.moveCard();
   }
   componentDidMount() {
-    this.startMoveCard();
+    this.pollForChanges();
   }
+  componentWillUnmount() {
+    // Stop polling when component unmounts
+    clearInterval(this.pollInterval);
+  }
+
+  pollForChanges = () => {
+    // Polling interval
+    this.pollInterval = setInterval(() => {
+      const spanContent = document.querySelector('.index-module_type__E-SaG').textContent;
+      // Check if content has changed
+      if (spanContent !== this.lastContent) {
+        this.handleContentChange(spanContent);
+        this.lastContent = spanContent;
+      }
+    }, 10); // Adjust polling interval as needed
+  };
+
+  handleContentChange = (newContent) => {
+    const strings = ["Manage", "Create", "Track"]
+    if(newContent.length < 1){
+      this.moveCard()
+    }
+  };
   render() {
     return (
       <div className="page">
@@ -223,7 +234,7 @@ class SignInPage extends Component {
               2000, // wait 1s before replacing "Mice" with "Hamsters"
               "Create",
               2000,
-              "Monitor",
+              "Track",
               2000,
             ]}
             wrapper="span"
@@ -232,6 +243,7 @@ class SignInPage extends Component {
             className="type-animation"
             repeat={Infinity}
             ref={this.typing}
+            id="type"
           />
         </div>
         <div className="signIn-cards">
