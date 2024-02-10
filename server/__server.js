@@ -282,7 +282,7 @@ async function dbPostUserMusclesTest(req, res){
     let sql = 'SELECT finished_workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN finished_workout ON calendar_workout.finished_workout_id = finished_workout.id WHERE calendar.date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND calendar.user_id = ?'
     result = await validateAndQuery(req, res, sql, [], [], single = false, user_id = true)
     //if (result) responseJson(res, SUCCESS, {result})
-    const exercises = new Map()
+    const Exercises = new Map()
     result.forEach(r => {
         var data = JSON.parse(r.json)
         data.forEach(d => {
@@ -293,11 +293,15 @@ async function dbPostUserMusclesTest(req, res){
             //map the value between 1-3
             //return an array of (musclename, mappedValue)
             //ha ez meg van beveszem-kokas:3
-            if (!exercises.has(d.exercise_id)) exercises.set(d.exercise_id, 1)
-            else exercises.set(d.exercise_id, (exercises.get(d.exercise_id))+1);
+            if (!Exercises.has(d.exercise_id)) Exercises.set(d.exercise_id, 1)
+            else Exercises.set(d.exercise_id, (Exercises.get(d.exercise_id))+1);
         });
     });
-    log(exercises)
+    const AveragedExercises = Exercises
+    Exercises.forEach((e, i) => {
+        AveragedExercises.set(i, e/Exercises.size)
+    })
+      
 }
 
 async function dbPostUserDiet(req, res){
