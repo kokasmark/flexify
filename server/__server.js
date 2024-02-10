@@ -277,37 +277,30 @@ async function dbPostUserMuscles(req, res){
 }
 app.post('/api/home/muscles_test', (req, res) => dbPostUserMusclesTest(req, res));
 async function dbPostUserMusclesTest(req, res){
-    // TODO: get muscles
     log('/api/home/muscles_test', 2)
     let sql = 'SELECT finished_workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN finished_workout ON calendar_workout.finished_workout_id = finished_workout.id WHERE calendar.date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND calendar.user_id = ?'
     result = await validateAndQuery(req, res, sql, [], [], single = false, user_id = true)
-    //if (result) responseJson(res, SUCCESS, {result})
     const Exercises = new Map()
     result.forEach(r => {
         var data = JSON.parse(r.json)
         data.forEach(d => {
-            //d contains the data of the set(exercise_id...)
-            //add d to a Map(exercise_id, 1) or increment the value
-            //average the Map -> AverageMap(exercise_id, averagevalue = Map[exercise_id]/total_count)
-            //loop trough map to change ids to muscle group names
-            //map the value between 1-3
-            //return an array of (musclename, mappedValue)
-            //ha ez meg van beveszem-kokas:3
             if (!Exercises.has(d.exercise_id)) Exercises.set(d.exercise_id, 1)
             else Exercises.set(d.exercise_id, (Exercises.get(d.exercise_id))+1);
         });
     });
     const AveragedExercises = new Map()
-    sql = 'SELECT name, id FROM exercise'
+    sql = 'SELECT json, id FROM exercise'
     result = await validateAndQuery(req, res, sql, [], [], single = false, user_id = false)
     result.forEach(results => {
         Exercises.forEach((e, i) => {
-            if (results.id == i) {
-            AveragedExercises.set(results.name, e/Exercises.size)
-            }
+            if (results.id == i) (JSON.parse(results.json).muscles).forEach(g => {AveragedExercises.set(g, e/Exercises.size)})
         })
     })
-    log(AveragedExercises)  
+    const FinalExercises = new Map()
+    AveragedExercises.forEach((value, name) => {
+        FinalExercises.set(name, Math.min(3, Math.max(1, Math.round(value * 3 + 1))))
+    })
+    return res.status(200).json(Object.fromEntries(FinalExercises))  
 }
 
 async function dbPostUserDiet(req, res){
