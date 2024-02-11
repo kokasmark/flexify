@@ -445,3 +445,50 @@ async function dbPostSaveExerciseTemplate(req, res){
     if (result) responseJson(res, SUCCESS, {id: result.insertId})
     else responseFail(res, result)
 }
+
+
+
+
+
+
+
+// temp fuctions
+const regex = {
+    token: /^([a-f0-9]){64}$/,
+    email: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+    password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+    username: /^[a-zA-Z1-9._\-]{5,}$/,
+    date: /^[0-9]{4}(-[0-9]{2}){1,2}$/,
+    carbs: /^[0-9]+((.|,)[0-9]+)?$/,
+    fat: /^[0-9]+((.|,)[0-9]+)?$/,
+    protein: /^[0-9]+((.|,)[0-9]+)?$/,
+    reset_token: /^([a-f0-9]){32}$/,
+    login: /^(([\w-\.]+@([\w-]+\.)+[\w-]{2,4})|([a-zA-Z1-9._\-]{5,}))$/,
+    id: /^[0-9]+$/,
+}
+
+function validateOne(type, value){
+    return regex[type].test(value)
+}
+
+function validatePost(req, fields){
+    for (const field of fields){
+        if (!validateOne(field, req.body[field])){
+            log(`${field} failed test with value: ${req.body[field]}`, 1)
+            return false
+        } 
+        log(`${field} passed.`, -1)
+    }
+    return true
+}
+
+
+app.post('/api/validate', (req, res) => validationTest(req, res));
+async function validationTest(req, res){
+    if (validatePost(req, ["token", "email", "password", "username", "date", "carbs", "reset_token", "login", "id"])){
+        responseSuccess(res)
+    }
+    else{
+        responseFail(res)
+    }
+}
