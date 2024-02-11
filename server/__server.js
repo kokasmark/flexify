@@ -263,44 +263,43 @@ async function dbPostUserRegister(req, res){
 }
 
 async function dbPostUserMuscles(req, res){
-    // TODO: get muscles
     log('/api/home/muscles', 2)
-    responseJson(res, SUCCESS, {muscles:[]})
-    return
-    let sql = 'SELECT exercise_template.muscles FROM exercise INNER JOIN exercise_template ON exercise.exercise_template_id = exercise_template.id WHERE exercise_template.user_id = ?'
-    let result = await validateAndQuery(req, res, sql, [], [], single=false, user_id=true)
-    if (result){
-        const muscles = result.map(entry => entry.muscles);
-        responseJson(res, SUCCESS, {muscles: muscles})
-    }
-    else responseFail(res, result)
-}
-app.post('/api/home/muscles_test', (req, res) => dbPostUserMusclesTest(req, res));
-async function dbPostUserMusclesTest(req, res){
-    log('/api/home/muscles_test', 2)
-    let sql = 'SELECT finished_workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN finished_workout ON calendar_workout.finished_workout_id = finished_workout.id WHERE calendar.date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND calendar.user_id = ?'
-    result = await validateAndQuery(req, res, sql, [], [], single = false, user_id = true)
+
     const Exercises = new Map()
-    result.forEach(r => {
-        var data = JSON.parse(r.json)
-        data.forEach(d => {
-            if (!Exercises.has(d.exercise_id)) Exercises.set(d.exercise_id, 1)
-            else Exercises.set(d.exercise_id, (Exercises.get(d.exercise_id))+1);
+    const AveragedExercises = new Map()
+    const FinalExercises = new Map()
+
+    let sql = 'SELECT finished_workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN finished_workout ON calendar_workout.finished_workout_id = finished_workout.id WHERE calendar.date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND calendar.user_id = ?'
+    let result = await validateAndQuery(req, res, sql, [], [], single=false, user_id=true)
+    if (result === false) return responseFail(res)
+
+    result.forEach(row => {
+        let data = JSON.parse(row.json)
+        data.forEach(entry => {
+            let id = entry.exercise_id
+            if (!Exercises.has(id)) Exercises.set(id, 0)
+            Exercises.set(id, Exercises.get(id)+1);
         });
     });
-    const AveragedExercises = new Map()
+
     sql = 'SELECT json, id FROM exercise'
-    result = await validateAndQuery(req, res, sql, [], [], single = false, user_id = false)
-    result.forEach(results => {
-        Exercises.forEach((e, i) => {
-            if (results.id == i) (JSON.parse(results.json).muscles).forEach(g => {AveragedExercises.set(g, e/Exercises.size)})
+    result = await validateAndQuery(req, res, sql, [], [])
+    if (result === false) return responseFail(res)
+
+    result.forEach(row => {
+        Exercises.forEach((value, id) => {
+            if (row.id == id){
+                JSON.parse(row.json).muscles.forEach(muscle => {
+                    AveragedExercises.set(muscle, value / Exercises.size)
+                })
+            }
         })
     })
-    const FinalExercises = new Map()
+
     AveragedExercises.forEach((value, name) => {
-        FinalExercises.set(name, Math.min(3, Math.max(1, Math.round(value * 3 + 1))))
+        FinalExercises.set(name, Math.min(3, Math.max(1, Math.round(value * 3 + 1)) ))
     })
-    return res.status(200).json(Object.fromEntries(FinalExercises))  
+    responseJson(res, SUCCESS, Object.fromEntries(FinalExercises))
 }
 
 async function dbPostUserDiet(req, res){
