@@ -264,7 +264,8 @@ async function dbPostUserRegister(req, res){
 
 async function dbPostUserMuscles(req, res){
     log('/api/home/muscles', 2)
-
+    return responseJson(res, SUCCESS, {muscles: []})
+    
     const Exercises = new Map()
     const AveragedExercises = new Map()
     const FinalExercises = new Map()
@@ -357,8 +358,9 @@ async function dbPostUserDietAdd(req, res){
 async function dbPostUserDates(req, res){
     log('/api/workouts/date', 2)
     // let sql = 'SELECT DATE_FORMAT( date, "%Y-%m-%d") as date FROM workout WHERE DATE_FORMAT( date, "%Y-%m") = ? AND user_id = ?'
-
-    let sql = 'SELECT date FROM calendar WHERE DATE_FORMAT( date, "%Y-%m") = ? AND done_workouts != "" AND user_id = ?'
+    // responseJson(res, SUCCESS, {dates: []})
+    // return
+    let sql = 'SELECT DATE_FORMAT(calendar.date, "%Y-%m-%d") as date FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT( date, "%Y-%m") = ? AND calendar.user_id = ?'
     let result = await validateAndQuery(req, res, sql, ["date"], [], single=false, user_id=true)
     if (result){
         let dateArray = result.map((x) => x.date)
