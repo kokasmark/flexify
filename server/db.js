@@ -24,6 +24,7 @@ class DB{
         this.log(3, `result: ${single ? result[0] : result}`)
         return single ? result[0] : result
     }
+
 }
 
 module.exports = DB

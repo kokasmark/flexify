@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const bcrypt = require("bcrypt");
 const moment = require('moment');
 const dotenv = require('dotenv');
 const DB = require('./db.js')
@@ -14,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(root));
-app.listen(3001, () => {console.log(`Server listening on port ${3001}`);});
+app.listen(3001, () => {log(1, `Server listening on port ${3001}`);});
 
 dotenv.config();
 const DEBUG_LEVEL = process.env.DEBUG_LEVEL
@@ -30,12 +29,36 @@ function log(level, message){
 }
 
 
-app.get("*", (_, res) => {res.sendFile('index.html', { root });})
-app.post('/api/workouts/dates', (req, res) => postUserDates(new User(req, res, db, log)))
+app.get('/api/user', (req, res) => getUserDetails(new User(req, res, db, log)))
+
+app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log)))
+app.post('/api/workouts/dates', (req, res) => postWorkoutsDates(new User(req, res, db, log)))
 app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
+// Leave at the end, otherwise captures all GET requests
+app.get("*", (_, res) => {res.sendFile('index.html', { root });})
 
 
-async function postUserDates(user){
+async function getUserDetails(user){
+    log(2, '/api/user')
+
+    const details = await user.userDetails()
+    if (!details) return
+
+    user.respondSuccess({username: details.username, email: details.email})
+}
+
+async function postLogin(user){
+    log(2, '/api/login')
+
+    const token = await user.login()
+    if (token === false) return user.respondMissing()
+    else if (token === 0) return user.respond(400, {reason: 'Invalid username or password'})
+
+    user.respondSuccess({token: token})
+}
+
+
+async function postWorkoutsDates(user){
     log(2, '/api/workouts/dates')
 
     let dates = await user.workoutDates()
@@ -77,5 +100,6 @@ async function postUserMuscles(user){
 
     user.respondSuccess({muscles: musclesUsed})
 }
+
 
 

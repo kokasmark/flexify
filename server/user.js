@@ -1,3 +1,6 @@
+const bcrypt = require("bcrypt");
+
+
 class User{
     constructor(req, res, db, log){
         this.req = req
@@ -22,7 +25,9 @@ class User{
         const regex = {
             token: /^([a-f0-9]){64}$/,
             email: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-            password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+            //TODO: uncomment when done testing 
+            //password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+            password: /.*/,
             username: /^[a-zA-Z0-9._\-]{5,}$/,
             date: /^[0-9]{4}(-[0-9]{2}){1,2}$/,
             carbs: /^[0-9]+((.|,)[0-9]+)?$/,
@@ -31,12 +36,14 @@ class User{
             reset_token: /^([a-f0-9]){32}$/,
             login: /^(([\w-\.]+@([\w-]+\.)+[\w-]{2,4})|([a-zA-Z0-9._\-]{5,}))$/,
             id: /^[0-9]+$/,
-            timespan: /^[0-9]+$/
+            timespan: /^[0-9]+$/,
+            location: /^(web)|(mobile)$/
         }
 
         let reqFields = this.req.body
         let toReturn = {}
         for (const field of fieldList){
+            console.log(field)
             if (!reqFields.hasOwnProperty(field)) return false
             if (!regex[field].test(reqFields[field])) return false
             toReturn[field] = reqFields[field]
@@ -79,6 +86,44 @@ class User{
         return workouts
     }
 
+    async userDetails(){
+        if (!(await this.isLoggedIn())) return false
+        let sql = 'SELECT username, email FROM user WHERE id=?'
+        return this.db.query(sql, [this.id], true)
+
+    }
+
+    async login(){
+        this.log(-1, this.req.body)
+        const post = this.validateFields(["username", "password", "location"])
+        if (!post) return false
+
+        let sql = 'SELECT id, password FROM user WHERE username = ?'
+        let result = await this.db.query(sql, [post.username], true)
+        if (!result) return 0
+
+        const id = result.id
+        const passwordHash = result.password
+        if (!(await this.compareHash(post.password, passwordHash))) return 0
+
+        const token = await this.generateToken(32)
+        sql = 'DELETE FROM login WHERE location=? AND user_id=?'
+        this.db.query(sql, [post.location, id], true)
+        sql = 'INSERT INTO login (location, user_id, token) VALUES (?, ?, ?)'
+        this.db.query(sql, [post.location, id, token], true)
+
+        return token
+    }
+
+    async compareHash(password, hash){
+        return await (bcrypt.compare(password, hash).catch(err => this.log(err, 1)))
+    }
+
+    async generateToken(length){
+        return await require('crypto').randomBytes(length).toString('hex');
+    }
+    
+
 
     respond(response_code, json){
         if (!this.alreadyRes){
@@ -94,6 +139,7 @@ class User{
     respondMissing(){
         this.respond(400, {reason: 'Missing or invalid POST field(s)'})
     }
+
 }
 
 module.exports = User
