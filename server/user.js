@@ -31,6 +31,7 @@ class User{
             reset_token: /^([a-f0-9]){32}$/,
             login: /^(([\w-\.]+@([\w-]+\.)+[\w-]{2,4})|([a-zA-Z0-9._\-]{5,}))$/,
             id: /^[0-9]+$/,
+            timespan: /^[0-9]+$/
         }
 
         let reqFields = this.req.body
@@ -43,17 +44,6 @@ class User{
         return toReturn
     }
 
-    
-    async workoutDates(){
-        const post = this.validateFields(["date"])
-        if (!(await this.isLoggedIn())) return false
-        if (!post) return false
-
-        let sql = 'SELECT DATE_FORMAT(calendar.date, "%Y-%m-%d") as date FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT( date, "%Y-%m") = ? AND calendar.user_id = ?'
-        let result = this.db.query(sql, [post.date, this.id])
-        return result
-    }
-
 
     async isLoggedIn(){
         if (await this.loggedIn) return true
@@ -61,6 +51,32 @@ class User{
             this.respond(401, {reason: 'Invalid token'})
             return false
         }
+    }
+
+    async workoutDates(){
+        const post = this.validateFields(["date"])
+        if (!post) return false
+        if (!(await this.isLoggedIn())) return false
+
+        let sql = 'SELECT DATE_FORMAT(calendar.date, "%Y-%m-%d") as date FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT( date, "%Y-%m") = ? AND calendar.user_id = ?'
+        let result = await this.db.query(sql, [post.date, this.id])
+        return result.map(x => x.date)
+    }
+
+
+    async userWorkouts(){
+        const post = this.validateFields(["timespan"])
+        if (!post) return false
+        if (!(await this.isLoggedIn())) return false
+
+        let sql = 'SELECT finished_workout.duration, finished_workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN finished_workout ON calendar_workout.finished_workout_id = finished_workout.id WHERE calendar.user_id = ? AND calendar.date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)'
+        let result = await this.db.query(sql, [this.id, post.timespan])
+        let workouts = []
+        result.forEach(row => {
+            row.json = JSON.parse(row.json)
+            workouts.push(row)
+        })
+        return workouts
     }
 
 

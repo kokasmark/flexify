@@ -29,59 +29,53 @@ function log(level, message){
     } 
 }
 
+
 app.get("*", (_, res) => {res.sendFile('index.html', { root });})
 app.post('/api/workouts/dates', (req, res) => postUserDates(new User(req, res, db, log)))
+app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
 
 
 async function postUserDates(user){
     log(2, '/api/workouts/dates')
+
     let dates = await user.workoutDates()
     if (dates === false) return user.respondMissing()
 
-    let dateArray = dates.map((x) => x.date)
-    user.respondSuccess({dates: dateArray})
+    user.respondSuccess({dates: dates})
 }
 
 
-async function dbPostUserMuscles(req, res){
-    log(2, '/api/home/muscles')
+async function postUserMuscles(user){
+    log(2, '/api/user/muscles')
+
+    let userWorkouts = await user.userWorkouts()
+    if (userWorkouts === false) return user.respondMissing()
     
-    const Exercises = new Map()
-    const AveragedExercises = new Map()
-    const FinalExercises = new Map()
+    let exercisesDone = {}
+    let musclesUsed = {}
 
-    let sql = 'SELECT finished_workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN finished_workout ON calendar_workout.finished_workout_id = finished_workout.id WHERE calendar.date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND calendar.user_id = ?'
-    let result = await validateAndQuery(req, res, sql, [], [], single=false, user_id=true)
-    if (result === false) return responseFail(res)
-
-    result.forEach(row => {
-        let data = JSON.parse(row.json)
-        data.forEach(entry => {
-            let id = entry.exercise_id
-            if (!Exercises.has(id)) Exercises.set(id, 0)
-            Exercises.set(id, Exercises.get(id)+1);
-        });
-    });
-
-    sql = 'SELECT json, id FROM exercise'
-    result = await validateAndQuery(req, res, sql, [], [])
-    if (result === false) return responseFail(res)
-
-    result.forEach(row => {
-        Exercises.forEach((value, id) => {
-            if (row.id == id){
-                JSON.parse(row.json).muscles.forEach(muscle => {
-                    AveragedExercises.set(muscle, value / Exercises.size)
-                })
-            }
+    userWorkouts.forEach(workout => {
+        workout.json.forEach(exercise => {
+            let id = exercise.exercise_id
+            if (!exercisesDone.hasOwnProperty(id)) exercisesDone[id] = 0
+            exercisesDone[id]++
         })
     })
 
-    AveragedExercises.forEach((value, name) => {
-        FinalExercises.set(name, Math.min(3, Math.max(1, Math.round(value * 3 + 1)) ))
+    for (const exerciseId of Object.keys(exercisesDone)){
+        let muscles = await exercises.getMuscles(exerciseId)
+        muscles.forEach(muscle => {
+            if (!musclesUsed.hasOwnProperty(muscle)) musclesUsed[muscle] = 0
+            musclesUsed[muscle] += exercisesDone[exerciseId]
+        })
+    }
+    const allMusclesUsed = Object.values(exercisesDone).reduce((acc, x) => acc + x, 0)
+    Object.keys(musclesUsed).forEach(muscle => {
+        musclesUsed[muscle] = musclesUsed[muscle] / allMusclesUsed
+        musclesUsed[muscle] = Math.min(3, Math.max(1, Math.round(musclesUsed[muscle] * 3 + 1)))
     })
-    responseJson(res, SUCCESS, Object.fromEntries(FinalExercises))
-}
 
+    user.respondSuccess({muscles: musclesUsed})
+}
 
 

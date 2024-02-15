@@ -12,8 +12,8 @@ class DB{
                 database: process.env.DB_DATABASE,
               });
         this.conn.connect((err) => {
-            if (err) this.log(0, 'Error connecting to MySQL:' + err)
-            else     this.log(0, 'Connected to MySQL');
+            if (err) this.log(1, 'Error connecting to MySQL:' + err)
+            else     this.log(1, 'Connected to MySQL');
         });
     }
 
