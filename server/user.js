@@ -1,4 +1,5 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt")
+const crypto = require('crypto')
 
 
 class User{
@@ -21,37 +22,6 @@ class User{
         return true
     }
 
-    validateFields(fieldList){
-        const regex = {
-            token: /^([a-f0-9]){64}$/,
-            email: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-            //TODO: uncomment when done testing 
-            //password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
-            password: /.*/,
-            username: /^[a-zA-Z0-9._\-]{5,}$/,
-            date: /^[0-9]{4}(-[0-9]{2}){1,2}$/,
-            carbs: /^[0-9]+((.|,)[0-9]+)?$/,
-            fat: /^[0-9]+((.|,)[0-9]+)?$/,
-            protein: /^[0-9]+((.|,)[0-9]+)?$/,
-            reset_token: /^([a-f0-9]){32}$/,
-            login: /^(([\w-\.]+@([\w-]+\.)+[\w-]{2,4})|([a-zA-Z0-9._\-]{5,}))$/,
-            id: /^[0-9]+$/,
-            timespan: /^[0-9]+$/,
-            location: /^(web)|(mobile)$/
-        }
-
-        let reqFields = this.req.body
-        let toReturn = {}
-        for (const field of fieldList){
-            console.log(field)
-            if (!reqFields.hasOwnProperty(field)) return false
-            if (!regex[field].test(reqFields[field])) return false
-            toReturn[field] = reqFields[field]
-        }
-        return toReturn
-    }
-
-
     async isLoggedIn(){
         if (await this.loggedIn) return true
         else {
@@ -60,12 +30,42 @@ class User{
         }
     }
 
+    validateFields(fieldList){
+        const regex = {
+            token: /^([a-f0-9]){64}$/,
+            email: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+            //TODO: uncomment when done testing 
+            //password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+            password: /.*/,
+            username: /^[a-zA-Z0-9._-]{5,}$/,
+            date: /^[0-9]{4}(-[0-9]{2}){1,2}$/,
+            carbs: /^[0-9]+((.|,)[0-9]+)?$/,
+            fat: /^[0-9]+((.|,)[0-9]+)?$/,
+            protein: /^[0-9]+((.|,)[0-9]+)?$/,
+            reset_token: /^([a-f0-9]){32}$/,
+            login: /^(([\w-.]+@([\w-]+\.)+[\w-]{2,4})|([a-zA-Z0-9._-]{5,}))$/,
+            id: /^[0-9]+$/,
+            timespan: /^[0-9]+$/,
+            location: /^(web)|(mobile)$/
+        }
+
+        let reqFields = this.req.body
+        let toReturn = {}
+        for (const field of fieldList){
+            if (!reqFields.hasOwnProperty(field)) return false
+            if (!regex[field].test(reqFields[field])) return false
+            toReturn[field] = reqFields[field]
+        }
+        return toReturn
+    }
+
+
     async workoutDates(){
         const post = this.validateFields(["date"])
         if (!post) return false
         if (!(await this.isLoggedIn())) return false
 
-        let sql = 'SELECT DATE_FORMAT(calendar.date, "%Y-%m-%d") as date FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT( date, "%Y-%m") = ? AND calendar.user_id = ?'
+        let sql = 'SELECT DATE_FORMAT(calendar.date, "%Y-%m-%d") as date FROM calendar_workout INNER JOIN caledar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT( date, "%Y-%m") = ? AND calendar.user_id = ?'
         let result = await this.db.query(sql, [post.date, this.id])
         return result.map(x => x.date)
     }
@@ -94,7 +94,6 @@ class User{
     }
 
     async login(){
-        this.log(-1, this.req.body)
         const post = this.validateFields(["username", "password", "location"])
         if (!post) return false
 
@@ -112,15 +111,45 @@ class User{
         sql = 'INSERT INTO login (location, user_id, token) VALUES (?, ?, ?)'
         this.db.query(sql, [post.location, id, token], true)
 
+        return this.updateToken(id, post.location)
+    }
+
+    async register(){
+        const post = this.validateFields(["username", "email", "password", "location"])
+        if (!post) return false
+
+        let sql = 'SELECT id FROM user WHERE username = ? OR email = ?'
+        let result = await this.db.query(sql, [post.username, post.email])
+        if (result.length) return 0
+
+        const passwordHash = await this.generateHash(post.password)
+        sql = 'INSERT INTO user (username, email, password) VALUES (?, ?, ?)'
+        result = await this.db.query(sql, [post.username, post.email, passwordHash])
+        const id = result.insertId
+
+        return this.updateToken(id, post.location)
+    }
+
+    async updateToken(id, location){
+        const token = await this.generateToken(32)
+        let sql = 'DELETE FROM login WHERE location=? AND user_id=?'
+        this.db.query(sql, [location, id], true)
+        sql = 'INSERT INTO login (location, user_id, token) VALUES (?, ?, ?)'
+        this.db.query(sql, [location, id, token], true)
+
         return token
     }
 
+    generateHash(password){
+        return bcrypt.hash(password, 10).catch(err => log(1, err))
+    }
+
     async compareHash(password, hash){
-        return await (bcrypt.compare(password, hash).catch(err => this.log(err, 1)))
+        return await (bcrypt.compare(password, hash).catch(err => this.log(1, err)))
     }
 
     async generateToken(length){
-        return await require('crypto').randomBytes(length).toString('hex');
+        return crypto.randomBytes(length).toString('hex');
     }
     
 

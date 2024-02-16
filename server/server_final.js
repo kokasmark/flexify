@@ -31,9 +31,12 @@ function log(level, message){
 
 app.get('/api/user', (req, res) => getUserDetails(new User(req, res, db, log)))
 
+
 app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log)))
+app.post('/api/signup', (req, res) => postUserRegister(new User(req, res, db, log)))
 app.post('/api/workouts/dates', (req, res) => postWorkoutsDates(new User(req, res, db, log)))
 app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
+
 // Leave at the end, otherwise captures all GET requests
 app.get("*", (_, res) => {res.sendFile('index.html', { root });})
 
@@ -53,6 +56,15 @@ async function postLogin(user){
     const token = await user.login()
     if (token === false) return user.respondMissing()
     else if (token === 0) return user.respond(400, {reason: 'Invalid username or password'})
+
+    user.respondSuccess({token: token})
+}
+
+async function postUserRegister(user){
+    log('/api/signup', 2)
+    const token = await user.register()
+    if (token === false) return user.respondMissing()
+    else if (token === 0) return user.respond(400, {reason: 'Already exists'})
 
     user.respondSuccess({token: token})
 }
