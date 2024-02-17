@@ -30,12 +30,16 @@ function log(level, message){
 
 
 app.get('/api/user', (req, res) => getUserDetails(new User(req, res, db, log)))
+app.get('/api/diet/all', (req, res) => getDietAll(new User(req, res, db, log)))
 
 
 app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log)))
 app.post('/api/signup', (req, res) => postUserRegister(new User(req, res, db, log)))
+
 app.post('/api/workouts/dates', (req, res) => postWorkoutsDates(new User(req, res, db, log)))
 app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
+app.post('/api/diet', (req, res) => postDietQuery(new User(req, res, db, log)));
+app.post('/api/diet/add', (req, res) => postDietAdd(new User(req, res, db, log)));
 
 // Leave at the end, otherwise captures all GET requests
 app.get("*", (_, res) => {res.sendFile('index.html', { root });})
@@ -50,6 +54,14 @@ async function getUserDetails(user){
     user.respondSuccess({username: details.username, email: details.email})
 }
 
+async function getDietAll(user){
+    log(2, '/api/diet/all')
+
+    const diet = await user.dietAll()
+    if (diet === false) return
+
+    user.respondSuccess(diet)
+}
 async function postLogin(user){
     log(2, '/api/login')
 
@@ -114,4 +126,21 @@ async function postUserMuscles(user){
 }
 
 
+async function postDietQuery(user){
+    log(2, '/api/diet/')
+
+    let result = await user.diet()
+    if (result === false) return user.respondMissing()
+
+    user.respondSuccess({carbs: result.carbs, fat: result.fat, protein: result.protein})
+}
+
+async function postDietAdd(user){
+    log(2, '/api/diet/add')
+
+    let result = await user.dietAdd()
+    if (result === false) return user.respondMissing()
+
+    user.respondSuccess()
+}
 

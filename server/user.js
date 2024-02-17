@@ -59,7 +59,6 @@ class User{
         return toReturn
     }
 
-
     async workoutDates(){
         const post = this.validateFields(["date"])
         if (!post) return false
@@ -69,7 +68,6 @@ class User{
         let result = await this.db.query(sql, [post.date, this.id])
         return result.map(x => x.date)
     }
-
 
     async userWorkouts(){
         const post = this.validateFields(["timespan"])
@@ -140,6 +138,45 @@ class User{
         return token
     }
 
+    async diet(){
+        const post = this.validateFields(["date"])
+        if (!post) return false
+        if (!await this.isLoggedIn()) return false
+
+        let sql = "SELECT protein, carbs, fat FROM calendar WHERE user_id=? AND date=?"
+        let result = await this.db.query(sql, [this.id, post.date], true)
+        if (result === undefined) result = {carbs: 0, fat: 0, protein: 0}
+
+        return result
+    }
+
+    async dietAdd(){
+        const post = this.validateFields(["carbs", "fat", "protein"])
+        if (!post) return false
+        if (!await this.isLoggedIn()) return false
+
+        let sql = "SELECT id FROM calendar WHERE user_id=? AND date=CURDATE()"
+        let result = await this.db.query(sql, [this.id])
+        if (!result.length){
+            sql ="INSERT INTO calendar (user_id, date, protein, carbs, fat) VALUES (?, CURDATE(), 0, 0, 0)"
+            result = await this.db.query(sql, [this.id])
+        }
+        const id = result.length ? result[0].id : result.insertId
+
+        sql = `UPDATE calendar SET carbs=carbs+?, fat=fat+?, protein=protein+? WHERE id=?`
+        await this.db.query(sql, [post.carbs, post.fat, post.protein, id])
+
+        return true
+    }
+
+    async dietAll(){
+        if (!await this.isLoggedIn()) return false
+
+        let sql = "SELECT date, carbs, fat, protein FROM calendar WHERE user_id=?"
+        return await this.db.query(sql, [this.id])
+    }
+
+
     generateHash(password){
         return bcrypt.hash(password, 10).catch(err => log(1, err))
     }
@@ -161,7 +198,7 @@ class User{
         }
     }
 
-    respondSuccess(json){
+    respondSuccess(json={}){
         this.respond(200, json)
     }
 
