@@ -24,18 +24,18 @@ const connection = createConnection()
 
 
 // setup api paths
-app.post('/api/user', (req, res) => dbPostUserDetails(req, res));
-app.post('/api/login', (req, res) => dbPostUserLogin(req, res));
-app.post('/api/signup', (req, res) => dbPostUserRegister(req, res));
+app.post('/api/user', (req, res) => dbPostUserDetails(req, res));//done
+app.post('/api/login', (req, res) => dbPostUserLogin(req, res));//done
+app.post('/api/signup', (req, res) => dbPostUserRegister(req, res));//done
 
-app.post('/api/home/muscles', (req, res) => dbPostUserMuscles(req, res));
+app.post('/api/home/muscles', (req, res) => dbPostUserMuscles(req, res));//done
 
-app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));
-app.post('/api/diet/date', (req, res) => dbPostUserDietOnDate(req, res));
-app.post('/api/diet/get_dates', (req, res) => dbPostUserDietDates(req, res));
-app.post('/api/diet/add', (req, res) => dbPostUserDietAdd(req, res));
+app.post('/api/diet', (req, res) => dbPostUserDiet(req, res));//done
+app.post('/api/diet/date', (req, res) => dbPostUserDietOnDate(req, res));//done
+app.post('/api/diet/get_dates', (req, res) => dbPostUserDietDates(req, res));//done
+app.post('/api/diet/add', (req, res) => dbPostUserDietAdd(req, res));//done
 
-app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));
+app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));//done
 app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
 app.post('/api/workouts/save', (req, res) => dbPostSaveWorkout(req, res));
 
@@ -417,7 +417,7 @@ async function dbPostSavedWorkoutTemplates(req, res){
 
 async function dbPostExerciseTemplates(req, res){
     log('/api/templates/exercises', 2)
-    let sql = 'SELECT id, name, `type`, json, gif_url as gifUrl FROM exercise;'
+    let sql = 'SELECT id, name, `type`, muscles, gif_url as gifUrl FROM exercise;'
     let result = await validateAndQuery(req, res, sql, [], [])
     let exerciesArray = result.map((x) => x)
     responseJson(res, SUCCESS, {data: exerciesArray})
