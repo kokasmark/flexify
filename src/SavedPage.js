@@ -7,7 +7,7 @@ import Sidebar from './Sidebar';
 import 'react-calendar/dist/Calendar.css';
 
 import AuthRedirect from './authRedirect';
-import { Card } from 'react-bootstrap';
+import { Card, CardBody } from 'react-bootstrap';
 import NavBarWrapper from './NavBar';
 import { ReactComponent as Icon_reps } from './assets/icon-reps.svg';
 import { ReactComponent as Icon_weight } from './assets/icon-weight.svg';
@@ -21,7 +21,8 @@ import {host} from './constants'
 class SavedPage extends Component {
   state = {
     savedTemplates: [],
-    opened: -1
+    current: 2,
+    direction:  [" furthest", " far", " closest", " close"]
   }
   getSavedTemplates() {
     var myHeaders = new Headers();
@@ -40,6 +41,7 @@ class SavedPage extends Component {
       .then((response) => {
         var r = JSON.parse(response);
         if (r.success) {
+          console.log(r.templates)
           this.setState({ savedTemplates: r.templates })
         } else {
 
@@ -50,52 +52,169 @@ class SavedPage extends Component {
   componentDidMount() {
     this.getSavedTemplates();
   }
+  scrollCards(e){
+    var prevValue = this.state.current;
+    var direction = []
+    if((this.state.current >= 0 && this.state.current <= this.state.savedTemplates.length-1)){
+      direction = e.deltaY == -100? [" furthest", " far", " closest", " close"]:[" close", " closest", " far", " furthest"]
+    var value = this.state.current + (e.deltaY == -100? 1:-1)
+    if(value < 0){
+      value = 0
+    }
+    if(value > this.state.savedTemplates.length-1){
+      value = this.state.savedTemplates.length-1
+    }
+    this.setState({current: value, direction: direction})}
+  }
   render() {
     return (
       <div className='page'>
 
-        <div className='saved-card-container load-anim' style={{position: 'absolute', top: 100, marginLeft: 150, borderRadius: 10, 
-        height: "90%", padding: 20, overflowY: 'auto'}}>
-        {this.state.savedTemplates.map((template, index) => (
-          <Card key={index} style={{ width: 300, height: 350, textAlign: 'center', boxShadow: '5px 5px 10px var(--shadow)' }} className='workout-card'>
-
-            <Card.Body>
-              <Card.Title>{template.name}</Card.Title>
-              <Link to={{ pathname: '/create', search: template.name }} style={{position: 'relative', top: -50, left: 120}}><Icon_copy title='Duplicate Workout' className='interactable'/></Link>
-              <div style={{position: 'relative', top: -40}}>
-              <Card.Text >{template.comment}</Card.Text>
-              <ol style={{maxHeight: 180, overflowY: 'scroll', overflowX: 'hidden'}}>
-                {template.data.map((data, olIndex) => (
-
-                  <div className='interactable' key={index} onClick={()=> this.setState({opened: this.state.opened == index+'-'+olIndex? -1:index+'-'+olIndex})}>
-                    <h5 style={{textAlign: 'start'}}>{(olIndex+1)+'. '+data.comment}</h5>
-                    <div style={{textAlign: 'start',overflow: 'auto', maxHeight: 150, backgroundColor: 'var(--darker-contrast)', borderRadius: 5}}>
-                    
-                    
-                    {JSON.parse(data.set_data).map((set, liIndex) => (
-                      <div>
-                      {this.state.opened == (index+'-'+olIndex)&& <li key={liIndex}>
-                        <div style={{display: 'inline-block'}}>
-                        <Icon_reps  style={{ width: 20, height: 20 }}/><p style={{display: 'inline-block', fontWeight: 700}}>{set.reps == 0 ? '-': set.reps}</p>
-                        <Icon_weight style={{ width: 20, height: 20 }}/><p style={{display: 'inline-block', fontWeight: 700}}>{set.weight == 0 ? '-': set.weight+' kg'} </p>
-                        <Icon_duration style={{ width: 20, height: 20 }}/><p style={{display: 'inline-block', fontWeight: 700}}>{set.time == 0 ? '-': set.time+' sec'}</p>
-                        </div>
-                      </li>}
-                      </div>
-
-                    ))}
-                    </div>
-                  </div>
-
-                ))}
-              </ol>
-              </div>
-              <Link to={{ pathname: '/workout'}} onClick={()=>localStorage.setItem("started-workout", JSON.stringify(template))} className='start-workout interactable'>Start</Link>
-            </Card.Body>
+        {this.state.savedTemplates.length > 0 && <div className='saved-workouts' onWheel={(e)=>this.scrollCards(e)}>
+          {(this.state.current >= 2 && this.state.current <= this.state.savedTemplates.length - 3) &&
+          <div>
+            <Card className={'saved-card' + this.state.direction[0]}  key={Math.random()} style={this.state.current != 0 &&{opacity: 0.25, transform: "scale(0.8)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current-2].name}</h1>
+            </CardBody>
           </Card>
+          <Card className={'saved-card' + this.state.direction[1]}  key={Math.random()} style={{opacity: 0.5, transform: "scale(0.9)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current-1].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className={'saved-card-current'} key={Math.random()}>
+            <CardBody>
+              <p>{this.state.current}</p>
+              <h1>{this.state.savedTemplates[this.state.current].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className={'saved-card' + this.state.direction[2]}  key={Math.random()} style={{opacity: 0.5, transform: "scale(0.9)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current+1].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className={'saved-card'  + this.state.direction[3]}  key={Math.random()} style={{opacity: 0.25, transform: "scale(0.8)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current+2].name}</h1>
+            </CardBody>
+          </Card>
+            </div>}
 
-        ))}
-        </div>
+            {(this.state.current == 1) &&
+          <div>
+            <Card className='saved-card' style={this.state.current != 0 &&{opacity: 0.5, transform: "scale(0.9)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current-1].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card-current' >
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card' style={{opacity: 0.5, transform: "scale(0.9)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current+1].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card' style={{opacity: 0.25, transform: "scale(0.8)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current+2].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card' style={{opacity: 0.15, transform: "scale(0.7)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current+3].name}</h1>
+            </CardBody>
+          </Card>
+            </div>}
+            {(this.state.current == 0) &&
+          <div>
+            <Card className='saved-card-current'>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card 'style={{opacity: 0.5, transform: "scale(0.9)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current+1].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card' style={{opacity: 0.25, transform: "scale(0.8)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current+2].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card' style={{opacity: 0.15, transform: "scale(0.7)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current+3].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card' style={{opacity: 0.1, transform: "scale(0.6)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current+4].name}</h1>
+            </CardBody>
+          </Card>
+            </div>}
+
+            {(this.state.current == this.state.savedTemplates.length-2) &&
+          <div>
+            <Card className='saved-card' style={{opacity: 0.15, transform: "scale(0.7)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current-3].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card 'style={{opacity: 0.25, transform: "scale(0.8)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current-2].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card' style={{opacity: 0.5, transform: "scale(0.9)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current-1].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card-current'>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card' style={{opacity: 0.5, transform: "scale(0.9)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current+1].name}</h1>
+            </CardBody>
+          </Card>
+            </div>}
+            {(this.state.current == this.state.savedTemplates.length-1) &&
+          <div>
+            <Card className='saved-card' style={{opacity: 0.15, transform: "scale(0.6)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current-4].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card 'style={{opacity: 0.25, transform: "scale(0.7)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current-3].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card' style={{opacity: 0.5, transform: "scale(0.8)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current-2].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card' style={{opacity: 0.5, transform: "scale(0.9)"}}>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current-1].name}</h1>
+            </CardBody>
+          </Card>
+          <Card className='saved-card-current'>
+            <CardBody>
+              <h1>{this.state.savedTemplates[this.state.current].name}</h1>
+            </CardBody>
+          </Card>
+            </div>}
+        </div>}
         <NavBarWrapper />
         <Sidebar />
       </div>

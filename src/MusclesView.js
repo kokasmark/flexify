@@ -7,6 +7,7 @@ import { ReactComponent as W_MusclesBack } from './assets/women-muscles-back.svg
 import { ReactComponent as Icon_rotate } from './assets/icon-rotate.svg';
 import icon_lightbulb from './assets/icon-lightbulb.png'
 import GetString from './language';
+import { RiErrorWarningLine, RiCheckboxCircleLine,RiMoreFill } from "react-icons/ri";
 
 
 export default class MusclesView extends Component {
@@ -58,7 +59,8 @@ export default class MusclesView extends Component {
     muscleData: [],
     frontLastKey: 138,
     animation: 'fade-in',
-    tips: ["Little bit empty... Explore the site and create a workout!"]
+    tips: [{text:"Little bit empty... Explore the site and create a workout!",level:0}],
+    tip_icons: [<RiMoreFill className='tip-icon' style={{color: "var(--heat-yellow)"}}/>, <RiCheckboxCircleLine className='tip-icon' style={{color: "var(--heat-orange)"}}/>, <RiErrorWarningLine className='tip-icon' style={{color: "var(--heat-red)"}}/>]
   }
   getGroup() {
     return this.state.men == true ? this.state.groups.men : this.state.groups.women;
@@ -175,13 +177,13 @@ export default class MusclesView extends Component {
       if (document.getElementById(this.findMuscleIndex(muscleName)) != null) {
         switch (mappedValue) {
           case 1:
-            t.push(GetString("tip-level-1").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`))
+            t.push({text: GetString("tip-level-1").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`),level: 0})
             break;
           case 2:
-            t.push(GetString("tip-level-2").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`))
+            t.push({text: GetString("tip-level-2").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`),level: 1})
             break;
           case 3:
-            t.push(GetString("tip-level-3").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`))
+            t.push({text: GetString("tip-level-3").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`),level: 2})
             break;
           default:
             break;
@@ -239,8 +241,8 @@ export default class MusclesView extends Component {
         {this.props.showTips != null && <div className={'tips-container '+ this.state.animation} style={{ position: 'relative', top: -800, left: 650 }}>
           {this.state.tips.map((tip, index) => (
             <div style={{ color: 'white', position: 'relative', left: index % 2 == 0 ? -550 : 200, width: 400, marginTop: 50 }} className='interactable anim home-tip'>
-              <img style={{ width: 100, filter: 'invert(1)', marginTop: -50 }} src={icon_lightbulb} />
-              <div style={{ display: 'inline-block', width: 250 }} key={index} dangerouslySetInnerHTML={{ __html: tip }}></div>
+              {this.state.tip_icons[tip.level]}
+              <div style={{ display: 'inline-block', width: 250 }} key={index} dangerouslySetInnerHTML={{ __html: tip.text }}></div>
             </div>
           ))}
         </div>}
