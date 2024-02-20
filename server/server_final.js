@@ -40,6 +40,7 @@ app.post('/api/signup', (req, res) => postUserRegister(new User(req, res, db, lo
 
 app.post('/api/workouts/dates', (req, res) => postWorkoutsDates(new User(req, res, db, log)))
 app.post('/api/workouts/data', (req, res) => postUserWorkouts(new User(req, res, db, log)))
+app.post('/api/workouts/save', (req, res) => postSaveWorkout(new User(req, res, db, log)))
 app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
 app.post('/api/diet', (req, res) => postDietQuery(new User(req, res, db, log)));
 app.post('/api/diet/add', (req, res) => postDietAdd(new User(req, res, db, log)));
@@ -173,5 +174,13 @@ async function getUserTemplates(user){
     if(result === false) return user.respondMissing()
 
     user.respondSuccess({templates: result})
+}
+
+async function postSaveWorkout(user){
+    log('/api/workouts/save', 2)
+    let result = await user.saveWorkout()
+    if(result === false) return user.respondMissing()
+    
+    user.respondSuccess()
 }
 
