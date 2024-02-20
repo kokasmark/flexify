@@ -21,6 +21,9 @@ import { FaPersonRunning } from "react-icons/fa6";
 import { CgGym } from "react-icons/cg";
 import { FaPerson } from "react-icons/fa6";
 
+import { FaPlay } from "react-icons/fa";
+import { FaListUl } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 class SavedPage extends Component {
   state = {
@@ -83,19 +86,28 @@ class SavedPage extends Component {
       slider.scrollLeft = scrollLeft - walk;
     });
   }
+  select(index){
+    if(this.state.selectedCard != index){
+      this.setState({selectedCard: index})
+    }
+  }
   render() {
     return (
       <div className='page'>
+        <h1 className='title'>Saved Workouts</h1>
         <div className='saved-workouts'>
           {this.state.savedTemplates.map((template,index) => (
-            <Card key={index} className={this.state.selectedCard == index ? "selected" : "not-selected"} onClick={()=>this.setState({selectedCard: index})}>
-              <CardBody>
+            <div className={`workout-card${this.state.selectedCard == index ? " selected-card":""}`} style={{animation: `card-load ${index/5}s`}}>
+            <Card key={index} onClick={()=>this.select(index)}>í
                 {this.state.icons[Math.floor(Math.random()*this.state.icons.length)]}
                 <div className='bottom'>
                   <h1>{template.name}</h1>
                 </div>
+                <Link to={"/workout"} onClick={()=> localStorage.setItem("started-workout", JSON.stringify(template))}><FaPlay className='control-btn interactable'/></Link>
+                  <FaListUl className='control-btn interactable'/>
+                  <MdDelete className='control-btn interactable'/>
 
-                <ul className='exercises'>
+                {/* <ul className='exercises'>
                   {template.data.map((data,index) => (
                     <li className='exercise'>
                       <h1>{data.comment}</h1>
@@ -104,9 +116,9 @@ class SavedPage extends Component {
                       </div>
                     </li>
                   ))}
-                </ul>
-              </CardBody>
+                </ul> */}
             </Card>
+            </div>
           )
           )}
         </div>

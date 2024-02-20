@@ -167,8 +167,25 @@
     position: fixed;
     right: -200px;
   }
-  .sign-in-controls{
-    left: 15% !important;
+  .saved-workouts{
+    left: 7% !important;
+    height: 100%;
+  }
+  .saved-workouts > div {
+    flex: 0 0 auto;
+    margin-left: 25% !important;
+    scroll-snap-align: start;
+  }
+  .saved-workouts .workout-card{
+    width: 80% !important;
+    height: 50% !important;
+    top: 30% !important;
+  }
+  .saved-workouts .selected-card{
+    transform: translateY(0) !important;
+  }
+  .title{
+      display: none;
   }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
@@ -272,6 +289,12 @@
   }
   .sign-in-controls{
     left: 15% !important;
+  }
+  .saved-workouts{
+    flex-wrap: wrap;
+  }
+  .saved-workouts .workout-card{
+    width: 80% !important;
   }
 }
 /* Medium devices (landscape tablets, 768px and up) */
@@ -964,23 +987,21 @@ iframe
   transition: 0.5s
 }
 .saved-workouts{
-  width: 100%;
+  width: 95%;
   position: absolute;
   display: flex;
   flex-wrap: nowrap;
-  overflow-x: auto;
+  overflow-x: scroll;
+  overflow-y: hidden;
   height: 100%;
   -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  left: 1.5%;
 }
-.saved-workouts::-webkit-scrollbar {
-  display: none;
-}
-.saved-workouts .card{
-  width: calc(100%/10);
-  height: 300px;
+.saved-workouts > div {
   flex: 0 0 auto;
-  margin-top: 38%;
-  margin-left: 1%;
+  margin-left: 1.2%;
+  scroll-snap-align: start;
 }
 .saved-workouts:active{
   cursor: grabbing;
@@ -988,75 +1009,115 @@ iframe
 .saved-workouts:hover{
   cursor: pointer;
 }
-.saved-workouts .card .card-body{
+.saved-workouts::-webkit-scrollbar {
+  display: none;
+}
+.saved-workouts .workout-card{
+  width: calc(100%/10);
+  height: 300px;
+
+  position: relative;
+  top: 20%;
+
   background-color: transparent;
   border: 1px solid var(--contrast);
-  height: 100%;
   overflow: hidden;
+  border-radius: 10px;
+
+  transition: 0.5s;
 }
-.saved-workouts .card .card-body .bottom{
+.saved-workouts .workout-card .bottom{
   background-color: var(--contrast);
   position: relative;
-  margin-top: 20%;
-  width: 200%;
-  margin-left: -50%;
-  height: 200%;
-  border-radius: 200px;
+  width: 100%;
+  height: 100%;
+  border-radius: 200px 200px 0px 0px;
   transition: 0.5s;
   text-align: center;
-  z-index: 100;
+  z-index: 10;
 }
-.saved-workouts .card .saved-card-icon{
-  width: 100%;
-  height: 30%;
-}
-.saved-workouts .card .card-body h1{
-  font-size: 20px;
+.saved-workouts .workout-card .saved-card-icon{
+  width: 50%;
+  height: 50%;
+  margin-left: 25%;
+  margin-top: 10%;
+  margin-bottom: 30%;
   color: white;
-  padding: 50px;
 }
-.saved-workouts .not-selected .card-body:hover{
-  transform: translateY(-150px);
+.saved-workouts .workout-card h1{
+  font-size: 15px;
+  color: white;
+  padding-bottom: 60%;
+  padding-top: 60px;
 }
-.saved-workouts .exercises{
-  display: none;
+.saved-workouts .workout-card:hover:not(.selected-card){
+  transform: translateY(-50px);
 }
-.saved-workouts .selected{
-  position: fixed;
-  left: 10%;
-  margin-top: 11%;
-  transform: scale(1.5);
+.saved-workouts .workout-card:hover:not(.selected-card) .bottom{
+  border-radius: 0px;
+  margin-top: -110%;
+  padding-bottom: 100%;
+}
+.saved-workouts .selected-card{
+  transform: translateY(-100px);
   transition: 0.5s;
 }
-.saved-workouts .selected:hover{
-  width: 30%;
-}
-.saved-workouts .selected:hover .bottom{
-  width: 120%;
-  height: fit-content;
-  margin-left: -10%;
+.saved-workouts .selected-card .bottom{
   border-radius: 0px;
-  margin-top: -20%;
+  margin-top: -15%;
+  padding-bottom: 0%;
+  animation: card-bottom 0.5s;
 }
-.saved-workouts .exercise:hover .sets{
-    display: block;
+.saved-workouts .selected-card .bottom h1{
+  padding-bottom: 1%;
+  padding-top: 5%;
+  margin-top: 1%;
 }
-.saved-workouts .selected .exercises li{
-  margin: 0px;
-  padding: 0px;
-  height: 20px;
+.saved-workouts .selected-card .control-btn{
+  color: white;
+  width: 100%;
+  height: 50px;
+  margin: 15% 0px 0px 0px
 }
-.saved-workouts .selected:hover .exercises{
-  display: block;
-  height: 100%;
-  width:100%;
-}
-.saved-workouts .selected:hover .exercises .sets{
+.saved-workouts .selected-card .saved-card-icon{
   display: none;
 }
-.saved-workouts .not-selected .card-body:hover .bottom{
-  margin-top: -80%;
-  border-radius: 0px;
+.title{
+  font-size: 60px;
+  width: 100%;
+  text-align: center;
+  color: white;
+  margin-top: 5%;
+}
+@keyframes card-load {
+  0%{
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  100%{
+    opacity: 1;
+  }
+}
+@keyframes card-bottom {
+  0%{
+    padding-bottom: 300%;
+  }
+  100%{
+   padding-bottom: -50%;
+  }
+}
+@keyframes card-bottom-title {
+  0%{
+    font-size: 20px;
+  color: white;
+  padding-bottom: 60%;
+  padding-top: 60px;
+  }
+  100%{
+    padding-bottom: 1%;
+  padding-top: 5%;
+  margin-top: 1%;
+  }
 }
 @keyframes move_up{
   0%{
