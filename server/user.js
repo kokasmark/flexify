@@ -97,7 +97,7 @@ class User{
         if (!post) return false
         if (!(await this.isLoggedIn())) return false
 
-        let sql = 'SELECT workout.id, workout.name, workout.json FROM calendar_workout INNER JOIN workout ON calendar_workout.workout_id = workout.id INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT(calendar.date, "%Y-%m-%d") = ? AND workout.user_id = ? AND workout.duration = "00:00:00"'
+        let sql = 'SELECT workout.id, workout.name, workout.json, workout.duration FROM calendar_workout INNER JOIN workout ON calendar_workout.workout_id = workout.id INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT(calendar.date, "%Y-%m-%d") = ? AND workout.user_id = ? AND workout.duration != "00:00:00"'
         let result = await this.db.query(sql, [post.date, this.id])
         if (result && result.length > 0){
             let workoutsArray = result.map((x) => x)
@@ -113,7 +113,7 @@ class User{
         let sql = 'SELECT workout.name, workout.json FROM workout WHERE workout.duration = "00:00:00" AND workout.user_id = ?'
         let result = await this.db.query(sql, [this.id])
         for (const template of result){
-            templates.push({name:template.name, data:template.json})
+            templates.push({name:template.name, json:template.json})
         }
         return templates
     }
