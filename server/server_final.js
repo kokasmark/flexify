@@ -47,7 +47,8 @@ app.get("*", (_, res) => {res.sendFile('index.html', { root });})
 
 
 if (process.env.RUN_TESTS){
-    const test = require('./test.js')
+    const Test = require('./test.js')
+    const test = new Test()
 }
 
 
