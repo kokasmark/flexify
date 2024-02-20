@@ -15,14 +15,18 @@ import { ReactComponent as Icon_duration } from './assets/icon-duration.svg';
 import { ReactComponent as Icon_copy } from './assets/icon-copy.svg';
 import { Link } from 'react-router-dom';
 
-import {host} from './constants'
+import { host } from './constants'
+
+import { FaPersonRunning } from "react-icons/fa6";
+import { CgGym } from "react-icons/cg";
+import { FaPerson } from "react-icons/fa6";
 
 
 class SavedPage extends Component {
   state = {
     savedTemplates: [],
-    current: 2,
-    direction:  [" furthest", " far", " closest", " close"]
+    icons: [<FaPersonRunning className='saved-card-icon'/>, <FaPerson className='saved-card-icon'/>, <CgGym className='saved-card-icon'/>],
+    selectedCard: -1
   }
   getSavedTemplates() {
     var myHeaders = new Headers();
@@ -51,170 +55,61 @@ class SavedPage extends Component {
   }
   componentDidMount() {
     this.getSavedTemplates();
-  }
-  scrollCards(e){
-    var prevValue = this.state.current;
-    var direction = []
-    if((this.state.current >= 0 && this.state.current <= this.state.savedTemplates.length-1)){
-      direction = e.deltaY == -100? [" furthest", " far", " closest", " close"]:[" close", " closest", " far", " furthest"]
-    var value = this.state.current + (e.deltaY == -100? 1:-1)
-    if(value < 0){
-      value = 0
-    }
-    if(value > this.state.savedTemplates.length-1){
-      value = this.state.savedTemplates.length-1
-    }
-    this.setState({current: value, direction: direction})}
+
+    const slider = document.querySelector('.saved-workouts');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    slider.addEventListener('mousedown', (e) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mousemove', (e) => {
+      if(!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 1; //scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+    });
   }
   render() {
     return (
       <div className='page'>
+        <div className='saved-workouts'>
+          {this.state.savedTemplates.map((template,index) => (
+            <Card key={index} className={this.state.selectedCard == index ? "selected" : "not-selected"} onClick={()=>this.setState({selectedCard: index})}>
+              <CardBody>
+                {this.state.icons[Math.floor(Math.random()*this.state.icons.length)]}
+                <div className='bottom'>
+                  <h1>{template.name}</h1>
+                </div>
 
-        {this.state.savedTemplates.length > 0 && <div className='saved-workouts' onWheel={(e)=>this.scrollCards(e)}>
-          {(this.state.current >= 2 && this.state.current <= this.state.savedTemplates.length - 3) &&
-          <div>
-            <Card className={'saved-card' + this.state.direction[0]}  key={Math.random()} style={this.state.current != 0 &&{opacity: 0.25, transform: "scale(0.8)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current-2].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className={'saved-card' + this.state.direction[1]}  key={Math.random()} style={{opacity: 0.5, transform: "scale(0.9)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current-1].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className={'saved-card-current'} key={Math.random()}>
-            <CardBody>
-              <p>{this.state.current}</p>
-              <h1>{this.state.savedTemplates[this.state.current].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className={'saved-card' + this.state.direction[2]}  key={Math.random()} style={{opacity: 0.5, transform: "scale(0.9)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current+1].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className={'saved-card'  + this.state.direction[3]}  key={Math.random()} style={{opacity: 0.25, transform: "scale(0.8)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current+2].name}</h1>
-            </CardBody>
-          </Card>
-            </div>}
-
-            {(this.state.current == 1) &&
-          <div>
-            <Card className='saved-card' style={this.state.current != 0 &&{opacity: 0.5, transform: "scale(0.9)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current-1].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card-current' >
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card' style={{opacity: 0.5, transform: "scale(0.9)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current+1].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card' style={{opacity: 0.25, transform: "scale(0.8)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current+2].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card' style={{opacity: 0.15, transform: "scale(0.7)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current+3].name}</h1>
-            </CardBody>
-          </Card>
-            </div>}
-            {(this.state.current == 0) &&
-          <div>
-            <Card className='saved-card-current'>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card 'style={{opacity: 0.5, transform: "scale(0.9)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current+1].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card' style={{opacity: 0.25, transform: "scale(0.8)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current+2].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card' style={{opacity: 0.15, transform: "scale(0.7)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current+3].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card' style={{opacity: 0.1, transform: "scale(0.6)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current+4].name}</h1>
-            </CardBody>
-          </Card>
-            </div>}
-
-            {(this.state.current == this.state.savedTemplates.length-2) &&
-          <div>
-            <Card className='saved-card' style={{opacity: 0.15, transform: "scale(0.7)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current-3].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card 'style={{opacity: 0.25, transform: "scale(0.8)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current-2].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card' style={{opacity: 0.5, transform: "scale(0.9)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current-1].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card-current'>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card' style={{opacity: 0.5, transform: "scale(0.9)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current+1].name}</h1>
-            </CardBody>
-          </Card>
-            </div>}
-            {(this.state.current == this.state.savedTemplates.length-1) &&
-          <div>
-            <Card className='saved-card' style={{opacity: 0.15, transform: "scale(0.6)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current-4].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card 'style={{opacity: 0.25, transform: "scale(0.7)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current-3].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card' style={{opacity: 0.5, transform: "scale(0.8)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current-2].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card' style={{opacity: 0.5, transform: "scale(0.9)"}}>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current-1].name}</h1>
-            </CardBody>
-          </Card>
-          <Card className='saved-card-current'>
-            <CardBody>
-              <h1>{this.state.savedTemplates[this.state.current].name}</h1>
-            </CardBody>
-          </Card>
-            </div>}
-        </div>}
+                <ul className='exercises'>
+                  {template.data.map((data,index) => (
+                    <li className='exercise'>
+                      <h1>{data.comment}</h1>
+                      <div className='sets'>
+                        <p>{data.set_data}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </CardBody>
+            </Card>
+          )
+          )}
+        </div>
         <NavBarWrapper />
         <Sidebar />
       </div>
