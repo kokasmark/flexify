@@ -1,21 +1,23 @@
 class Test{
-    constructor(username, email, password){
+    constructor(username, email, password, debug){
         this.data = {}
         this.userData = {
             username: username,
             email: email,
             password: password,
         }
+        this.debug = debug
 
     }
 
     async runTests(){
         await this.delay(1000)
         await this.callAPIs()
+        if (this.debug) console.log(this.data)
+
         const test = require('node:test')
         const assert = require('node:assert')
 
-        console.log(this.data)
         test('Testing register and login', t => {
             assert.ok(this.data.register)
             assert.strictEqual(this.data.login.status, 200)
@@ -34,12 +36,11 @@ class Test{
             assert.strictEqual(this.data.dietSecond.status, 200)
             assert.strictEqual(this.data.dietAdd.status, 200)
 
-            assert.ok(this.data.dietSecond, {
+            assert.deepStrictEqual(this.data.dietSecond, {
                 status: 200,
                 carbs: this.data.dietFirst.carbs + this.data.dietSecond.carbs, 
                 fat: this.data.dietFirst.fat + this.data.dietSecond.fat,
                 protein: this.data.dietFirst.protein + this.data.dietSecond.protein})
-
         })
 
 
@@ -85,7 +86,7 @@ class Test{
 
     async waitForToken(){
         while (!this.data.login){
-            await this.delay(0.1)
+            await this.delay(10)
         }
         this.userData.token = this.data.login.token
         return
