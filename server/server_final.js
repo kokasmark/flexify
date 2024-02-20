@@ -49,8 +49,9 @@ app.get("*", (_, res) => {res.sendFile('index.html', { root });})
 
 async function test(){
     if (process.env.RUN_TESTS == 1){
+        const debug = process.env.RUN_TESTS_DEBUG == 1 ? true : false
         const Test = require('./test.js')
-        const test = new Test("module_test", "module_test@teszt.com", "teszt123")
+        const test = new Test("module_test", "module_test@teszt.com", "teszt123", debug)
 
         await test.runTests()
         await db.query("DELETE FROM user WHERE username='module_test'", [])
