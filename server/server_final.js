@@ -37,6 +37,7 @@ app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log)))
 app.post('/api/signup', (req, res) => postUserRegister(new User(req, res, db, log)))
 
 app.post('/api/workouts/dates', (req, res) => postWorkoutsDates(new User(req, res, db, log)))
+app.post('/api/workouts/data', (req, res) => postUserWorkouts(new User(req, res, db, log)))
 app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
 app.post('/api/diet', (req, res) => postDietQuery(new User(req, res, db, log)));
 app.post('/api/diet/add', (req, res) => postDietAdd(new User(req, res, db, log)));
@@ -100,7 +101,7 @@ async function postWorkoutsDates(user){
 async function postUserMuscles(user){
     log(2, '/api/user/muscles')
 
-    let userWorkouts = await user.userWorkouts()
+    let userWorkouts = await user.userWorkoutsTimespan()
     if (userWorkouts === false) return user.respondMissing()
     
     let exercisesDone = {}
@@ -147,5 +148,13 @@ async function postDietAdd(user){
     if (result === false) return user.respondMissing()
 
     user.respondSuccess()
+}
+
+async function postUserWorkouts(user){
+    log('/api/workouts/data', 2)
+    let result = await user.userWorkoutsMonth()
+    if(result === false) return user.respondMissing()
+
+    user.respondSuccess({data: result})
 }
 

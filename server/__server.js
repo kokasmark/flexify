@@ -36,7 +36,7 @@ app.post('/api/diet/get_dates', (req, res) => dbPostUserDietDates(req, res));//d
 app.post('/api/diet/add', (req, res) => dbPostUserDietAdd(req, res));//done
 
 app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));//done
-app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
+app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));//done
 app.post('/api/workouts/save', (req, res) => dbPostSaveWorkout(req, res));
 
 app.post('/api/templates/workouts', (req, res) => dbPostSavedWorkoutTemplates(req, res));
