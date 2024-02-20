@@ -31,6 +31,7 @@ function log(level, message){
 
 app.get('/api/user', (req, res) => getUserDetails(new User(req, res, db, log)))
 app.get('/api/diet/all', (req, res) => getDietAll(new User(req, res, db, log)))
+app.get('/api/workouts/templates', (req, res) => getUserTemplates(new User(req, res, db, log)))
 
 
 app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log)))
@@ -157,5 +158,13 @@ async function postUserWorkouts(user){
     if(result === false) return user.respondMissing()
 
     user.respondSuccess({data: result})
+}
+
+async function getUserTemplates(user){
+    log('/api/workouts/templates', 2)
+    let result = await user.userTemplates()
+    if(result === false) return user.respondMissing()
+
+    user.respondSuccess({templates: result})
 }
 
