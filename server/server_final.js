@@ -32,7 +32,7 @@ function log(level, message){
 
 app.get('/api/user', (req, res) => getUserDetails(new User(req, res, db, log)))
 app.get('/api/diet/all', (req, res) => getDietAll(new User(req, res, db, log)))
-app.get('/api/workouts/templates', (req, res) => getUserTemplates(new User(req, res, db, log)))
+app.get('/api/templates', (req, res) => getUserTemplates(new User(req, res, db, log)))
 
 
 app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log)))
@@ -41,6 +41,7 @@ app.post('/api/signup', (req, res) => postUserRegister(new User(req, res, db, lo
 app.post('/api/workouts/dates', (req, res) => postWorkoutsDates(new User(req, res, db, log)))
 app.post('/api/workouts/data', (req, res) => postUserWorkouts(new User(req, res, db, log)))
 app.post('/api/workouts/save', (req, res) => postSaveWorkout(new User(req, res, db, log)))
+app.post('/api/templates/save', (req, res) => postSaveTemplate(new User(req, res, db, log)))
 app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
 app.post('/api/diet', (req, res) => postDietQuery(new User(req, res, db, log)));
 app.post('/api/diet/add', (req, res) => postDietAdd(new User(req, res, db, log)));
@@ -168,7 +169,7 @@ async function postUserWorkouts(user){
 }
 
 async function getUserTemplates(user){
-    log('/api/workouts/templates', 2)
+    log('/api/templates', 2)
     let result = await user.userTemplates()
     if(result === false) return user.respondMissing()
 
@@ -178,6 +179,14 @@ async function getUserTemplates(user){
 async function postSaveWorkout(user){
     log('/api/workouts/save', 2)
     let result = await user.saveWorkout()
+    if(result === false) return user.respondMissing()
+    
+    user.respondSuccess()
+}
+
+async function postSaveTemplate(user){
+    log('/api/templates/save', 2)
+    let result = await user.saveTemplate()
     if(result === false) return user.respondMissing()
     
     user.respondSuccess()

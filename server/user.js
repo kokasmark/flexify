@@ -219,6 +219,29 @@ class User{
             result = await this.db.query(sql, [this.id])
         }
         const calendarId = result.length ? result[0].id : result.insertId
+
+        sql = 'INSERT INTO calendar_workout (calendar_id, workout_id) VALUES (?, ?)'
+        this.db.query(sql, [calendarId, workoutId])
+        
+        return true
+    }
+
+    async saveTemplate(){
+        const post = this.validateFields(["name", "json"])
+        if (!post) return false
+        if (!await this.isLoggedIn()) return false
+
+        let sql = 'INSERT INTO workout (user_id, duration, name, json) VALUES (?, ?, ?, ?)'
+        let result = await this.db.query(sql, [this.id, "00:00:00", post.name, post.json])
+
+        let workoutId = result.insertId
+        sql = "SELECT id FROM calendar WHERE user_id=? AND date=CURDATE()"
+        result = await this.db.query(sql, [this.id])
+        if (!result.length){
+            sql ="INSERT INTO calendar (user_id, date, protein, carbs, fat) VALUES (?, CURDATE(), 0, 0, 0)"
+            result = await this.db.query(sql, [this.id])
+        }
+        const calendarId = result.length ? result[0].id : result.insertId
         
         sql = 'INSERT INTO calendar_workout (calendar_id, workout_id) VALUES (?, ?)'
         this.db.query(sql, [calendarId, workoutId])
