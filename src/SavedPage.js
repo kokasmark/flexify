@@ -24,12 +24,17 @@ import { FaPerson } from "react-icons/fa6";
 import { FaPlay } from "react-icons/fa";
 import { FaListUl } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { IoChevronBackOutline } from "react-icons/io5";
+import { GiWeight } from "react-icons/gi";
+import { PiArrowsCounterClockwise } from "react-icons/pi";
+import { PiClockCountdown } from "react-icons/pi";
 
 class SavedPage extends Component {
   state = {
     savedTemplates: [],
     icons: [<FaPersonRunning className='saved-card-icon'/>, <FaPerson className='saved-card-icon'/>, <CgGym className='saved-card-icon'/>],
-    selectedCard: -1
+    selectedCard: -1,
+    details: false
   }
   getSavedTemplates() {
     var myHeaders = new Headers();
@@ -58,33 +63,6 @@ class SavedPage extends Component {
   }
   componentDidMount() {
     this.getSavedTemplates();
-
-    const slider = document.querySelector('.saved-workouts');
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-
-    slider.addEventListener('mousedown', (e) => {
-      isDown = true;
-      slider.classList.add('active');
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    });
-    slider.addEventListener('mouseleave', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mouseup', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mousemove', (e) => {
-      if(!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      const walk = (x - startX) * 1; //scroll-fast
-      slider.scrollLeft = scrollLeft - walk;
-    });
   }
   select(index){
     if(this.state.selectedCard != index){
@@ -95,28 +73,41 @@ class SavedPage extends Component {
     return (
       <div className='page'>
         <h1 className='title'>Saved Workouts</h1>
-        <div className='saved-workouts'>
+        <div className={`saved-workouts${this.state.details == true ? " details":""}`}>
           {this.state.savedTemplates.map((template,index) => (
-            <div className={`workout-card${this.state.selectedCard == index ? " selected-card":""}`} style={{animation: `card-load ${index/5}s`}}>
-            <Card key={index} onClick={()=>this.select(index)}>í
+            <div className={`workout-card${this.state.selectedCard == index ? " selected-card":""}${this.state.details == true ? " card-detail":""}`} style={{animation: `card-load ${index/5}s`}}>
+            <Card key={index} onClick={()=>this.select(index)}>
                 {this.state.icons[Math.floor(Math.random()*this.state.icons.length)]}
                 <div className='bottom'>
                   <h1>{template.name}</h1>
                 </div>
+                {this.state.details == false && <div>
                 <Link to={"/workout"} onClick={()=> localStorage.setItem("started-workout", JSON.stringify(template))}><FaPlay className='control-btn interactable'/></Link>
-                  <FaListUl className='control-btn interactable'/>
+                  <FaListUl className='control-btn interactable' onClick={()=> this.setState({details: !this.state.details})}/>
                   <MdDelete className='control-btn interactable'/>
-
-                {/* <ul className='exercises'>
+                  </div>}
+                  
+                  {this.state.details && <div>
+                    <IoChevronBackOutline  className='interactable' style={{fontSize: 50, backgroundColor: "var(--contrast)", borderRadius: "0px 0px 10px 0px", color: "white"}} onClick={()=> this.setState({details: !this.state.details})}/>
+                {<ul className='exercises'>
                   {template.data.map((data,index) => (
                     <li className='exercise'>
-                      <h1>{data.comment}</h1>
-                      <div className='sets'>
-                        <p>{data.set_data}</p>
-                      </div>
+                      <ol className='sets'>
+                      <h2>{data.comment}</h2>
+                      {JSON.parse(data.set_data).map((set,index) => (
+                        <li style={{display: 'flex'}}>
+                          <p>{set.reps}<PiArrowsCounterClockwise/></p>
+                          <p>{set.weight}<GiWeight/></p>
+                          <p>{set.time}<PiClockCountdown/></p>
+                        </li>
+                      ))
+                          
+                        }
+                      </ol>
                     </li>
                   ))}
-                </ul> */}
+                </ul>}
+                </div>}
             </Card>
             </div>
           )

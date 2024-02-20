@@ -997,6 +997,7 @@ iframe
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
   left: 1.5%;
+  scroll-behavior: smooth;
 }
 .saved-workouts > div {
   flex: 0 0 auto;
@@ -1004,7 +1005,7 @@ iframe
   scroll-snap-align: start;
 }
 .saved-workouts:active{
-  cursor: grabbing;
+  cursor: grabbing !important;
 }
 .saved-workouts:hover{
   cursor: pointer;
@@ -1019,7 +1020,7 @@ iframe
   position: relative;
   top: 20%;
 
-  background-color: transparent;
+  background-color: var(--bg);
   border: 1px solid var(--contrast);
   overflow: hidden;
   border-radius: 10px;
@@ -1032,9 +1033,10 @@ iframe
   width: 100%;
   height: 100%;
   border-radius: 200px 200px 0px 0px;
-  transition: 0.5s;
+  transition: 0.65s;
   text-align: center;
   z-index: 10;
+  animation: card-bottom-load 0.65s;
 }
 .saved-workouts .workout-card .saved-card-icon{
   width: 50%;
@@ -1051,7 +1053,7 @@ iframe
   padding-top: 60px;
 }
 .saved-workouts .workout-card:hover:not(.selected-card){
-  transform: translateY(-50px);
+  transform: translateY(0px);
 }
 .saved-workouts .workout-card:hover:not(.selected-card) .bottom{
   border-radius: 0px;
@@ -1059,19 +1061,19 @@ iframe
   padding-bottom: 100%;
 }
 .saved-workouts .selected-card{
-  transform: translateY(-100px);
+  transform: translateY(0px);
   transition: 0.5s;
 }
 .saved-workouts .selected-card .bottom{
   border-radius: 0px;
   margin-top: -15%;
   padding-bottom: 0%;
-  animation: card-bottom 0.5s;
+  animation: card-bottom 0.5s ease-out;
 }
 .saved-workouts .selected-card .bottom h1{
-  padding-bottom: 1%;
+  padding-bottom: 5%;
   padding-top: 5%;
-  margin-top: 1%;
+  margin-top: 10%;
 }
 .saved-workouts .selected-card .control-btn{
   color: white;
@@ -1088,6 +1090,50 @@ iframe
   text-align: center;
   color: white;
   margin-top: 5%;
+}
+.saved-workouts.details > div{
+  filter: brightness(0.5) blur(3px);
+}
+.saved-workouts .selected-card.card-detail{
+ width: 30% !important; 
+ z-index: 101;
+ height: 60%;
+ filter: none;
+ overflow-y: auto;
+}
+.saved-workouts .selected-card.card-detail .exercises{
+  color: white;
+  display: flex;
+  list-style: none;
+  flex-flow: wrap;
+}
+
+.saved-workouts .selected-card.card-detail .exercises li{
+  width: 45%;
+}
+.saved-workouts .selected-card.card-detail .sets li{
+  margin-left: -10px;
+  width: fit-content;
+}
+.saved-workouts .selected-card.card-detail .sets p{
+  margin-left: 10px;
+}
+@keyframes card-bottom-load {
+  0%{
+    border-radius: 0px;
+  margin-top: -110%;
+  padding-bottom: 100%;
+  }
+  100%{
+    background-color: var(--contrast);
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 200px 200px 0px 0px;
+  transition: 0.65s;
+  text-align: center;
+  z-index: 10;
+  }
 }
 @keyframes card-load {
   0%{
