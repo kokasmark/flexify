@@ -21,6 +21,7 @@ const DEBUG_RESPONSE = process.env.DEBUG_RESPONSE
 const db = new DB(log)
 const exercises = new Exercises(db)
 function log(level, message){
+    if (process.env.RUN_TESTS == 1 && process.env.DEBUG_WHILE_TEST == 0) return
     const log_colors = ["\x1b[31m", "\x1b[90m", "\x1b[36m", "\x1b[33m", "\x1b[32m", "\x1b[47m\x1b[30m"]
     if (DEBUG_LEVEL >= level){
         process.stdout.write(log_colors.at(level) + "[" + moment().format('YYYY-MM-DD hh:mm:ss') + "]:\x1b[0m ")
@@ -31,12 +32,16 @@ function log(level, message){
 
 app.get('/api/user', (req, res) => getUserDetails(new User(req, res, db, log)))
 app.get('/api/diet/all', (req, res) => getDietAll(new User(req, res, db, log)))
+app.get('/api/templates', (req, res) => getUserTemplates(new User(req, res, db, log)))
 
 
 app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log)))
 app.post('/api/signup', (req, res) => postUserRegister(new User(req, res, db, log)))
 
 app.post('/api/workouts/dates', (req, res) => postWorkoutsDates(new User(req, res, db, log)))
+app.post('/api/workouts/data', (req, res) => postUserWorkouts(new User(req, res, db, log)))
+app.post('/api/workouts/save', (req, res) => postSaveWorkout(new User(req, res, db, log)))
+app.post('/api/templates/save', (req, res) => postSaveTemplate(new User(req, res, db, log)))
 app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
 app.post('/api/diet', (req, res) => postDietQuery(new User(req, res, db, log)));
 app.post('/api/diet/add', (req, res) => postDietAdd(new User(req, res, db, log)));
@@ -44,11 +49,17 @@ app.post('/api/diet/add', (req, res) => postDietAdd(new User(req, res, db, log))
 // Leave at the end, otherwise captures all GET requests
 app.get("*", (_, res) => {res.sendFile('index.html', { root });})
 
+async function test(){
+    if (process.env.RUN_TESTS == 1){
+        const debug = process.env.RUN_TESTS_DEBUG == 1 ? true : false
+        const Test = require('./test.js')
+        const test = new Test("module_test", "module_test@teszt.com", "teszt123", debug)
 
-if (process.env.RUN_TESTS){
-    const Test = require('./test.js')
-    const test = new Test()
+        await test.runTests()
+        await db.query("DELETE FROM user WHERE username='module_test'", [])
+    }
 }
+test()
 
 
 async function getUserDetails(user){
@@ -101,7 +112,7 @@ async function postWorkoutsDates(user){
 async function postUserMuscles(user){
     log(2, '/api/user/muscles')
 
-    let userWorkouts = await user.userWorkouts()
+    let userWorkouts = await user.userWorkoutsTimespan()
     if (userWorkouts === false) return user.respondMissing()
     
     let exercisesDone = {}
@@ -147,6 +158,38 @@ async function postDietAdd(user){
     let result = await user.dietAdd()
     if (result === false) return user.respondMissing()
 
+    user.respondSuccess()
+}
+
+async function postUserWorkouts(user){
+    log('/api/workouts/data', 2)
+    let result = await user.userWorkoutsMonth()
+    if(result === false) return user.respondMissing()
+
+    user.respondSuccess({data: result})
+}
+
+async function getUserTemplates(user){
+    log('/api/templates', 2)
+    let result = await user.userTemplates()
+    if(result === false) return user.respondMissing()
+
+    user.respondSuccess({templates: result})
+}
+
+async function postSaveWorkout(user){
+    log('/api/workouts/save', 2)
+    let result = await user.saveWorkout()
+    if(result === false) return user.respondMissing()
+    
+    user.respondSuccess()
+}
+
+async function postSaveTemplate(user){
+    log('/api/templates/save', 2)
+    let result = await user.saveTemplate()
+    if(result === false) return user.respondMissing()
+    
     user.respondSuccess()
 }
 

@@ -36,11 +36,11 @@ app.post('/api/diet/get_dates', (req, res) => dbPostUserDietDates(req, res));//d
 app.post('/api/diet/add', (req, res) => dbPostUserDietAdd(req, res));//done
 
 app.post('/api/workouts/date', (req, res) => dbPostUserDates(req, res));//done
-app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));
+app.post('/api/workouts/data', (req, res) => dbPostUserWorkouts(req, res));//done
 app.post('/api/workouts/save', (req, res) => dbPostSaveWorkout(req, res));
 
-app.post('/api/templates/workouts', (req, res) => dbPostSavedWorkoutTemplates(req, res));
-app.post('/api/templates/exercises', (req, res) => dbPostExerciseTemplates(req, res));
+app.post('/api/templates/workouts', (req, res) => dbPostSavedWorkoutTemplates(req, res));//done
+app.post('/api/templates/exercises', (req, res) => dbPostExerciseTemplates(req, res));//done
 app.post('/api/templates/save_workout', (req, res) => dbPostSaveWorkoutTemplate(req, res));
 app.post('/api/templates/save_exercise', (req, res) => dbPostSaveExerciseTemplate(req, res));
 

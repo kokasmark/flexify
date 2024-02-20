@@ -1,17 +1,52 @@
 class Test{
-    constructor(){
-        this.test = require('node:test')
+    constructor(username, email, password, debug){
         this.data = {}
+        this.userData = {
+            username: username,
+            email: email,
+            password: password,
+        }
+        this.debug = debug
 
-        this.callAPIs()
-        // this.sendRequest('GET', '/api/user', '9767afbb0ec883ba2e896b07f72237b0b2c9a0ade7a796b438789f64386bb5f1', this.testLogin)
     }
 
-    runTests(self){
-        console.log(self.data)
+    async runTests(){
+        await this.delay(1000)
+        await this.callAPIs()
+        if (this.debug) console.log(this.data)
+
+        const test = require('node:test')
+        const assert = require('node:assert')
+
+        test('Testing register and login', t => {
+            assert.ok(this.data.register)
+            assert.strictEqual(this.data.login.status, 200)
+            assert.strictEqual(this.data.user.status, 200)
+
+            assert.ok(this.data.user.username)
+            assert.ok(this.data.user.email)
+            assert.ok(this.userData.token)
+
+            assert.strictEqual(this.data.user.username, this.userData.username)
+            assert.strictEqual(this.data.user.email, this.userData.email)
+        })
+
+        test('Testing diet', t => {
+            assert.strictEqual(this.data.dietFirst.status, 200)
+            assert.strictEqual(this.data.dietSecond.status, 200)
+            assert.strictEqual(this.data.dietAdd.status, 200)
+
+            assert.deepStrictEqual(this.data.dietSecond, {
+                status: 200,
+                carbs: this.data.dietFirst.carbs + this.data.dietSecond.carbs, 
+                fat: this.data.dietFirst.fat + this.data.dietSecond.fat,
+                protein: this.data.dietFirst.protein + this.data.dietSecond.protein})
+        })
+
+
     }
 
-    sendRequest(method, path, body, token,  callback){
+    sendRequest(method, path, body, token,  dataKey){
         const options = {
             'method': method,
             'url': 'http://localhost:3001' + path,
@@ -19,57 +54,47 @@ class Test{
             'body': JSON.stringify(body),
             
         };
-        if (token) options.headers['X-Token'] = this.data.token
+        if (token) options.headers['X-Token'] = this.userData.token
         
-        console.log(`${path}:\t${this.data.token}`)
-
         const self = this
         const request = require('request')
         request(options, function (error, response) {
             if (error) throw new Error(error);
-            callback(JSON.parse(response.body), self);
+            self.data[dataKey] = JSON.parse(response.body)
+            self.data[dataKey].status = response.statusCode
         });
     }
 
     async callAPIs(){
-        this.sendRequest('POST', '/api/signup', {username: "teszt123", email: "teszt@teszt.com", password: "teszt", location: "web"}, false, this.testRegister)
-        this.sendRequest('POST', '/api/login', {username: "gipsz_jakab", password: "teszt", location: "web"}, false, this.testLogin)
+        const date = new Date().toISOString().slice(0,10);
+        this.sendRequest('POST', '/api/signup', {username: this.userData.username, email: this.userData.email, password: this.userData.password, location: "web"}, false, "register")
+        await this.delay(500)
 
-        await this.isTokenSet() // wait for user token, all the calls below need it
-        this.sendRequest('GET', '/api/user', {}, true, this.testUser)
+        this.sendRequest('POST', '/api/login', {username: this.userData.username, password: this.userData.password, location: "web"}, false, "login")
+        await this.waitForToken()
+        this.sendRequest('GET', '/api/user', {}, true, "user")
 
-        const self = this
-        const callback = this.runTests
-        setTimeout(function(){callback(self)}, 3000)
+        this.sendRequest('POST', '/api/diet', {date: date}, true, "dietFirst")
+        this.sendRequest('POST', '/api/diet/add', {carbs: 100, fat: 90, protein: 80}, true, "dietAdd")
+        await this.delay(100)
+        this.sendRequest('POST', '/api/diet', {date: date}, true, "dietSecond")
+
+        await this.delay(1000)
+
+        return 1
     }
 
-    testRegister(response, self){
-        self.data.register = response
-    }
-
-    testLogin(response, self){
-        self.data.token = response.token
-        self.data.login = response
-    }
-
-    testUser(response, self){
-        self.data.user = response
-    }
-
-    async isTokenSet(){
+    async waitForToken(){
         while (!this.data.login){
-            await this.delay(0.1)
+            await this.delay(10)
         }
+        this.userData.token = this.data.login.token
         return
     }
 
     delay(time) {
         return new Promise(resolve => setTimeout(resolve, time));
     }
-    
-
-
-
 }
 
 module.exports = Test
