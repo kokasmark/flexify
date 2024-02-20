@@ -21,6 +21,7 @@ const DEBUG_RESPONSE = process.env.DEBUG_RESPONSE
 const db = new DB(log)
 const exercises = new Exercises(db)
 function log(level, message){
+    if (process.env.RUN_TESTS == 1 && process.env.DEBUG_WHILE_TEST == 0) return
     const log_colors = ["\x1b[31m", "\x1b[90m", "\x1b[36m", "\x1b[33m", "\x1b[32m", "\x1b[47m\x1b[30m"]
     if (DEBUG_LEVEL >= level){
         process.stdout.write(log_colors.at(level) + "[" + moment().format('YYYY-MM-DD hh:mm:ss') + "]:\x1b[0m ")
@@ -44,11 +45,16 @@ app.post('/api/diet/add', (req, res) => postDietAdd(new User(req, res, db, log))
 // Leave at the end, otherwise captures all GET requests
 app.get("*", (_, res) => {res.sendFile('index.html', { root });})
 
+async function test(){
+    if (process.env.RUN_TESTS == 1){
+        const Test = require('./test.js')
+        const test = new Test("module_test", "module_test@teszt.com", "teszt123")
 
-if (process.env.RUN_TESTS){
-    const Test = require('./test.js')
-    const test = new Test()
+        await test.runTests()
+        await db.query("DELETE FROM user WHERE username='module_test'", [])
+    }
 }
+test()
 
 
 async function getUserDetails(user){
