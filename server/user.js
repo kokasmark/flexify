@@ -69,7 +69,7 @@ class User{
         return result.map(x => x.date)
     }
 
-    async userWorkouts(){
+    async userWorkoutsTimespan(){
         const post = this.validateFields(["timespan"])
         if (!post) return false
         if (!(await this.isLoggedIn())) return false
@@ -89,6 +89,32 @@ class User{
         let sql = 'SELECT username, email FROM user WHERE id=?'
         return this.db.query(sql, [this.id], true)
 
+    }
+
+    async userWorkoutsMonth(){
+        const post = this.validateFields(["date"])
+        if (!post) return false
+        if (!(await this.isLoggedIn())) return false
+
+        let sql = 'SELECT workout.id, workout.name, workout.json FROM calendar_workout INNER JOIN workout ON calendar_workout.workout_id = workout.id INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT(calendar.date, "%Y-%m-%d") = ? AND workout.user_id = ? AND workout.duration = "00:00:00"'
+        let result = await this.db.query(sql, [post.date, this.id])
+        if (result && result.length > 0){
+            let workoutsArray = result.map((x) => x)
+            return workoutsArray
+        }
+        return []
+    }
+
+    async userTemplates(){
+        if (!(await this.isLoggedIn())) return false
+
+        let templates = []
+        let sql = 'SELECT workout.name, workout.json FROM workout WHERE workout.duration = "00:00:00" AND workout.user_id = ?'
+        let result = await this.db.query(sql, [this.id])
+        for (const template of result){
+            templates.push({name:template.name, data:template.json})
+        }
+        return templates
     }
 
     async login(){
