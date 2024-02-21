@@ -357,10 +357,11 @@ class CreatePage extends Component {
   }
   render() {
     const exerciseCards = this.state.exerciseTemplates.map((template, index) => (
-      <div key={index} className='create-workout-card-parent'>
-        <Card style={{ width: 300, border: 'white', boxShadow: '2px 2px 5px var(--shadow)' }} className='create-workout-card'>
+
+        <Card key={index} style={{ width: 300, border: 'white'}} className='create-workout-card'>
           <Card.Body>
-            {template.name != 'Empty' ? <Card.Title>{template.name}</Card.Title> : <Card.Title><input placeholder='name' /></Card.Title>}
+            {template.name != 'Empty' ? <Card.Title style={{width: "85%", display: "inline-block", marginLeft: 10}}>{template.name}</Card.Title> : <Card.Title><input placeholder='name' /></Card.Title>}
+            <Icon_remove style={{ width: 20, height: 20, marginTop: -10}} className='interactable' onClick={() => this.deleteCard(index)} />
             <p style={{display: 'inline-block', margin: 10}} className='interactable' onClick={()=> this.setRepsCount(index,-1)}>-</p>
             <input
               style={{ width: 50, textAlign: 'center' }}
@@ -381,9 +382,7 @@ class CreatePage extends Component {
               ))}
             </ol>
           </Card.Body>
-          <Icon_remove style={{ width: 30, height: 30, position: 'relative', top: -320, left: 265 }} className='interactable' onClick={() => this.deleteCard(index)} />
         </Card>
-      </div>
     ));
     return (
       <div className='page'>
@@ -391,7 +390,7 @@ class CreatePage extends Component {
           <div className='create-muscles' style={{ position: 'relative', top: 150 }}>
             <MusclesView ref={this.muscleRef} chooseCallback={this.chooseMuscleGroup} />
           </div>
-          <div className='anim create-templates' style={{ color: 'white', position: 'relative', top: -600, left: '15%', backgroundColor: 'var(--contrast)', borderRadius: 10, height: 500, overflow: 'auto', width: 300 }}>
+          <div className='anim create-templates' style={{ color: 'white', position: 'relative', top: -600, left: '20%',height: 500, overflow: 'auto', width: 300 }}>
             <h1 style={{ marginTop: 5, textAlign: 'center' }}>{GetString("create-template")}</h1>
             {this.state.getTemplates.map((template, index) => (
               <div>
@@ -399,12 +398,11 @@ class CreatePage extends Component {
                   <div ref={this.cardRef} draggable
                     onDragStart={(e) => this.dragStart(e, index, template)}
                     onDragEnd={(e) =>this.dragEnd(e)}
-                    onDrop={this.drop} onMouseEnter={() => this.colorAffectedMuscles(template.muscles, false)} onMouseLeave={() => this.colorAffectedMuscles(template.muscles, true)} onClick={() => this.selectTemplate(template.name, template.type, template.id)} key={index} style={{
-                      backgroundColor: 'var(--contrast)', borderRadius: 5, marginLeft: 'auto', marginRight: 'auto', width: '80%', marginTop: 20
-                      , height: 60, textAlign: 'center', boxShadow: '5px 5px 15px var(--bg)'
-                    }} className='interactable load-anim exercise-card'>
-                    <h2>{template.name}</h2>
-                    <p style={{ marginTop: -10, fontSize: 11 }}>({template.muscles.replaceAll("[", "").replaceAll("]", "").replaceAll('"', "")})</p>
+                    onDrop={this.drop} onMouseEnter={() => this.colorAffectedMuscles(template.muscles, false)} onMouseLeave={() => this.colorAffectedMuscles(template.muscles, true)} onClick={() => this.selectTemplate(template.name, template.type, template.id)} key={index} className='interactable load-anim exercise-card'>
+                    <div className='bottom'>
+                      <h2>{template.name}</h2>
+                      <p style={{ marginTop: -10, fontSize: 11 }}>({template.muscles.replaceAll("[", "").replaceAll("]", "").replaceAll('"', "")})</p>
+                    </div>
                   </div>}
               </div>
             ))}

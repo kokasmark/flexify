@@ -85,6 +85,10 @@ class BrowsePage extends Component {
     render() {
         return (
             <div className='page'>
+              <div className='browse-page-header'>
+                <h1>Browse Exercises</h1>
+                <h3>Click on a muscle to list the exercises that work on it</h3>
+              </div>
                     <div className='browse-muscle' style={{ position: 'absolute',left: this.state.choosenGroup == null ? "24%" : "0%" }}>
                         <MusclesView ref={this.muscleRef}chooseCallback={this.chooseMuscleGroup} />
                     </div>
@@ -102,7 +106,7 @@ class BrowsePage extends Component {
           <Card.Body>
             <div className='bottom'>
               <Card.Title>{template.name}</Card.Title>
-              <img style={{ width: "80%", marginLeft: '10%', mixBlendMode: "multiply" }} src={require("./assets/exercises/" + template.gifUrl + ".gif")} />
+              <img style={{mixBlendMode: "multiply" }} src={require("./assets/exercises/" + template.gifUrl + ".gif")} />
             </div>
           </Card.Body>
         </Card>

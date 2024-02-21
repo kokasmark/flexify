@@ -497,7 +497,7 @@ input{
 .create-workout input{
   border: none;
   border-radius: 5px;
-  background-color: var(--contrast);
+  background-color: transparent;
   border: white;
   border-style: solid;
   border-width: 1px;
@@ -519,15 +519,32 @@ input{
 .card-container {
   display: grid;
   grid-template-columns: repeat(2, 300px); /* Set each column to 200px width */
-  gap: 20px; /* Adjust the gap between cards to 20px */
+  gap: 10px; /* Adjust the gap between cards to 20px */
   padding-left: 10px;
+  padding-bottom: 40px;
 }
 .create-workout-card {
   margin-bottom: 10px; /* Adjust the margin-bottom value to control spacing between rows */
   box-sizing: border-box;
   animation: grow 0.2s ease-in;
 }
-
+.create-workout-card.card .card-body{
+  height: 55px !important;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: transparent;
+  border: 1px solid var(--contrast);
+  border-radius: 10px;
+  margin-bottom: -10px;
+  -webkit-transition: height 1s ease;
+    -moz-transition: height 1s ease;
+    -o-transition: height 1s ease;
+    transition: height 1s ease;
+}
+.create-workout-card.card .card-body:hover{
+  background-color: var(--contrast);
+  height: 350px !important;
+}
 ::-webkit-scrollbar {
   width: 5px; /* Set the width of the scrollbar */
 }
@@ -543,7 +560,7 @@ input{
 
 }
 .create-workout{
-  background-color: var(--contrast);
+  border: 1px solid var(--contrast);
   border-radius: 10px;
   width: 650px;
   position: relative;
@@ -588,9 +605,31 @@ input{
   animation: opacity-fade-in 1s ease;
 }
 .exercise-card{
+  width: 80%;
+  height: 70px;
+  overflow: hidden;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: transparent;
+  border: 1px solid var(--contrast);
+  cursor: pointer;
+  text-align: center;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.exercise-card .bottom{
+  background-color: var(--contrast);
+  border-radius: 200px;
+  height: 100px;
+  margin-top: 12%;
+  transition: 0.5s;
+}
+.exercise-card:active{
   cursor: grabbing;
-  cursor: -moz-grabbing;
-  cursor: -webkit-grabbing;
+}
+.exercise-card:hover .bottom{
+  margin-top: 0px;
+  border-radius: 0px;
 }
 iframe
 {
@@ -1169,8 +1208,8 @@ iframe
 }
 .browse-cards {
   position: absolute;
-  right: 10%;
-  top: 20%;
+  right: 20%;
+  top: 30%;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start; /* Adjust as needed */
@@ -1205,13 +1244,16 @@ iframe
   height: 200%;
   transition: 0.5s;
 }
+.browse-card img{
+  width: 100%;
+}
 .browse-card .bottom .card-title{
   margin-bottom: 40%;
   padding-top: 20%;
 }
 
 .browse-card:hover .bottom{
-  margin-top: -60%;
+  margin-top: -70%;
   border-radius: 0px;
 }
 .browse-muscle{
@@ -1219,6 +1261,27 @@ iframe
 }
 .card{
   background-color: transparent !important;
+  border: none !important;
+}
+.create-templates{
+  border: 1px solid var(--contrast);
+  padding-top: 10px;
+  border-radius: 10px;
+}
+.browse-page-header{
+  width: 100%;
+  text-align: center;
+  color: white;
+  margin-top: 5%;
+  margin-bottom: -10%;
+}
+@keyframes create-workout-card-hover {
+  0%{
+    height: 55px;
+  }
+  100%{
+    height: fit-content;
+  }
 }
 @keyframes card-bottom-load {
   0%{
