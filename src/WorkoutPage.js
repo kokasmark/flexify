@@ -104,7 +104,6 @@ class WorkoutPage extends Component {
     if (this.state.paused) {
       if (this.state.breakSeconds + 1 > 30) { this.setState({ paused: false, breakSeconds: 0 }) }
       else {
-        console.log("!")
         this.setState({ breakSeconds: this.state.breakSeconds + 1 })
         this.break()
       }

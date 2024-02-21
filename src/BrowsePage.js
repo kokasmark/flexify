@@ -14,7 +14,7 @@ import GetString from './language';
 class BrowsePage extends Component {
   muscleRef = React.createRef();
     state = {
-        choosenGroup: '',
+        choosenGroup: null,
         templates: [],
         viewedGif: '',
         nameOfGroup: ''
@@ -85,31 +85,33 @@ class BrowsePage extends Component {
     render() {
         return (
             <div className='page'>
-                <div style={{position: 'relative', left: 250}} className='load-anim browse-container'>
-                    <div className='browse-muscle' style={{ position: 'absolute' }}>
+                    <div className='browse-muscle' style={{ position: 'absolute',left: this.state.choosenGroup == null ? "24%" : "0%" }}>
                         <MusclesView ref={this.muscleRef}chooseCallback={this.chooseMuscleGroup} />
                     </div>
-                    {this.state.choosenGroup != '' ?<div key={this.state.choosenGroup} className='workouts anim browse-cards' style={{ position: 'relative', left: 800, top: 100 }}>
-                    <h1 style={{marginBottom: 20, color: 'white'}}>{this.state.nameOfGroup}  {GetString("exercises")}</h1>
-                    {this.state.templates.map((template, index) => (
-                      <div>
-                    {JSON.parse(template.muscles).includes(this.state.choosenGroup) &&
-                    <Card key={index}
-                    onMouseEnter={()=>this.colorAffectedMuscles(template.muscles, false)} 
-                    onMouseLeave={()=>this.colorAffectedMuscles(template.muscles, true)}
-                    className="animated-card interactable" style={{ maxWidth: 240, marginTop: -20 }}>
-                    <Icon_save className='interactable' style={{position: 'relative', height: 30, width:30, top: 35, left: '85%'}}/>
-                        <Card.Body onMouseEnter={()=>this.setState({viewedGif: template.gifUrl})} onMouseLeave={()=>this.setState({viewedGif: ''})}>
-                            <Card.Title>{template.name}</Card.Title>                            
-                            <Card.Text>
-                            <img style={{width: "80%",marginLeft:'10%', mixBlendMode: "multiply"}}src={require("./assets/exercises/"+template.gifUrl+".gif")}></img>
-                            </Card.Text>
-                        </Card.Body>
-                    </Card>}</div>
-                  ))}
-                      
-                    </div> : <h1  style={{ position: 'relative', left: 700, top: 250, color: 'white', width: 1000 }}>{GetString("browse-choose-a-muscle")}</h1>}
-                </div>
+                    {this.state.choosenGroup != null && (
+  <div key={this.state.choosenGroup} className='browse-cards'>
+    {this.state.templates.map((template, index) => (
+      JSON.parse(template.muscles).includes(this.state.choosenGroup) && (
+        <Card
+          key={Math.random()}
+          onMouseEnter={() => this.colorAffectedMuscles(template.muscles, false)}
+          onMouseLeave={() => this.colorAffectedMuscles(template.muscles, true)}
+          className="animated-card browse-card interactable"
+          style={{ animation: `card-load ${0.5 + index / 10}s ease-out`, backgroundColor: "transparent" }}
+        >
+          <Card.Body>
+            <div className='bottom'>
+              <Card.Title>{template.name}</Card.Title>
+              <img style={{ width: "80%", marginLeft: '10%', mixBlendMode: "multiply" }} src={require("./assets/exercises/" + template.gifUrl + ".gif")} />
+            </div>
+          </Card.Body>
+        </Card>
+      )
+    ))}
+  </div>
+)}
+
+
 
                 
                 

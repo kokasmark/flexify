@@ -117,10 +117,8 @@
     padding-left: 10px;
   }
   .browse-muscle{
-    position: relative !important;
-    top: -100px;
-    left: -280px;
     transform: scale(0.8);
+    transition: 0.5
   }
   .workouts{
     position: relative !important;
@@ -252,21 +250,13 @@
   .create-container::-webkit-scrollbar {
     display: none;
   }
-  .browse-container{
-    position: absolute;
-    top: 0px !important;
-    left: -320px !important;
-    overflow-y: visible;
-    overflow-x: hidden;
-    width: 150% !important;
-    height: 120% !important;
-  }
   .browse-cards{
     position: relative;
     left: 700px !important;
-  }
-  .browse-container h1{
-    width: 300px !important;
+    display: flex !important;
+    height: 600px !important;
+    flex-wrap: wrap;
+    width: 800px !important;
   }
   .dietpage-chart{
     position: relative;
@@ -332,12 +322,12 @@ body{
   z-index: 10;
 }
 .card{
-  border: none !important;
-  background-color: transparent !important;
+  border: none;
+  background-color: transparent;
 }
 .card-body{
   background-color: var(--contrast);
-  border-radius: 10px !important;
+  border-radius: 10px;
   color: white !important;
   transition: .5s ease;
 }
@@ -539,7 +529,7 @@ input{
 }
 
 ::-webkit-scrollbar {
-  width: 10px; /* Set the width of the scrollbar */
+  width: 5px; /* Set the width of the scrollbar */
 }
 
 ::-webkit-scrollbar-thumb {
@@ -855,12 +845,71 @@ iframe
   width: 60%;
   color: white !important;
 }
+.calendar-add-popup{
+  width: 40%;
+  height: 50%;
+  position: absolute;
+  left: 30%;
+  top: 25%;
+  border: 1px solid var(--contrast);
+  background-color: var(--bg);
+  overflow-y: hidden;
+}
+.calendar-add-popup .header{
+  width: 100%;
+  color: white;
+  background-color: var(--contrast);
+  display: flex;
+  align-items: center;
+}
+.calendar-add-popup .header h2{
+  width: 95%;
+  font-size: 20px;
+}
+.calendar-add-popup .header .control-btn{
+  font-size: 2em;
+  margin-left: 5%;
+  cursor: pointer;
+}
+.calendar-add-popup .workouts{
+  overflow-y: auto;
+  max-height: 400px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  scroll-snap-type: y mandatory;
+  margin-top: 1%;
+}
+.calendar-add-popup .workouts .card{
+  flex: 0 0 240px;
+  width: 240px;
+  height: 50px;
+  margin-bottom: 2.2%;
+  margin-left: 5px;
+  border: none;
+}
+.calendar-add-popup .workouts .card:hover .card-body{
+  background-color: var(--contrast);
+}
+.calendar-add-popup .workouts .card-body{
+  background-color: transparent;
+  border: 1px solid var(--contrast);
+}
+.calendar .rbc-selected-cell{
+  background-color: var(--contrast) !important;
+}
+.calendar .rbc-slot-selection{
+  background-color: var(--contrast) !important;
+}
+.calendar .rbc-today{
+  background-color: var(--darker-contrast) !important;
+}
 .calendar .rbc-month-view{
   box-shadow: 5px 5px 10px var(--shadow);
 }
 .calendar .rbc-header.rbc-today{
   z-index: 1;
-  background-color: var(--contrast) !important;
+  background-color: var(--darker-contrast) !important;
 }
 .calendar .rbc-active{
   z-index: 1;
@@ -884,6 +933,7 @@ iframe
 
 .calendar .rbc-day-bg{
   background-color: #2d3549;
+  transition: 0.5s;
 }
 .calendar .rbc-time-view .rbc-event{
   margin-left: 5px;
@@ -994,10 +1044,9 @@ iframe
   overflow-x: scroll;
   overflow-y: hidden;
   height: 100%;
-  -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
   left: 1.5%;
-  scroll-behavior: smooth;
+  transition: 0.5s;
 }
 .saved-workouts > div {
   flex: 0 0 auto;
@@ -1117,6 +1166,67 @@ iframe
 }
 .saved-workouts .selected-card.card-detail .sets p{
   margin-left: 10px;
+}
+.browse-cards {
+  position: absolute;
+  right: 10%;
+  top: 20%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start; /* Adjust as needed */
+  width: 800px;
+  background-color: transparent;
+}
+
+.browse-card {
+  flex: 0 0 calc(33.33% - 20px); /* Adjust width and margins as needed */
+  margin-bottom: 20px; /* Adjust as needed */
+  border: none;
+  background-color: var(--bg);
+  overflow: hidden;
+  height: 300px !important;
+  width: 240px !important; /* Adjust width and margins as needed */
+}
+.browse-card .card-body{
+  background-color: var(--bg) !important;
+  border: 1px solid var(--contrast) !important;
+  border-radius: 10px;
+  max-width: 240px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.browse-card .bottom{
+  background-color: var(--contrast);
+  width: 120%;
+  margin-left: -10%;
+  margin-top: 85%;
+  border-radius: 100px;
+  text-align: center;
+  height: 200%;
+  transition: 0.5s;
+}
+.browse-card .bottom .card-title{
+  margin-bottom: 40%;
+  padding-top: 20%;
+}
+
+.browse-card:hover .bottom{
+  margin-top: -60%;
+  border-radius: 0px;
+}
+.browse-muscle{
+  transition: 0.5s;
+}
+.card{
+  background-color: transparent !important;
+}
+.swal-modal{
+  background-color: var(--contrast);
+  color: white;
+  border: 1px solid #fff;
+}
+.swal-title{
+  color: white;
 }
 @keyframes card-bottom-load {
   0%{
