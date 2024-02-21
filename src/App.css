@@ -1220,14 +1220,6 @@ iframe
 .card{
   background-color: transparent !important;
 }
-.swal-modal{
-  background-color: var(--contrast);
-  color: white;
-  border: 1px solid #fff;
-}
-.swal-title{
-  color: white;
-}
 @keyframes card-bottom-load {
   0%{
     border-radius: 0px;
