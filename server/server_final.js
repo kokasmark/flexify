@@ -42,10 +42,16 @@ app.post('/api/signup', (req, res) => postUserRegister(new User(req, res, db, lo
 app.post('/api/workouts/dates', (req, res) => postWorkoutsDates(new User(req, res, db, log)))
 app.post('/api/workouts/data', (req, res) => postUserWorkouts(new User(req, res, db, log)))
 app.post('/api/workouts/save', (req, res) => postSaveWorkout(new User(req, res, db, log)))
+
 app.post('/api/templates/save', (req, res) => postSaveTemplate(new User(req, res, db, log)))
 app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
+
 app.post('/api/diet', (req, res) => postDietQuery(new User(req, res, db, log)));
 app.post('/api/diet/add', (req, res) => postDietAdd(new User(req, res, db, log)));
+
+app.post('/api/reset/generate', (req, res) => postResetGenerate(new User(req, res, db, log)));
+app.post('/api/reset/validate', (req, res) => postResetValidate(new User(req, res, db, log)));
+app.post('/api/reset', (req, res) => postResetPassword(new User(req, res, db, log)));
 
 // Leave at the end, otherwise captures all GET requests
 app.get("*", (_, res) => {res.sendFile('index.html', { root });})
@@ -162,7 +168,8 @@ async function postDietAdd(user){
 }
 
 async function postUserWorkouts(user){
-    log('/api/workouts/data', 2)
+    log(2, '/api/workouts/data')
+
     let result = await user.userWorkoutsMonth()
     if(result === false) return user.respondMissing()
 
@@ -170,7 +177,7 @@ async function postUserWorkouts(user){
 }
 
 async function getUserTemplates(user){
-    log('/api/templates', 2)
+    log(2, '/api/templates')
     let result = await user.userTemplates()
     if(result === false) return user.respondMissing()
 
@@ -178,7 +185,8 @@ async function getUserTemplates(user){
 }
 
 async function postSaveWorkout(user){
-    log('/api/workouts/save', 2)
+    log(2, '/api/workouts/save')
+
     let result = await user.saveWorkout()
     if(result === false) return user.respondMissing()
     
@@ -186,7 +194,8 @@ async function postSaveWorkout(user){
 }
 
 async function postSaveTemplate(user){
-    log('/api/templates/save', 2)
+    log(2, '/api/templates/save')
+
     let result = await user.saveTemplate()
     if(result === false) return user.respondMissing()
     
@@ -194,8 +203,38 @@ async function postSaveTemplate(user){
 }
 
 async function getAdminTables(user){
-    log('/api/admin/tables', 2)
+    log(2, '/api/admin/tables')
+
     let result = await user.getTables()
-    user.respond(200, {tables: result})
+    if(result === false) return user.respondMissing()
+
+    user.respondSuccess({tables: result})
+}
+
+async function postResetGenerate(user){
+    log(2, '/api/reset/generate')
+
+    let result = await user.generateResetToken(process.env.EMAIL_SERVER)
+    if (result === false) return user.respondMissing()
+
+    user.respondSuccess()
+}
+
+async function postResetValidate(user){
+    log(2, '/api/reset/validate')
+
+    let result = await user.validateResetToken()
+    if (result === false) return user.respondMissing()
+
+    user.respondSuccess()
+}
+
+async function postResetPassword(user){
+    log(2, '/api/reset/validate')
+
+    let result = await user.resetPassword()
+    if (result === false) return user.respondMissing()
+
+    user.respondSuccess()
 }
 
