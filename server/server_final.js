@@ -33,6 +33,7 @@ function log(level, message){
 app.get('/api/user', (req, res) => getUserDetails(new User(req, res, db, log)))
 app.get('/api/diet/all', (req, res) => getDietAll(new User(req, res, db, log)))
 app.get('/api/templates', (req, res) => getUserTemplates(new User(req, res, db, log)))
+app.get('/api/admin/tables', (req, res) => getAdminTables(new User(req, res, db, log)));
 
 
 app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log)))
@@ -60,7 +61,6 @@ async function test(){
     }
 }
 test()
-
 
 async function getUserDetails(user){
     log(2, '/api/user')
@@ -191,5 +191,11 @@ async function postSaveTemplate(user){
     if(result === false) return user.respondMissing()
     
     user.respondSuccess()
+}
+
+async function getAdminTables(user){
+    log('/api/admin/tables', 2)
+    let result = await user.getTables()
+    user.respond(200, {tables: result})
 }
 

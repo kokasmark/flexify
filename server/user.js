@@ -10,6 +10,7 @@ class User{
         this.log = log
         
         this.loggedIn = this.getUserId()
+        this.admin = this.getAdmin()
         this.alreadyRes = false
     }
 
@@ -21,13 +22,27 @@ class User{
         this.id = result[0].user_id
         return true
     }
-
     async isLoggedIn(){
         if (await this.loggedIn) return true
-        else {
-            this.respond(401, {reason: 'Invalid token'})
-            return false
+
+        this.respond(401, {reason: 'Invalid token'})
+        return false
+    }
+
+    async getAdmin(){
+        await this.isLoggedIn()
+        let result = await this.db.query('SELECT is_admin FROM user WHERE id = ?', [this.id], true)
+
+        return !!result.is_admin
+    }
+    async isAdmin(){
+        if (await this.admin){
+            await this.db.initStructure()
+            return true
         }
+
+        this.respond(401, {reason: 'Unauthorized'})
+        return false
     }
 
     validateFields(fieldList){
@@ -249,14 +264,20 @@ class User{
         return true
     }
 
+
+
+    async getTables(){
+        if (!await this.isAdmin()) return false
+        return Object.keys(this.db.structure)
+    }
+
+
     generateHash(password){
         return bcrypt.hash(password, 10).catch(err => log(1, err))
     }
-
     async compareHash(password, hash){
         return await (bcrypt.compare(password, hash).catch(err => this.log(1, err)))
     }
-
     async generateToken(length){
         return crypto.randomBytes(length).toString('hex');
     }
@@ -269,11 +290,9 @@ class User{
             this.alreadyRes = true
         }
     }
-
     respondSuccess(json={}){
         this.respond(200, json)
     }
-
     respondMissing(){
         this.respond(400, {reason: 'Missing or invalid POST field(s)'})
     }

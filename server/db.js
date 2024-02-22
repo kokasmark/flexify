@@ -15,6 +15,9 @@ class DB{
             if (err) this.log(1, 'Error connecting to MySQL:' + err)
             else     this.log(1, 'Connected to MySQL');
         });
+
+        this.structure = {}
+        this.didInit = false
     }
 
     async query(sql, vars=[], single=false) {
@@ -23,6 +26,19 @@ class DB{
         const result = (await this.conn.promise().query(sql, vars))[0]
         this.log(3, `result: ${single ? result[0] : result}`)
         return single ? result[0] : result
+    }
+
+    async initStructure(){
+        if (this.didInit) return
+        
+        const sql = `SELECT group_concat(COLUMN_NAME) AS structure, TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'flexify' GROUP BY TABLE_NAME`
+        let result = await this.query(sql)
+        result.forEach(table => {
+            this.structure[table.TABLE_NAME] = table.structure.split(',')
+        });
+        this.didInit = true
+
+        return true
     }
 
 }
