@@ -106,6 +106,15 @@ class SavedPage extends Component {
                 {this.state.icons[Math.floor(Math.random()*this.state.icons.length)]}
                 <div className='bottom'>
                   <h1>{template.name}</h1>
+                  {this.state.selectedCard != index && <div className='summary'>
+                    {<ul className='exercises'>
+                    {template.data.map((data,index) => (
+                      <li className='exercise'>
+                        <p><b>{JSON.parse(data.set_data).length}</b>x {data.comment}</p>
+                      </li>
+                    ))}
+                  </ul>}
+                  </div>}
                 </div>
                 {this.state.details == false && <div>
                 <Link to={"/workout"} onClick={()=> localStorage.setItem("started-workout", JSON.stringify(template))}><FaPlay className='control-btn interactable'/></Link>

@@ -527,6 +527,7 @@ input{
   margin-bottom: 10px; /* Adjust the margin-bottom value to control spacing between rows */
   box-sizing: border-box;
   animation: grow 0.2s ease-in;
+  margin-left: 2.5%;
 }
 .create-workout-card.card .card-body{
   height: 55px !important;
@@ -1205,6 +1206,16 @@ iframe
 }
 .saved-workouts .selected-card.card-detail .sets p{
   margin-left: 10px;
+}
+.saved-workouts .bottom .summary{
+  color: white;
+  margin-top: -20%;
+}
+.saved-workouts .bottom .summary li{
+  list-style: none;
+  width: 100%;
+  text-align: center;
+  margin-left: -10%;
 }
 .browse-cards {
   position: absolute;
