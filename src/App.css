@@ -1,5 +1,6 @@
 :root {
   --contrast: #3C6FAA;
+  --contrast-A: #3c6faa83;
   --darker-contrast: #305886;
   --bg: #1F2229;
   --shadow:rgb(20, 20, 20);
@@ -618,12 +619,13 @@ input{
 }
 .exercise-card .bottom{
   background-color: var(--contrast);
-  border-radius: 200px;
-  height: 40px;
+  border-radius: 0px;
+  height: 80px;
   transition: 0.6s;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  animation: exercise-card-load 0.5s ease-out;
 }
 .exercise-card:active{
   cursor: grabbing;
@@ -649,14 +651,17 @@ iframe
   filter: saturate(5);
 }
 .home-tip{
-  animation: grow 0.5s ease-in;
-  
   filter: drop-shadow(5px 5px 2px rgb(0 0 0 / 0.4));
+  margin-top: 50px;
+  width: 400px;
+  color: white;
+  position: relative;
 }
 .home-tip .tip-icon{
   font-size: 50px;
   margin-bottom: 20%;
   margin-right: 10px;
+  animation: beat 1s ease-in-out infinite;
 }
 .home-tip img{
   filter: invert(86%) sepia(25%) saturate(6802%) hue-rotate(343deg) brightness(106%) contrast(97%) drop-shadow(5px 5px 2px rgb(0 0 0 / 0.4)) !important;
@@ -1298,6 +1303,34 @@ iframe
   color: white;
   margin-top: 5%;
   margin-bottom: -10%;
+}
+@keyframes tip-left {
+  0%{
+    transform: translateX(1000px);
+  }
+  100%{
+    transform: translateX(0px);
+  }
+}
+@keyframes tip-right {
+  0%{
+    transform: translateX(-1000px);
+  }
+  100%{
+    transform: translateX(0px);
+  }
+}
+@keyframes exercise-card-load {
+  0%{
+    border-radius: 200px;
+    border: 1px solid var(--contrast);
+    height: 40px;
+  }
+  100%{
+    border-radius: 0px;
+  border: 1px solid var(--contrast);
+  height: 80px;
+  }
 }
 @keyframes create-workout-card-hover {
   0%{

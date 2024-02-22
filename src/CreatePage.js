@@ -398,7 +398,8 @@ class CreatePage extends Component {
                   <div ref={this.cardRef} draggable
                     onDragStart={(e) => this.dragStart(e, index, template)}
                     onDragEnd={(e) =>this.dragEnd(e)}
-                    onDrop={this.drop} onMouseEnter={() => this.colorAffectedMuscles(template.muscles, false)} onMouseLeave={() => this.colorAffectedMuscles(template.muscles, true)} onClick={() => this.selectTemplate(template.name, template.type, template.id)} key={index} className='interactable load-anim exercise-card'>
+                    onDrop={this.drop} onMouseEnter={() => this.colorAffectedMuscles(template.muscles, false)} onMouseLeave={() => this.colorAffectedMuscles(template.muscles, true)} 
+                    onClick={() => this.selectTemplate(template.name, template.type, template.id)} key={index} className='interactable exercise-card'>
                     <div className='bottom'>
                       <h2>{template.name}</h2>
                       <p style={{ marginTop: -10, fontSize: 11 }}>({template.muscles.replaceAll("[", "").replaceAll("]", "").replaceAll('"', "")})</p>

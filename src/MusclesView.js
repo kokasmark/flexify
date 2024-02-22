@@ -88,12 +88,16 @@ export default class MusclesView extends Component {
   }
   setColor = () => {
     const colors = ['var(--heat-blue)', 'var(--heat-yellow)', 'var(--heat-orange)', 'var(--heat-red)'];
-    if (this.state.front) {
+
       for (var i = 0; i < this.state.muscleData.length; i++) {
         var muscle = document.getElementById(i);
         var color = colors[parseInt(this.state.muscleData[i].val)];
+        try{
         muscle.style.fill = color;
-      }
+        }catch{
+          
+        }
+      
     }
   }
   updateMuscleGroup(group, value) {
@@ -114,7 +118,7 @@ export default class MusclesView extends Component {
       try {
         var muscle = muscles[this.state.front == true ? this.getGroup()[group][i] : this.getGroup()[group][i] - (this.state.men == true ? 138 : 87)];
         var key = parseInt(muscle.id);
-        this.state.muscleData[key].val = value;
+        this.state.muscleData[key].val = value != -1 ? value : this.state.muscleData[key].val;
         var color = colors[parseInt(this.state.muscleData[key].val)];
         muscle.style.fill = color;
       } catch {
@@ -146,7 +150,6 @@ export default class MusclesView extends Component {
   }
   Draw() {
     var muscles = this.props.muscles;
-    console.log(muscles)
     const muscleCounts = {};
     var count = 0;
     // Assuming 'muscles' is an array of muscle objects
@@ -177,13 +180,13 @@ export default class MusclesView extends Component {
       if (document.getElementById(this.findMuscleIndex(muscleName)) != null) {
         switch (mappedValue) {
           case 1:
-            t.push({text: GetString("tip-level-1").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`),level: 0})
+            t.push({text: GetString("tip-level-1").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`),level: 0, group: muscleName})
             break;
           case 2:
-            t.push({text: GetString("tip-level-2").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`),level: 1})
+            t.push({text: GetString("tip-level-2").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`),level: 1, group: muscleName})
             break;
           case 3:
-            t.push({text: GetString("tip-level-3").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`),level: 2})
+            t.push({text: GetString("tip-level-3").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`),level: 2, group: muscleName})
             break;
           default:
             break;
@@ -224,6 +227,22 @@ export default class MusclesView extends Component {
       this.AutoRotate()
     }
   }
+  highlight(group){
+      for (var i = 0; i < this.state.muscleData.length; i++) {
+        var muscle = document.getElementById(i);
+        var color = "var(--contrast-A)";
+        try{
+          muscle.style.fill = color;
+        }catch{
+
+        }
+      }
+
+      this.updateMuscleGroup(group,-1)
+  }
+  hide(){
+    this.setColor()
+  }
   render() {
     return (
       <div>
@@ -240,7 +259,8 @@ export default class MusclesView extends Component {
         </div>
         {this.props.showTips != null && <div className={'tips-container '+ this.state.animation} style={{ position: 'relative', top: -800, left: 650 }}>
           {this.state.tips.map((tip, index) => (
-            <div style={{ color: 'white', position: 'relative', left: index % 2 == 0 ? -550 : 200, width: 400, marginTop: 50 }} className='interactable anim home-tip'>
+            <div key={Math.random()} style={{ left: index % 2 == 0 ? -550 : 200, animation: `tip-${index%2==0 ? 'right' : 'left'} ${1 + (index)/5}s ease-out` }} 
+            className='interactable home-tip' onMouseEnter={()=>this.highlight(tip.group)} onMouseLeave={()=>this.hide()}>
               {this.state.tip_icons[tip.level]}
               <div style={{ display: 'inline-block', width: 250 }} key={index} dangerouslySetInnerHTML={{ __html: tip.text }}></div>
             </div>
