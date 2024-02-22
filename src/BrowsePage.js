@@ -10,6 +10,7 @@ import AuthRedirect from './authRedirect';
 import NavBarWrapper from './NavBar';
 import {host} from './constants'
 import GetString from './language';
+import { CallApi } from './api';
 
 class BrowsePage extends Component {
   muscleRef = React.createRef();
@@ -39,29 +40,13 @@ class BrowsePage extends Component {
     
       }
 
-    getExerciseTemplates() {
-      var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-      var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), location: "web" });
-  
-      var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-      };
-  
-      fetch(`http://${host}:3001/api/templates/exercises`, requestOptions)
-        .then(response => response.text())
-        .then((response) => {
-          var r = JSON.parse(response);
-          if (r.success) {
-            this.setState({ templates: r.data });
-          } else {
-  
-          }
-        })
-        .catch(error => console.log('error', error));
+    async getExerciseTemplates() {
+      var r = await CallApi("templates/exercises",{ token: localStorage.getItem('loginToken')})
+      if (r.success) {
+        this.setState({ templates: r.data });
+      } else {
+
+      }
       }
       componentDidMount(){
         this.getExerciseTemplates();

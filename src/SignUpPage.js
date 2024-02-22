@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import {host} from './constants';
 import { TypeAnimation } from "react-type-animation";
 import Card from "react-bootstrap/Card";
+import { CallApi } from './api';
 const SignUpWrapper = () => {
   const navigate = useNavigate();
 
@@ -26,35 +27,20 @@ class SignUpPage extends Component {
     hidePassword: true,
     cardIndex: 1
   }
-  validate = () => {
+  async validate(){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
-    var raw = JSON.stringify({ "username": document.getElementById('username').value, "email": document.getElementById('email').value,
-    "password": document.getElementById('password').value, location: "web" });
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
-    fetch(`http://${host}:3001/api/signup`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        var r = JSON.parse(response);
-        if(r.success){
-          console.log('Validating');
-          localStorage.setItem('loginToken', r.token);
-          const { navigate } = this.props;
-          navigate('/');
-        }else{
-          
-        }
-      })
-      .catch(error => console.log('error', error));
-    
+    var r = await CallApi('register',{ "username": document.getElementById('username').value, "email": document.getElementById('email').value,
+    "password": document.getElementById('password').value})
+    if(r.success){
+      console.log('Validating');
+      localStorage.setItem('loginToken', r.token);
+      const { navigate } = this.props;
+      navigate('/');
+    }else{
+      
+    } 
   }
   moveCard() {
     const cards = [this.card_manage, this.card_create, this.card_monitor];
@@ -176,7 +162,7 @@ class SignUpPage extends Component {
           </div>
           <Button
             style={{ width: "50%", marginLeft: "8%", backgroundColor: "var(--heat-orange)" }}
-            onClick={this.validate}
+            onClick={()=>this.validate()}
           >
             Sign In
           </Button>

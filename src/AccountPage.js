@@ -12,6 +12,7 @@ import Navbar from './NavBar';
 import AuthRedirect from './authRedirect';
 import NavBarWrapper from './NavBar';
 import {host} from './constants'
+import { CallApi } from './api';
 
 class AccountPage extends Component {
   state = {
@@ -20,30 +21,13 @@ class AccountPage extends Component {
     anatomy: (localStorage.getItem('anatomy') != null ? (localStorage.getItem('anatomy') == "Masculine" ? "Masculine": "Feminine") : "Masculine")
   }
 
-  getUserInformation(){
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    var raw = JSON.stringify({"token": localStorage.getItem('loginToken'), location: "web"});
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
-    fetch(`http://${host}:3001/api/user`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {      
-        var r = JSON.parse(response);
-        if(r.success){
-         this.setState({username: r.username, email: r.email});
-        }else{
-          
-        }
-      })
-      .catch(error => console.log('error', error));
+  async getUserInformation(){
+    var r = await CallApi("user", {token: localStorage.getItem('loginToken')})
+    if(r.success){
+      this.setState({username: r.username, email: r.email});
+     }else{
+       
+     }
   }
   componentDidMount(){
     this.getUserInformation();

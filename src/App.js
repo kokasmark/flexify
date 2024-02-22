@@ -11,6 +11,7 @@ import Carousel from 'react-bootstrap/Carousel';
 
 import { host } from './constants'
 import GetString from './language';
+import { CallApi } from './api';
 class App extends Component {
   muscleViewRef = React.createRef();
   calendarRef = React.createRef()
@@ -31,29 +32,11 @@ class App extends Component {
     
   }
 
-  getMusclesTrained() {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), location: "web" });
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
-    fetch(`http://${host}:3001/api/home/muscles`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        var r = JSON.parse(response);
-        if (r.success) {
-          this.setState({ muscles: r.muscles });
-        } else {
-
-        }
-      })
-      .catch(error => console.log('error', error));
+  async getMusclesTrained() {
+    var r = await CallApi("home/muscles", {token: localStorage.getItem("loginToken")})
+    if (r.success) {
+      this.setState({ muscles: r.muscles });
+    }
   }
   componentDidMount() {
     this.getMusclesTrained();

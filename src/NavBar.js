@@ -16,6 +16,7 @@ import swal from 'sweetalert';
 import {host} from './constants'
 
 import GetString from './language';
+import { CallApi } from './api';
 
 
 const NavBarWrapper = () => {
@@ -70,59 +71,22 @@ class Navbar extends Component {
   
   
   
-  getWorkouts() {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), date: this.state.dateForApi, location: "web" });
+  async getWorkouts() {
+    var r = await CallApi("workouts/date", {token: localStorage.getItem('loginToken'), date: this.state.dateForApi})
+    if (r.success) {
+      this.setState({ dates: r.dates });
+    } else {
 
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-    fetch(`http://${host}:3001/api/workouts/date`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        var r = JSON.parse(response);
-        if (r.success) {
-          this.setState({ dates: r.dates });
-        } else {
-
-        }
-      })
-      .catch(error => console.log('error', error));
+    }
   }
-  changeTheme = ()=>{
-      this.setState({theme: this.state.theme == 'light' ? 'dark' : 'light'})
-      document.documentElement.style.setProperty('--contrast',this.state.theme == 'dark'? '#3C6FAA':'#163457');
-      //document.documentElement.style.setProperty('--bg',this.state.theme == 'dark'? '#1F2229':'#101218');
-  }
-  getUserInformation(){
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    var raw = JSON.stringify({"token": localStorage.getItem('loginToken'), location: "web"});
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
-    fetch(`http://${host}:3001/api/user`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        var r = JSON.parse(response);
-        if(r.success){
-         this.setState({username: r.username, email: r.email});
-        }else{
-          swal(GetString("alert-logged-out")[0],GetString("alert-logged-out")[1], "error");
-          this.props.navigate('/login');
-        }
-      })
-      .catch(error => console.log('error', error));
+  async getUserInformation(){
+    var r = await CallApi("user", {token: localStorage.getItem('loginToken')})
+    if(r.success){
+      this.setState({username: r.username, email: r.email});
+     }else{
+       swal(GetString("alert-logged-out")[0],GetString("alert-logged-out")[1], "error");
+       this.props.navigate('/login');
+     }
   }
   componentDidMount(){
     this.getUserInformation();

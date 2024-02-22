@@ -28,6 +28,7 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import { GiWeight } from "react-icons/gi";
 import { PiArrowsCounterClockwise } from "react-icons/pi";
 import { PiClockCountdown } from "react-icons/pi";
+import { CallApi } from './api';
 
 class SavedPage extends Component {
   state = {
@@ -36,30 +37,15 @@ class SavedPage extends Component {
     selectedCard: -1,
     details: false
   }
-  getSavedTemplates() {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), location: "web" });
+  async getSavedTemplates() {
+    var r = await CallApi("templates/workouts", {token: localStorage.getItem('loginToken')})
 
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
+    if (r.success) {
+      console.log(r.templates)
+      this.setState({ savedTemplates: r.templates })
+    } else {
 
-    fetch(`http://${host}:3001/api/templates/workouts`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        var r = JSON.parse(response);
-        if (r.success) {
-          console.log(r.templates)
-          this.setState({ savedTemplates: r.templates })
-        } else {
-
-        }
-      })
-      .catch(error => console.log('error', error));
+    }
   }
   componentDidMount() {
     this.getSavedTemplates();

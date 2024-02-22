@@ -14,6 +14,7 @@ import { host } from "./constants";
 import GetString from "./language";
 import { TypeAnimation } from "react-type-animation";
 import Card from "react-bootstrap/Card";
+import { CallApi } from "./api";
 
 const SignInWrapper = () => {
   const navigate = useNavigate();
@@ -29,48 +30,27 @@ class SignInPage extends Component {
     hidePassword: true,
     cardIndex: 1,
   };
-  validate = () => {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    var raw = JSON.stringify({
-      username: document.getElementById("username").value,
-      password: document.getElementById("password").value,
-      location: "web",
-    });
-
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-
-    fetch(`http://${host}:3001/api/login`, requestOptions)
-      .then((response) => response.text())
-      .then((response) => {
-        var r = JSON.parse(response);
-        if (r.success) {
-          localStorage.setItem("loginToken", r.token);
-          console.log("Validating");
-          const { navigate } = this.props;
-          navigate("/");
-          swal(
-            GetString("alert-login-success"),
-            `${GetString("navbar-welcome")} ${
-              document.getElementById("username").value
-            }!`,
-            "success"
-          );
-        } else {
-          swal(
-            GetString("alert-login-error")[0],
-            GetString("alert-login-error")[1],
-            "error"
-          );
-        }
-      })
-      .catch((error) => console.log("error", error));
+  async validate(){
+    var r = await CallApi("login", {username: document.getElementById("username").value, password: document.getElementById("password").value})
+    if (r.success) {
+      localStorage.setItem("loginToken", r.token);
+      console.log("Validating");
+      const { navigate } = this.props;
+      navigate("/");
+      swal(
+        GetString("alert-login-success"),
+        `${GetString("navbar-welcome")} ${
+          document.getElementById("username").value
+        }!`,
+        "success"
+      );
+    } else {
+      swal(
+        GetString("alert-login-error")[0],
+        GetString("alert-login-error")[1],
+        "error"
+      );
+    }
   };
   moveCard() {
     const cards = [this.card_manage, this.card_create, this.card_monitor];
@@ -183,7 +163,7 @@ class SignInPage extends Component {
           </div>
           <Button
             style={{ width: "50%", marginLeft: "8%", backgroundColor: "var(--heat-orange)" }}
-            onClick={this.validate}
+            onClick={()=>this.validate()}
           >
             Sign In
           </Button>
