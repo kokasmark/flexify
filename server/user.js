@@ -30,7 +30,7 @@ class User{
     }
 
     async getAdmin(){
-        await this.isLoggedIn()
+        if (!await this.loggedIn) return false
         let result = await this.db.query('SELECT is_admin FROM user WHERE id = ?', [this.id], true)
 
         return !!result.is_admin
@@ -57,7 +57,8 @@ class User{
             carbs: /^[0-9]+((.|,)[0-9]+)?$/,
             fat: /^[0-9]+((.|,)[0-9]+)?$/,
             protein: /^[0-9]+((.|,)[0-9]+)?$/,
-            reset_token: /^([a-f0-9]){32}$/,
+            //reset_token: /^([a-f0-9]){32}$/,
+            reset_token: /^.*$/,
             login: /^(([\w-.]+@([\w-]+\.)+[\w-]{2,4})|([a-zA-Z0-9._-]{5,}))$/,
             id: /^[0-9]+$/,
             timespan: /^[0-9]+$/,
@@ -265,6 +266,59 @@ class User{
     }
 
 
+    async deleteExpiredResetTokens(){
+        let sql = 'DELETE FROM login_reset WHERE created < (CURRENT_TIMESTAMP()  - INTERVAL 10 MINUTE);'
+        return this.db.query(sql)
+    }
+
+    async validateResetToken(){
+        let post = this.validateFields(["reset_token"])
+        if (!post) return false
+
+        await this.deleteExpiredResetTokens()
+        let sql = 'SELECT user_id FROM login_reset WHERE token = ?;'
+        let result = await this.db.query(sql, [post.reset_token])
+
+        if (!result.length) return false
+        return true
+    }
+
+    async generateResetToken(serverUrl){
+        const post = this.validateFields(["user"])
+        if (!post) return false
+        this.deleteExpiredResetTokens()
+
+        let sql = "SELECT id, username, email FROM user WHERE username=? OR email=?"
+        let result = await this.db.query(sql, [post.user, post.user])
+        if (!result.length) return false
+
+        const id = result[0].id
+        const reset_token = await this.generateToken(16)
+        this.sendRequest('POST', serverUrl, {username: result[0].username, email: result[0].email, token: reset_token})
+
+        sql = "INSERT INTO login_reset (user_id, token) VALUES (?, ?)"
+        this.db.query(sql, [id, reset_token])
+
+        return true
+    }
+
+    async resetPassword(){
+        const post = this.validateFields(["password", "reset_token"])
+        if (!post) return false
+        this.log(-1, 'ok')
+
+        let sql = 'SELECT user_id FROM login_reset WHERE token = ?'
+        let result = await this.db.query(sql, [post.reset_token])
+        if (result.length == 0) return false
+        const id = result[0].user_id
+        const hash = await this.generateHash(post.password)
+        this.db.query('UPDATE user SET password=? WHERE id=?', [hash, id])
+        this.db.query('DELETE FROM login_reset WHERE token=?', [post.reset_token])
+
+        return true
+    }
+
+
 
     async getTables(){
         if (!await this.isAdmin()) return false
@@ -272,7 +326,7 @@ class User{
     }
 
 
-    generateHash(password){
+    async generateHash(password){
         return bcrypt.hash(password, 10).catch(err => log(1, err))
     }
     async compareHash(password, hash){
@@ -295,6 +349,21 @@ class User{
     }
     respondMissing(){
         this.respond(400, {reason: 'Missing or invalid POST field(s)'})
+    }
+
+
+    sendRequest(method, url, body){
+        const request = require('request')
+        const options = {
+            'method': method,
+            'url': url,
+            'headers': {'Content-Type': 'application/json'},
+            body: JSON.stringify(body)
+        }
+        request(options, function (error) {
+            if (error) throw new Error(error);
+        })
+    
     }
 
 }

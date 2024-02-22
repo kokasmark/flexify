@@ -17,7 +17,7 @@ class DB{
         });
 
         this.structure = {}
-        this.didInit = false
+        this.didInitStructure = false
     }
 
     async query(sql, vars=[], single=false) {
@@ -29,14 +29,14 @@ class DB{
     }
 
     async initStructure(){
-        if (this.didInit) return
+        if (this.didInitStructure) return
         
         const sql = `SELECT group_concat(COLUMN_NAME) AS structure, TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'flexify' GROUP BY TABLE_NAME`
         let result = await this.query(sql)
         result.forEach(table => {
             this.structure[table.TABLE_NAME] = table.structure.split(',')
         });
-        this.didInit = true
+        this.didInitStructure = true
 
         return true
     }
