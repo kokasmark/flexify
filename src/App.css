@@ -390,7 +390,6 @@ body{
   width: 100px !important;
   margin-top: 2.5px;
   height: 20px;
-  width: fit-content;
 }
 .navBar{
   position: fixed;
@@ -612,25 +611,28 @@ input{
   margin-left: auto;
   margin-right: auto;
   background-color: transparent;
-  border: 1px solid var(--contrast);
   cursor: pointer;
   text-align: center;
   border-radius: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 .exercise-card .bottom{
   background-color: var(--contrast);
   border-radius: 200px;
-  height: 100px;
-  margin-top: 12%;
-  transition: 0.5s;
+  height: 40px;
+  transition: 0.6s;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .exercise-card:active{
   cursor: grabbing;
 }
 .exercise-card:hover .bottom{
-  margin-top: 0px;
   border-radius: 0px;
+  border: 1px solid var(--contrast);
+  height: 80px;
+  justify-content: center;
 }
 iframe
 {
@@ -1122,7 +1124,7 @@ iframe
   width: 100%;
   height: 100%;
   border-radius: 200px 200px 0px 0px;
-  transition: 0.65s;
+  transition: 0.8s;
   text-align: center;
   z-index: 10;
   animation: card-bottom-load 0.65s;
@@ -1157,18 +1159,18 @@ iframe
   border-radius: 0px;
   margin-top: -15%;
   padding-bottom: 0%;
-  animation: card-bottom 0.5s ease-out;
+  animation: card-bottom 0.8s ease-out;
 }
 .saved-workouts .selected-card .bottom h1{
   padding-bottom: 5%;
-  padding-top: 5%;
+  padding-top: 15%;
   margin-top: 10%;
 }
 .saved-workouts .selected-card .control-btn{
   color: white;
   width: 100%;
   height: 50px;
-  margin: 15% 0px 0px 0px
+  margin: 25% 0px 0px 0px;
 }
 .saved-workouts .selected-card .saved-card-icon{
   display: none;
@@ -1232,31 +1234,33 @@ iframe
   flex: 0 0 calc(33.33% - 20px); /* Adjust width and margins as needed */
   margin-bottom: 20px; /* Adjust as needed */
   border: none;
-  background-color: var(--bg);
+  background-color: transparent;
   overflow: hidden;
-  height: 300px !important;
+  height: 100px !important;
   width: 240px !important; /* Adjust width and margins as needed */
+  transition: 1s;
 }
 .browse-card .card-body{
-  background-color: var(--bg) !important;
-  border: 1px solid var(--contrast) !important;
-  border-radius: 10px;
-  max-width: 240px;
-  margin-top: 10px;
+  border-radius: 20px;
+  height: 40px;
+  transition: 0.6s;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  background-color: var(--contrast);
 }
 .browse-card .bottom{
-  background-color: var(--contrast);
   width: 120%;
   margin-left: -10%;
-  margin-top: 85%;
-  border-radius: 100px;
+  margin-top: -15%;
   text-align: center;
-  height: 200%;
-  transition: 0.5s;
+  transition: 1s;
 }
 .browse-card img{
-  width: 100%;
+  margin-left: 10%;
+  width: 80%;
+  margin-top: -25%;
 }
 .browse-card .bottom .card-title{
   margin-bottom: 40%;
@@ -1264,8 +1268,14 @@ iframe
 }
 
 .browse-card:hover .bottom{
-  margin-top: -70%;
   border-radius: 0px;
+}
+.browse-card:hover{
+  height: 300px !important;
+}
+.browse-card:hover .card-body{
+  border-radius: 10px;
+  background-color: var(--contrast);
 }
 .browse-muscle{
   transition: 0.5s;
@@ -1278,6 +1288,9 @@ iframe
   border: 1px solid var(--contrast);
   padding-top: 10px;
   border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
 }
 .browse-page-header{
   width: 100%;

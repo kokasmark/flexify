@@ -118,31 +118,9 @@ class SavedPage extends Component {
                 </div>
                 {this.state.details == false && <div>
                 <Link to={"/workout"} onClick={()=> localStorage.setItem("started-workout", JSON.stringify(template))}><FaPlay className='control-btn interactable'/></Link>
-                  <FaListUl className='control-btn interactable' onClick={()=> this.setState({details: !this.state.details})}/>
                   <MdDelete className='control-btn interactable'/>
                   </div>}
                   
-                  {this.state.details && <div>
-                    <IoChevronBackOutline  className='interactable' style={{fontSize: 50, backgroundColor: "var(--contrast)", borderRadius: "0px 0px 10px 0px", color: "white"}} onClick={()=> this.setState({details: !this.state.details})}/>
-                {<ul className='exercises'>
-                  {template.data.map((data,index) => (
-                    <li className='exercise'>
-                      <ol className='sets'>
-                      <h2>{data.comment}</h2>
-                      {JSON.parse(data.set_data).map((set,index) => (
-                        <li style={{display: 'flex'}}>
-                          <p>{set.reps}<PiArrowsCounterClockwise/></p>
-                          <p>{set.weight}<GiWeight/></p>
-                          <p>{set.time}<PiClockCountdown/></p>
-                        </li>
-                      ))
-                          
-                        }
-                      </ol>
-                    </li>
-                  ))}
-                </ul>}
-                </div>}
             </Card>
             </div>
           )
