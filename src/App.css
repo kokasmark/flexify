@@ -626,6 +626,10 @@ input{
   display: flex;
   flex-direction: column;
   animation: exercise-card-load 0.5s ease-out;
+  justify-content: center;
+}
+.exercise-card h2{
+  font-size: 20px;
 }
 .exercise-card:active{
   cursor: grabbing;
@@ -634,7 +638,6 @@ input{
   border-radius: 0px;
   border: 1px solid var(--contrast);
   height: 80px;
-  justify-content: center;
 }
 iframe
 {
@@ -1216,13 +1219,14 @@ iframe
 }
 .saved-workouts .bottom .summary{
   color: white;
-  margin-top: -20%;
+  margin-top: -30%;
 }
 .saved-workouts .bottom .summary li{
   list-style: none;
   width: 100%;
   text-align: center;
   margin-left: -10%;
+  margin-top: -20px;
 }
 .browse-cards {
   position: absolute;
