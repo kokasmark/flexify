@@ -1,5 +1,5 @@
 :root {
-  --contrast: #3C6FAA;
+  --contrast: #3f8de6;/*3C6FAA*/
   --contrast-A: #3c6faa83;
   --darker-contrast: #305886;
   --bg: #1F2229;
@@ -1307,6 +1307,17 @@ iframe
   color: white;
   margin-top: 5%;
   margin-bottom: -10%;
+}
+@keyframes muscle-load {
+  0%{
+    opacity: 0;
+  }
+  50%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
 }
 @keyframes tip-load {
   0%{

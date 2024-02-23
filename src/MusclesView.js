@@ -86,6 +86,18 @@ export default class MusclesView extends Component {
     }
     this.setState({ muscleData: mData });
   }
+  muscleLoadAnimation(){
+    console.log("muscle load")
+    for (var i = 0; i < this.state.muscleData.length; i++) {
+      var muscle = document.getElementById(i);
+      try{
+        muscle.style.animation = `muscle-load ${this.state.front ? i/100 : (i-(this.state.men == true ? 138 : 87))/100}s ease-out`;
+      }catch{
+
+      }
+    
+  }
+  }
   setColor = () => {
     const colors = ['var(--heat-blue)', 'var(--heat-yellow)', 'var(--heat-orange)', 'var(--heat-red)'];
 
@@ -142,11 +154,8 @@ export default class MusclesView extends Component {
     return data;
   }
   async rotate() {
-    if (this.state.animation == 'fade-in') {
-      this.setState({ animation: 'fade-out' })
-      await new Promise(r => setTimeout(r, 200))
-      this.setState({ front: !this.state.front, animation: 'fade-in' });
-    }
+    await new Promise(r => setTimeout(r, 200))
+    this.setState({ front: !this.state.front});
   }
   Draw() {
     var muscles = this.props.muscles;
@@ -193,14 +202,17 @@ export default class MusclesView extends Component {
         }
 
       }
-      this.setState({ tips: t })
+      
     }
+    this.setState({ tips: t })
+    this.muscleLoadAnimation()
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.front !== this.state.front) {
       if (this.props.muscles != null) {
-        this.Draw()
+        this.Draw();
       }
+      this.muscleLoadAnimation()
     }
     if (this.props.muscles != prevProps.muscles) {
       this.Draw()
