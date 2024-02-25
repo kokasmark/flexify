@@ -1135,6 +1135,7 @@ iframe
   transition: 0.8s;
   text-align: center;
   z-index: 10;
+  margin-top: 100px;
   animation: card-bottom-load 0.65s;
 }
 .saved-workouts .workout-card .saved-card-icon{
@@ -1156,7 +1157,7 @@ iframe
 }
 .saved-workouts .workout-card:hover:not(.selected-card) .bottom{
   border-radius: 0px;
-  margin-top: -110%;
+  margin-top: -60%;
   padding-bottom: 100%;
 }
 .saved-workouts .selected-card{

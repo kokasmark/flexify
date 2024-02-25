@@ -4,16 +4,13 @@ import { host } from "./constants";
 function justTokenArgs(args){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("X-Token", args.token)
 
-    var raw = JSON.stringify({
-      token: args.token,
-      location: "web",
-    });
+
 
     var requestOptions = {
-      method: "POST",
+      method: "GET",
       headers: myHeaders,
-      body: raw,
       redirect: "follow",
     };
     return requestOptions;
@@ -58,8 +55,24 @@ export function register(args){
 
     return requestOptions;
 }
-export function home_muscles(args){
-    return justTokenArgs(args);
+export function user_muscles(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    token: args.token,
+    timespan: args.timespan,
+    location: "web",
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
 }
 export function user(args){
     return justTokenArgs(args);
@@ -67,13 +80,13 @@ export function user(args){
 export function templates_exercises(args){
     return justTokenArgs(args);
 }
-export function templates_workouts(args){
+export function templates(args){
     return justTokenArgs(args);
 }
-export function workouts_date(args){
+export function workouts_dates(args){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-
+    myHeaders.append("X-Token", args.token)
     var raw = JSON.stringify({
       token: args.token,
       date: args.date,
@@ -95,10 +108,10 @@ export async function CallApi(route, args) {
         register,
         user,
 
-        home_muscles,
+        user_muscles,
         templates_exercises,
-        templates_workouts,
-        workouts_date
+        templates,
+        workouts_dates
     }; 
     const apiFunc = apiFunctions[route.replace("/","_")]; // Get the corresponding API function based on the route
     if (!apiFunc) {
@@ -110,7 +123,7 @@ export async function CallApi(route, args) {
     try {
         const response = await fetch(`http://${host}:3001/api/${route}`, requestOptions);
         const data = await response.json();
-        console.log(data)
+        console.log("Data: "+data)
         return data; // Return the data from the API call
     } catch (error) {
         throw error; // Throw any errors that occur during the API call

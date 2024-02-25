@@ -72,7 +72,7 @@ class Navbar extends Component {
   
   
   async getWorkouts() {
-    var r = await CallApi("workouts/date", {token: localStorage.getItem('loginToken'), date: this.state.dateForApi})
+    var r = await CallApi("workouts/dates", {token: localStorage.getItem('loginToken'), date: this.state.dateForApi})
     if (r.success) {
       this.setState({ dates: r.dates });
     } else {

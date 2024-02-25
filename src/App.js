@@ -33,7 +33,7 @@ class App extends Component {
   }
 
   async getMusclesTrained() {
-    var r = await CallApi("home/muscles", {token: localStorage.getItem("loginToken")})
+    var r = await CallApi("user/muscles", {token: localStorage.getItem("loginToken"), timespan: 30})
     if (r.success) {
       this.setState({ muscles: r.muscles });
     }

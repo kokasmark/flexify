@@ -38,10 +38,9 @@ class SavedPage extends Component {
     details: false
   }
   async getSavedTemplates() {
-    var r = await CallApi("templates/workouts", {token: localStorage.getItem('loginToken')})
+    var r = await CallApi("templates", {token: localStorage.getItem('loginToken')})
 
     if (r.success) {
-      console.log(r.templates)
       this.setState({ savedTemplates: r.templates })
     } else {
 
@@ -92,14 +91,14 @@ class SavedPage extends Component {
             <div className={`workout-card${this.state.selectedCard == index ? " selected-card":""}${this.state.details == true ? " card-detail":""}`} 
             style={{animation: `card-load-${index % 2 == 0 ? 'up': 'down'} ${index/2}s`}}>
             <Card key={index} onClick={()=>this.select(index)}>
-                {this.state.icons[Math.floor(Math.random()*this.state.icons.length)]}
+                <div className='saved-card-icon'></div>
                 <div className='bottom'>
                   <h1>{template.name}</h1>
                   {this.state.selectedCard != index && <div className='summary'>
                     {<ul className='exercises'>
-                    {template.data.map((data,index) => (
+                    {template.json.map((data,index) => (
                       <li className='exercise'>
-                        <p><b>{JSON.parse(data.set_data).length}</b>x {data.comment}</p>
+                        <p><b>{data.set_data.length}</b>x {data.name}</p>
                       </li>
                     ))}
                   </ul>}
