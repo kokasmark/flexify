@@ -338,16 +338,21 @@ class User{
     
 
 
-    respond(response_code, json){
+    respond(response_code, json={}){
+        json.success = false
+        if (response_code == 200) json.success = true
+        
         if (!this.alreadyRes){
             this.res.status(response_code).json(json)
             this.alreadyRes = true
         }
     }
     respondSuccess(json={}){
+        json.success = true
         this.respond(200, json)
     }
     respondMissing(){
+        json.success = false
         this.respond(400, {reason: 'Missing or invalid POST field(s)'})
     }
 
