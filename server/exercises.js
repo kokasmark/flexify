@@ -21,6 +21,10 @@ class Exercises{
     async getMuscles(id){
         return (await this.exercises)[id].muscles
     }
+
+    async getName(id){
+        return (await this.exercises)[id].name
+    }
 }
 
 module.exports = Exercises

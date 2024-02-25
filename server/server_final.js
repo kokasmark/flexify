@@ -180,7 +180,19 @@ async function getUserTemplates(user){
     log(2, '/api/templates')
     let result = await user.userTemplates()
     if(result === false) return user.respondMissing()
+    
+    result = result.map(template => { 
+        template.json = JSON.parse(template.json)
+        return template
+    })
 
+    for (let workout of result){
+        for (let exercise of workout.json){
+            exercise.name = await exercises.getName(exercise.exercise_id)
+            log(-1, exercise)
+        }
+    }
+    
     user.respondSuccess({templates: result})
 }
 
