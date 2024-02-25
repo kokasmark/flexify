@@ -78,6 +78,7 @@
     position: relative;
     top: -100px !important;
     left: 40px !important;
+    overflow: auto;
   }
   .create-muscles{
     position: relative;
@@ -624,7 +625,6 @@ input{
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  animation: exercise-card-load 0.5s ease-out;
   justify-content: center;
 }
 .exercise-card h2{
@@ -1109,9 +1109,6 @@ iframe
   opacity: 0.5;
   transform: scaleX(1.05);
 }
-.saved-workouts:hover{
-  cursor: pointer;
-}
 .saved-workouts::-webkit-scrollbar {
   display: none;
 }
@@ -1303,6 +1300,8 @@ iframe
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
+  overflow: auto;
+  animation: exercise-card-container 3s;
 }
 .browse-page-header{
   width: 100%;
@@ -1315,14 +1314,11 @@ iframe
   0% {
     transform: translateX(0);
   }
-  90%{
-    transform: translateX(0);
-  }
-  95% {
-    transform: translateX(-5px); /* Move container slightly to the right */
+  50% {
+    transform: translateX(calc(-100% + 100vw)); /* Scroll to the end */
   }
   100% {
-    transform: translateX(0);
+    transform: translateX(0); /* Scroll back to the start */
   }
 }
 @keyframes muscle-load {
@@ -1349,32 +1345,20 @@ iframe
     transform: translateY(0px);
   }
 }
-@keyframes tip-left {
-  0%{
-    transform: translateX(1000px);
-  }
-  100%{
-    transform: translateX(0px);
-  }
-}
-@keyframes tip-right {
-  0%{
-    transform: translateX(-1000px);
-  }
-  100%{
-    transform: translateX(0px);
-  }
-}
 @keyframes exercise-card-load {
   0%{
-    border-radius: 200px;
-    border: 1px solid var(--contrast);
-    height: 40px;
+    transform: translateY(500px);
   }
   100%{
-    border-radius: 0px;
-  border: 1px solid var(--contrast);
-  height: 80px;
+    transform: translateY(0);
+  }
+}
+@keyframes exercise-card-container {
+  0%{
+    overflow: hidden !important;
+  }
+  100%{
+    overflow: hidden !important;
   }
 }
 @keyframes create-workout-card-hover {
@@ -1402,10 +1386,25 @@ iframe
   z-index: 10;
   }
 }
-@keyframes card-load {
+@keyframes card-load-down{
   0%{
     opacity: 0;
-    transform: translateY(100px);
+    transform: translateY(500px);
+  }
+  50%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+@keyframes card-load-up {
+  0%{
+    opacity: 0;
+    transform: translateY(-500px);
+  }
+  50%{
+    opacity: 0;
   }
   100%{
     opacity: 1;

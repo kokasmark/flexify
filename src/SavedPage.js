@@ -47,13 +47,15 @@ class SavedPage extends Component {
 
     }
   }
+  
   componentDidMount() {
     this.getSavedTemplates();
     const slider = document.querySelector('.saved-workouts');
+
     let isDown = false;
     let startX;
     let scrollLeft;
-
+    
     slider.addEventListener('mousedown', (e) => {
       isDown = true;
       slider.classList.add('active');
@@ -87,7 +89,8 @@ class SavedPage extends Component {
         <h1 className='title'>Saved Workouts</h1>
         <div className={`saved-workouts${this.state.details == true ? " details":""}`}>
           {this.state.savedTemplates.map((template,index) => (
-            <div className={`workout-card${this.state.selectedCard == index ? " selected-card":""}${this.state.details == true ? " card-detail":""}`} style={{animation: `card-load ${index/5}s`}}>
+            <div className={`workout-card${this.state.selectedCard == index ? " selected-card":""}${this.state.details == true ? " card-detail":""}`} 
+            style={{animation: `card-load-${index % 2 == 0 ? 'up': 'down'} ${index/2}s`}}>
             <Card key={index} onClick={()=>this.select(index)}>
                 {this.state.icons[Math.floor(Math.random()*this.state.icons.length)]}
                 <div className='bottom'>

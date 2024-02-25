@@ -390,7 +390,7 @@ class CreatePage extends Component {
           <div className='create-muscles' style={{ position: 'relative', top: 150 }}>
             <MusclesView ref={this.muscleRef} chooseCallback={this.chooseMuscleGroup} />
           </div>
-          <div className='anim create-templates' style={{ color: 'white', position: 'relative', top: -600, left: '20%',height: 500, overflow: 'auto', width: 300 }}>
+          <div className='anim create-templates' style={{ color: 'white', position: 'relative', top: -600, left: '20%',height: 500, width: 300 }}>
             <h1 style={{ marginTop: 5, textAlign: 'center' }}>{GetString("create-template")}</h1>
             {this.state.getTemplates.map((template, index) => (
               <div>
@@ -399,7 +399,8 @@ class CreatePage extends Component {
                     onDragStart={(e) => this.dragStart(e, index, template)}
                     onDragEnd={(e) =>this.dragEnd(e)}
                     onDrop={this.drop} onMouseEnter={() => this.colorAffectedMuscles(template.muscles, false)} onMouseLeave={() => this.colorAffectedMuscles(template.muscles, true)} 
-                    onClick={() => this.selectTemplate(template.name, template.type, template.id)} key={index} className='interactable exercise-card'>
+                    onClick={() => this.selectTemplate(template.name, template.type, template.id)} key={index} className='interactable exercise-card'
+                    style={{animation: `exercise-card-load ${index/5}s ease-out`}}>
                     <div className='bottom'>
                       <h2>{template.name}</h2>
                       <p style={{ marginTop: -10, fontSize: 11 }}>({template.muscles.replaceAll("[", "").replaceAll("]", "").replaceAll('"', "")})</p>
