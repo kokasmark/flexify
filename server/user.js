@@ -53,7 +53,7 @@ class User{
             //password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
             password: /.*/,
             username: /^[a-zA-Z0-9._-]{5,}$/,
-            date: /^[0-9]{4}(-[0-9]{2}){1,2}$/,
+            date: /^[0-9]{4}(-[0-9]{1,2}){1,2}$/,
             carbs: /^[0-9]+((.|,)[0-9]+)?$/,
             fat: /^[0-9]+((.|,)[0-9]+)?$/,
             protein: /^[0-9]+((.|,)[0-9]+)?$/,
@@ -81,7 +81,7 @@ class User{
         if (!post) return false
         if (!(await this.isLoggedIn())) return false
 
-        let sql = 'SELECT DATE_FORMAT(calendar.date, "%Y-%m-%d") as date FROM calendar_workout INNER JOIN caledar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT( date, "%Y-%m") = ? AND calendar.user_id = ?'
+        let sql = 'SELECT DATE_FORMAT(calendar.date, "%Y-%m-%d") as date FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT( date, "%Y-%m") = ? AND calendar.user_id = ?'
         let result = await this.db.query(sql, [post.date, this.id])
         return result.map(x => x.date)
     }
