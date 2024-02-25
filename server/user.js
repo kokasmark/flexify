@@ -91,6 +91,7 @@ class User{
         if (!post) return false
         if (!(await this.isLoggedIn())) return false
 
+        // TODO: finished_workout doesn't exist anymore
         let sql = 'SELECT finished_workout.duration, finished_workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN finished_workout ON calendar_workout.finished_workout_id = finished_workout.id WHERE calendar.user_id = ? AND calendar.date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)'
         let result = await this.db.query(sql, [this.id, post.timespan])
         let workouts = []
@@ -341,7 +342,7 @@ class User{
     respond(response_code, json={}){
         json.success = false
         if (response_code == 200) json.success = true
-        
+
         if (!this.alreadyRes){
             this.res.status(response_code).json(json)
             this.alreadyRes = true
@@ -352,8 +353,8 @@ class User{
         this.respond(200, json)
     }
     respondMissing(){
-        json.success = false
-        this.respond(400, {reason: 'Missing or invalid POST field(s)'})
+        
+        this.respond(400, {reason: 'Missing or invalid POST field(s)', success: false})
     }
 
 
