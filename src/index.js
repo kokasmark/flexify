@@ -18,6 +18,9 @@ import CreatePageWrapper from './CreatePage';
 import WorkoutPageWrapper from './WorkoutPage';
 import ResetPageWrapper from './ResetPage';
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+console.log = () => {}//turning off all console logs
+
 root.render(
   <BrowserRouter history={history}>
   <Routes>

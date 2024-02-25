@@ -37,13 +37,6 @@ class SignInPage extends Component {
       console.log("Validating");
       const { navigate } = this.props;
       navigate("/");
-      swal(
-        GetString("alert-login-success"),
-        `${GetString("navbar-welcome")} ${
-          document.getElementById("username").value
-        }!`,
-        "success"
-      );
     } else {
       swal(
         GetString("alert-login-error")[0],

@@ -13,6 +13,7 @@ import {host} from './constants';
 import { TypeAnimation } from "react-type-animation";
 import Card from "react-bootstrap/Card";
 import { CallApi } from './api';
+import swal from 'sweetalert';
 const SignUpWrapper = () => {
   const navigate = useNavigate();
 
@@ -38,6 +39,13 @@ class SignUpPage extends Component {
       localStorage.setItem('loginToken', r.token);
       const { navigate } = this.props;
       navigate('/');
+      swal(
+        "Welcome!",
+        `Your account "${
+          document.getElementById("username").value
+        }" has been succesfully registered!`,
+        "success"
+      );
     }else{
       
     } 

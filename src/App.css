@@ -365,7 +365,6 @@ body{
 }
 .muscle{
   z-index: 0 !important;
-  
 }
 .muscles path:not(.rotate){
   cursor: pointer;
@@ -1097,6 +1096,8 @@ iframe
   scroll-snap-type: x mandatory;
   left: 1.5%;
   transition: 0.5s;
+  scroll-behavior: smooth;
+  cursor: grab !important;
 }
 .saved-workouts > div {
   flex: 0 0 auto;
@@ -1105,6 +1106,8 @@ iframe
 }
 .saved-workouts:active{
   cursor: grabbing !important;
+  opacity: 0.5;
+  transform: scaleX(1.05);
 }
 .saved-workouts:hover{
   cursor: pointer;
@@ -1307,6 +1310,20 @@ iframe
   color: white;
   margin-top: 5%;
   margin-bottom: -10%;
+}
+@keyframes scrollHint {
+  0% {
+    transform: translateX(0);
+  }
+  90%{
+    transform: translateX(0);
+  }
+  95% {
+    transform: translateX(-5px); /* Move container slightly to the right */
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 @keyframes muscle-load {
   0%{
