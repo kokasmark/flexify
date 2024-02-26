@@ -62,7 +62,8 @@ class User{
             login: /^(([\w-.]+@([\w-]+\.)+[\w-]{2,4})|([a-zA-Z0-9._-]{5,}))$/,
             id: /^[0-9]+$/,
             timespan: /^[0-9]+$/,
-            location: /^(web)|(mobile)$/
+            location: /^(web)|(mobile)$/,
+            time: /^.*$/,
         }
 
         let reqFields = this.req.body
@@ -95,7 +96,6 @@ class User{
         if (!post) return false
         if (!(await this.isLoggedIn())) return false
 
-        // let sql = 'SELECT finished_workout.duration, finished_workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN finished_workout ON calendar_workout.finished_workout_id = finished_workout.id WHERE calendar.user_id = ? AND calendar.date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)'
         let sql = 'SELECT workout.duration, workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN workout ON calendar_workout.workout_id = workout.id WHERE calendar.user_id = ? AND calendar.date >= DATE_SUB(CURDATE(), INTERVAL ? DAY) AND workout.duration != "00:00:00"'
         let result = await this.db.query(sql, [this.id, post.timespan])
         let workouts = []
@@ -225,12 +225,12 @@ class User{
     }
 
     async saveWorkout(){
-        const post = this.validateFields(["duration", "name", "json"])
+        const post = this.validateFields(["duration", "name", "json", "time"])
         if (!post) return false
         if (!await this.isLoggedIn()) return false
 
-        let sql = 'INSERT INTO workout (user_id, duration, name, json) VALUES (?, ?, ?, ?)'
-        let result = await this.db.query(sql, [this.id, post.duration, post.name, post.json])
+        let sql = 'INSERT INTO workout (user_id, duration, name, json, time) VALUES (?, ?, ?, ?, ?)'
+        let result = await this.db.query(sql, [this.id, post.duration, post.name, post.json, post.time])
 
         let workoutId = result.insertId
         sql = "SELECT id FROM calendar WHERE user_id=? AND date=CURDATE()"
