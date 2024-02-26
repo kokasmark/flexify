@@ -121,6 +121,28 @@ export function workouts_data(args){
 
   return requestOptions;
 }
+export function workouts_save(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    token: args.token,
+    name: args.name,
+    duration: args.duration,
+    json: args.json,
+    time: args.time,
+    location: "web",
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
 export async function CallApi(route, args) {
     const apiFunctions = 
     {   login,
@@ -131,7 +153,8 @@ export async function CallApi(route, args) {
         templates_exercises,
         templates,
         workouts_dates,
-        workouts_data
+        workouts_data,
+        workouts_save
     }; 
     const apiFunc = apiFunctions[route.replace("/","_")]; // Get the corresponding API function based on the route
     if (!apiFunc) {

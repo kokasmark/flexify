@@ -35,30 +35,14 @@ class PlanPage extends Component {
     addWorkoutPopUp: false,
     savedTemplates: []
   }
-  getSavedTemplates() {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), location: "web" });
+  async getSavedTemplates() {
+    var r = await CallApi("templates", {token: localStorage.getItem('loginToken')})
+    console.log(r)
+    if (r.success) {
+      this.setState({ savedTemplates: r.templates })
+    } else {
 
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
-    fetch(`http://${host}:3001/api/templates/workouts`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        var r = JSON.parse(response);
-        if (r.success) {
-          console.log(r.templates)
-          this.setState({ savedTemplates: r.templates })
-        } else {
-
-        }
-      })
-      .catch(error => console.log('error', error));
+    }
   }
   async getWorkouts(date) {
     var r = await CallApi("workouts/dates", {token: localStorage.getItem('loginToken'), date: date})
@@ -68,7 +52,7 @@ class PlanPage extends Component {
         updatedLoaded[date] = {}
       });
       console.log(r.dates)
-      this.setState({ loaded: updatedLoaded });
+      this.setState({ loaded: updatedLoaded, events: [] });
     } else {
 
     }
@@ -78,6 +62,7 @@ class PlanPage extends Component {
     if (r.success) {
       var updatedLoaded = this.state.loaded
       updatedLoaded[date] = r.data
+      console.log(date,r.data)
       this.parseEvent(r.data)
       this.setState({ loaded: updatedLoaded });
     } else {
@@ -85,29 +70,31 @@ class PlanPage extends Component {
     }
   }
   parseEvent(data) {
-    if (data.length === 0) return;
-    console.log(data);
+    data.forEach(d => {
+      if (d === null) return;
+      
     this.setState((prevState) => {
         var updatedEvents = [...prevState.events];
-        var start = new Date(JSON.parse(data[0].time).start);
+        var start = new Date(JSON.parse(d.time).start);
         var end;
-        if (data[0].duration !== "00:00:00") {
-            var durationParts = data[0].duration.split(":");
+        if (d.duration !== "00:00:00") {
+            var durationParts = d.duration.split(":");
             var durationMilliseconds = (+durationParts[0] * 60 * 60 * 1000) +
                                         (+durationParts[1] * 60 * 1000) +
                                         (+durationParts[2] * 1000);
             end = new Date(start.getTime() + durationMilliseconds);
         } else {
-            end = new Date(JSON.parse(data[0].time).end);
+            end = new Date(JSON.parse(d.time).end);
         }
         console.log(end);
         updatedEvents.push({
-            "title": data[0].name,
+            "title": d.name,
             "start": start,
             "end": end
         });
         return { events: updatedEvents };
     });
+  });
 }
 
   addEvent(data, date) {
@@ -126,12 +113,22 @@ class PlanPage extends Component {
         })
         ids.push(data[0].id)
       }
+
       return { events: updatedEvents, idsInEvents: ids };
     });
   }
+  async saveWorkout(data, time){
+    console.log(time)
+    var r = await CallApi("workouts/save", {token: localStorage.getItem('loginToken'), name: data.name, time: JSON.stringify(time), json: JSON.stringify(data.json), duration: "00:00:00"})
+    if (r.success) {
+      swal("Success!", `${data.name} was saved!`, "success")
+    } else {
+
+    }
+  }
   componentDidMount() {
     this.getWorkouts(new Date().getFullYear() + '-' + (new Date().getMonth() + 1));
-    //this.getSavedTemplates();
+    this.getSavedTemplates();
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.loaded != this.state.loaded) {
@@ -158,6 +155,7 @@ class PlanPage extends Component {
         "title": template.name, 'start': this.state.newEvent.start,
         'end': this.state.newEvent.end, "data": JSON.stringify(template)
       })
+      this.saveWorkout(template, {start:  new Date(this.state.newEvent.start).toString(), end: new Date(this.state.newEvent.end).toString()})
       return { events: updatedEvents, addWorkoutPopUp: false, newEvent: null };
     });
   }
@@ -189,6 +187,9 @@ class PlanPage extends Component {
           onSelectSlot={(e) => this.selectTime(e)}
           style={{ filter: this.state.addWorkoutPopUp ? "blur(3px)" : "" }}
           onSelectEvent={(e) => this.handleEventClick(e)}
+          onRangeChange={range => {
+            console.log(range)
+        }}
         />
 
         {this.state.addWorkoutPopUp && <div className='calendar-add-popup'>
