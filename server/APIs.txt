@@ -1,0 +1,91 @@
+/api/user
+    GET
+    X-Token: reqired
+    # Get the details of user
+
+    request:
+    {
+
+    }
+
+    answer:
+    {
+        success:    (boolean)
+        username:   (string) user.username,
+        email:      (string) user.email
+    }
+
+    status:
+        200 OK
+        401 Token invalid
+
+/api/login
+    POST
+    X-Token: not required
+    # Log in with given credentials
+
+    request:
+    {
+        username:   (string) user.username
+        password:   (string) unhashed user.password
+        location:   (string) "web" || "mobile"
+    }
+
+    answer:
+    {
+        success:    (boolean)
+        token:      (string)    login.token
+    }
+
+    status:
+        200: OK
+        400: POST field(s) missing or invalid (regex)
+
+/api/signup
+    POST
+    X-Token: not required
+    # Sign up with given credentials
+
+    request:
+    {
+        username:   (string) user.username
+        email:      (string) user.email
+        password:   (string) unhashed user.password
+        location:   (string) "web" || "mobile"
+    }
+
+    answer:
+    {
+        success:    (boolean)
+        token:      (string)    login.token
+    }
+
+    status:
+        200: OK
+        400: POST field(s) missing or invalid (regex)
+
+/api/diet
+    POST
+    X-Token: required
+    # Get diet details of user on given date
+
+
+    request:
+    {
+        date:      (string) calendar.date
+    }
+
+    answer:
+    {
+        success:    (boolean)
+        carbs:      (int)   calendar.carbs
+        fat:        (int)   calendar.fat
+        protein:    (int)   calendar.protein
+    }
+
+    status:
+        200: OK
+        400: POST field(s) missing or invalid (regex)
+        401: Token missing or invalid
+
+/api/diet/
