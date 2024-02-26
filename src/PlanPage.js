@@ -18,7 +18,7 @@ import { Card } from 'react-bootstrap';
 import { host } from './constants';
 import swal from 'sweetalert';
 import { IoIosCloseCircleOutline } from "react-icons/io"
-
+import {CallApi} from "./api";
 moment.locale('en-GB');
 
 class PlanPage extends Component {
@@ -28,6 +28,7 @@ class PlanPage extends Component {
     selectedDate: new Date().toLocaleString('en-us', { month: 'long', day: 'numeric' }),
     dateForapi: null,
     dates: [],
+    loaded: {},
     idsInEvents: [],
     events: [],
     newEvent: null,
@@ -59,53 +60,56 @@ class PlanPage extends Component {
       })
       .catch(error => console.log('error', error));
   }
-  getWorkouts(date) {
-    var myHeaders = new Headers();
-    var d = date.split("-")
-    date = d[0] + (d[1].length < 2 ? "-0" : "-") + d[1]
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), date: date, location: "web" });
+  async getWorkouts(date) {
+    var r = await CallApi("workouts/dates", {token: localStorage.getItem('loginToken'), date: date})
+    if (r.success) {
+      var updatedLoaded = {}
+      r.dates.forEach(date => {
+        updatedLoaded[date] = {}
+      });
+      console.log(r.dates)
+      this.setState({ loaded: updatedLoaded });
+    } else {
 
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-    fetch(`http://${host}:3001/api/workouts/date`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        var r = JSON.parse(response);
-        if (r.success) {
-          this.setState({ dates: r.dates });
-        } else {
+    }
+  }  
+  async getWorkoutsData(date) {
+    var r = await CallApi("workouts/data", {token: localStorage.getItem('loginToken'), date: date})
+    if (r.success) {
+      var updatedLoaded = this.state.loaded
+      updatedLoaded[date] = r.data
+      this.parseEvent(r.data)
+      this.setState({ loaded: updatedLoaded });
+    } else {
 
-        }
-      })
-      .catch(error => console.log('error', error));
+    }
   }
-  getWorkoutsData(date) {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ token: localStorage.getItem('loginToken'), date: date, location: "web" });
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-    fetch(`http://${host}:3001/api/workouts/data`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        var r = JSON.parse(response);
-        if (r.success) {
-          this.addEvent(r.data, date);
+  parseEvent(data) {
+    if (data.length === 0) return;
+    console.log(data);
+    this.setState((prevState) => {
+        var updatedEvents = [...prevState.events];
+        var start = new Date(JSON.parse(data[0].time).start);
+        var end;
+        if (data[0].duration !== "00:00:00") {
+            var durationParts = data[0].duration.split(":");
+            var durationMilliseconds = (+durationParts[0] * 60 * 60 * 1000) +
+                                        (+durationParts[1] * 60 * 1000) +
+                                        (+durationParts[2] * 1000);
+            end = new Date(start.getTime() + durationMilliseconds);
         } else {
+            end = new Date(JSON.parse(data[0].time).end);
         }
-      })
-      .catch(error => console.log('error', error));
-  }
+        console.log(end);
+        updatedEvents.push({
+            "title": data[0].name,
+            "start": start,
+            "end": end
+        });
+        return { events: updatedEvents };
+    });
+}
+
   addEvent(data, date) {
     this.setState((prevState) => {
       var updatedEvents = [...prevState.events];
@@ -127,11 +131,12 @@ class PlanPage extends Component {
   }
   componentDidMount() {
     this.getWorkouts(new Date().getFullYear() + '-' + (new Date().getMonth() + 1));
-    this.getSavedTemplates();
+    //this.getSavedTemplates();
   }
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.dates != this.state.dates) {
-      this.state.dates.forEach(date => {
+    if (prevState.loaded != this.state.loaded) {
+      Object.keys(this.state.loaded).map((date) => {
+        console.log(date)
         this.getWorkoutsData(date)
       });
     }

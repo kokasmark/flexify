@@ -159,31 +159,10 @@ export default class MusclesView extends Component {
   }
   Draw() {
     var muscles = this.props.muscles;
-    const muscleCounts = {};
-    var count = 0;
-    // Assuming 'muscles' is an array of muscle objects
-    for (var i = 0; i < muscles.length; i++) {
-      var muscleData = JSON.parse(muscles[i]);
-      for (var ii = 0; ii < muscleData.length; ii++) {
-        var name = muscleData[ii]; // Assuming the muscle is the first element in the array
-        count++;
-        // Count the occurrences of each muscle
-        muscleCounts[name] = (muscleCounts[name] || 0) + 1;
-      }
-
-    }
-
-    // Calculate the average count for each muscle group
-    const averageCounts = {};
-
-    for (const muscleName in muscleCounts) {
-      const totalOccurrences = muscleCounts[muscleName];
-      const averageCount = totalOccurrences / count; // Adjust the denominator if needed
-      averageCounts[muscleName] = averageCount;
-    }
     let t = []
-    for (const muscleName in averageCounts) {
-      const mappedValue = Math.min(3, Math.max(1, Math.round(averageCounts[muscleName] * 3 + 1)));
+    for (const [key,value] of Object.entries(muscles)) {
+      const muscleName = key;
+      const mappedValue = value;
       this.updateMuscleGroup(muscleName, mappedValue);
       const colors = ['var(--heat-blue)', 'var(--heat-yellow)', 'var(--heat-orange)', 'var(--heat-red)'];
       if (document.getElementById(this.findMuscleIndex(muscleName)) != null) {

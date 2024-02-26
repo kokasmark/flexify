@@ -81,8 +81,12 @@ class User{
         if (!post) return false
         if (!(await this.isLoggedIn())) return false
 
-        let sql = 'SELECT DATE_FORMAT(calendar.date, "%Y-%m-%d") as date FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT( date, "%Y-%m") = ? AND calendar.user_id = ?'
-        let result = await this.db.query(sql, [post.date, this.id])
+        let date = post.date.split("-")
+        if (date[1].length == 1) date[1] = "0" + date[1]
+        let paddedDate = `${date[0]}-${date[1]}`
+        let sql = 'SELECT DATE_FORMAT(calendar.date, "%Y-%m-%d") as date FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT( calendar.date, "%Y-%m") = ? AND calendar.user_id = ?'
+        let result = await this.db.query(sql, [paddedDate, this.id])
+        this.log(-1, result)
         return result.map(x => x.date)
     }
 
@@ -91,8 +95,8 @@ class User{
         if (!post) return false
         if (!(await this.isLoggedIn())) return false
 
-        // TODO: finished_workout doesn't exist anymore
-        let sql = 'SELECT finished_workout.duration, finished_workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN finished_workout ON calendar_workout.finished_workout_id = finished_workout.id WHERE calendar.user_id = ? AND calendar.date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)'
+        // let sql = 'SELECT finished_workout.duration, finished_workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN finished_workout ON calendar_workout.finished_workout_id = finished_workout.id WHERE calendar.user_id = ? AND calendar.date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)'
+        let sql = 'SELECT workout.duration, workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN workout ON calendar_workout.workout_id = workout.id WHERE calendar.user_id = ? AND calendar.date >= DATE_SUB(CURDATE(), INTERVAL ? DAY) AND workout.duration != "00:00:00"'
         let result = await this.db.query(sql, [this.id, post.timespan])
         let workouts = []
         result.forEach(row => {
@@ -114,7 +118,7 @@ class User{
         if (!post) return false
         if (!(await this.isLoggedIn())) return false
 
-        let sql = 'SELECT workout.id, workout.name, workout.json, workout.duration FROM calendar_workout INNER JOIN workout ON calendar_workout.workout_id = workout.id INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT(calendar.date, "%Y-%m-%d") = ? AND workout.user_id = ? AND workout.duration != "00:00:00"'
+        let sql = 'SELECT workout.id, workout.name, workout.json, workout.duration, workout.time FROM calendar_workout INNER JOIN workout ON calendar_workout.workout_id = workout.id INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT(calendar.date, "%Y-%m-%d") = ? AND workout.user_id = ? AND workout.duration != "00:00:00"'
         let result = await this.db.query(sql, [post.date, this.id])
         if (result && result.length > 0){
             let workoutsArray = result.map((x) => x)
