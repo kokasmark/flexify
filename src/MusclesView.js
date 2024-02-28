@@ -153,6 +153,7 @@ export default class MusclesView extends Component {
         this.state.muscleData[key].val = value != -1 ? value : this.state.muscleData[key].val;
         var color = colors[parseInt(this.state.muscleData[key].val)];
         muscle.style.fill = color;
+        muscle.style.filter = `brightness(${Math.min(Math.max(0.85, Math.random() +0.5),1)})`
       } catch {
         continue;
       }

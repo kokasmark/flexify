@@ -154,6 +154,58 @@ class PlanPage extends Component {
       });
     }
   }
+  async scrollToCurrentTime(){
+    var timeView = document.querySelector('.rbc-time-content');
+    if(timeView != undefined){
+      await new Promise(resolve => setTimeout(resolve, 100))
+    var events = document.querySelectorAll('.rbc-event');
+
+    
+    function scrollToEvent(event) {
+        
+        var eventTop = event.getBoundingClientRect().top;
+        var timeViewTop = timeView.getBoundingClientRect().top;
+        var relativeTop = eventTop - timeViewTop;
+        var percentage = (relativeTop / timeView.offsetHeight) * 100;
+
+        
+        var scrollPosition = (percentage / 100) * timeView.scrollHeight;
+
+        
+        setTimeout(function () {
+            timeView.scrollTo(0, scrollPosition);
+        }, 500); 
+    }
+
+    
+    events.forEach(function (event) {
+        scrollToEvent(event);
+    });
+
+    
+    setTimeout(function () {
+        
+        var currentTime = new Date();
+        var hours = currentTime.getHours();
+        var minutes = currentTime.getMinutes();
+
+        
+        var currentTimeInMinutes = hours * 60 + minutes;
+
+        
+        var percentage = (currentTimeInMinutes / (24 * 60)) * 100;
+
+        
+        var scrollPosition = (percentage / 100) * timeView.scrollHeight;
+
+        
+        setTimeout(function () {
+            timeView.scrollTo(0, scrollPosition);
+        }, 500); 
+    }, events.length * 500);
+
+    }
+  }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.loaded != this.state.loaded) {
       this.daysAnimation()
@@ -168,6 +220,8 @@ class PlanPage extends Component {
     }
     if(prevState.currentRange != this.state.currentRange){
       this.daysAnimation()
+
+      this.scrollToCurrentTime()
     }
   }
   navigate(e) {

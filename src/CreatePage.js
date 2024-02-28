@@ -127,7 +127,7 @@ class CreatePage extends Component {
     });
   }
   colorAffectedMuscles(muscles, leave) {
-    var affected = JSON.parse(muscles);
+    var affected = muscles;
 
     for (const groupName in this.muscleRef.current.getGroup()) {
       this.muscleRef.current.updateMuscleGroup(groupName, 0);
