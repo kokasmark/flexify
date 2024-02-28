@@ -1331,7 +1331,8 @@ iframe
   margin-bottom: -10%;
 }
 .tips-container{
-  z-index: -1;
+  width: fit-content;
+  height: fit-content;
 }
 .rbc-day-bg + .rbc-day-bg {
   border-left: 2px solid var(--bg) !important;
@@ -1347,6 +1348,7 @@ iframe
 }
 .rbc-time-content{
   border-top: 2px solid var(--bg) !important;
+  scroll-behavior: smooth;
 }
 .rbc-time-view{
   border: 2px solid var(--bg) !important;
@@ -1358,7 +1360,11 @@ iframe
 .rbc-timeslot-group{
   border-bottom: 2px solid var(--bg) !important;
 }
-
+.rbc-current-time-indicator{
+  width: 100%;
+  height: 2px !important;
+  background-color: var(--contrast) !important;
+}
 @keyframes calendar-bg-load {
   0%{
     box-shadow: none;
