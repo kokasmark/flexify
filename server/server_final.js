@@ -203,7 +203,6 @@ async function getUserTemplates(user){
     for (let workout of result){
         for (let exercise of workout.json){
             exercise.name = await exercises.getName(exercise.exercise_id)
-            log(-1, exercise)
         }
     }
     
