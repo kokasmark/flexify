@@ -275,18 +275,6 @@ class User{
         let sql = 'INSERT INTO workout (user_id, name, time, isTemplate, json ) VALUES (?, ?, "{}", 1, ?)'
         let result = await this.db.query(sql, [this.id, post.name, post.json])
 
-        let workoutId = result.insertId
-        sql = "SELECT id FROM calendar WHERE user_id=? AND date=CURDATE()"
-        result = await this.db.query(sql, [this.id])
-        if (!result.length){
-            sql ='INSERT INTO calendar (user_id, date, diet) VALUES (?, CURDATE(), "{}")'
-            result = await this.db.query(sql, [this.id])
-        }
-        const calendarId = result.length ? result[0].id : result.insertId
-        
-        sql = 'INSERT INTO calendar_workout (calendar_id, workout_id) VALUES (?, ?)'
-        this.db.query(sql, [calendarId, workoutId])
-        
         return true
     }
 
