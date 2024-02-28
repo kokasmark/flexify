@@ -1,39 +1,39 @@
-const express = require('express');
-const cors = require('cors');
-const moment = require('moment');
-const dotenv = require('dotenv');
+const express = require('express')
+const cors = require('cors')
+const moment = require('moment')
+const dotenv = require('dotenv')
 const DB = require('./db.js')
-const User = require('./user.js');
-const Exercises = require('./exercises.js');
+const User = require('./user.js')
+const Exercises = require('./exercises.js')
 
-const app = express();
+const app = express()
 const root = require('path').join(__dirname, 'build')
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-app.use(express.static(root));
+app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+app.use(express.static(root))
 app.listen(3001, () => {log(1, `Server listening on port ${3001}`);});
 
 dotenv.config();
 const DEBUG_LEVEL = process.env.DEBUG_LEVEL
-const DEBUG_RESPONSE = process.env.DEBUG_RESPONSE
 const db = new DB(log)
 const exercises = new Exercises(db)
+
 function log(level, message){
     if (process.env.RUN_TESTS == 1 && process.env.DEBUG_WHILE_TEST == 0) return
+    if (DEBUG_LEVEL < level) return
+
     const log_colors = ["\x1b[31m", "\x1b[90m", "\x1b[36m", "\x1b[33m", "\x1b[32m", "\x1b[47m\x1b[30m"]
-    if (DEBUG_LEVEL >= level){
-        process.stdout.write(log_colors.at(level) + "[" + moment().format('YYYY-MM-DD hh:mm:ss') + "]:\x1b[0m ")
-        console.log(message)
-    } 
+    process.stdout.write(log_colors.at(level) + "[" + moment().format('YYYY-MM-DD hh:mm:ss') + "]:\x1b[0m ")
+    console.log(message)
 }
 
 
 app.get('/api/user', (req, res) => getUserDetails(new User(req, res, db, log)))
 app.get('/api/diet/all', (req, res) => getDietAll(new User(req, res, db, log)))
 app.get('/api/templates', (req, res) => getUserTemplates(new User(req, res, db, log)))
-app.get('/api/admin/tables', (req, res) => getAdminTables(new User(req, res, db, log)));
+app.get('/api/admin/tables', (req, res) => getAdminTables(new User(req, res, db, log)))
 app.get('/api/exercises', (req, res) => getExercises(new User(req, res, db, log)))
 
 
@@ -50,12 +50,12 @@ app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, d
 app.post('/api/diet', (req, res) => postDietQuery(new User(req, res, db, log)));
 app.post('/api/diet/add', (req, res) => postDietAdd(new User(req, res, db, log)));
 
-app.post('/api/reset/generate', (req, res) => postResetGenerate(new User(req, res, db, log)));
-app.post('/api/reset/validate', (req, res) => postResetValidate(new User(req, res, db, log)));
+app.post('/api/reset/generate', (req, res) => postResetGenerate(new User(req, res, db, log)))
+app.post('/api/reset/validate', (req, res) => postResetValidate(new User(req, res, db, log)))
 app.post('/api/reset', (req, res) => postResetPassword(new User(req, res, db, log)));
 
 // Leave at the end, otherwise captures all GET requests
-app.get("*", (_, res) => {res.sendFile('index.html', { root });})
+app.get("*", (_, res) => {res.sendFile('index.html', { root })})
 
 async function test(){
     if (process.env.RUN_TESTS == 1){
@@ -92,12 +92,9 @@ async function getExercises(user){
     log(2, '/api/exercises')
 
     if (!(await user.isLoggedIn())) return false
-    let local_exercises = await exercises.exercises
-    local_exercises = Object.entries(local_exercises).map(([key, value]) => {
-        value.id = parseInt(key)
-        return value
-    })
-    user.respondSuccess({json: local_exercises})
+    let localExercises = await exercises.exercises
+
+    user.respondSuccess({json: localExercises})
 }
 async function postLogin(user){
     log(2, '/api/login')
@@ -111,6 +108,7 @@ async function postLogin(user){
 
 async function postUserRegister(user){
     log('/api/signup', 2)
+
     const token = await user.register()
     if (token === false) return user.respondMissing()
     else if (token === 0) return user.respond(400, {reason: 'Already exists'})
@@ -146,13 +144,14 @@ async function postUserMuscles(user){
         })
     })
 
-    for (const exerciseId of Object.keys(exercisesDone)){
+    Object.keys(exercisesDone).forEach(async exerciseId => {
         let muscles = await exercises.getMuscles(exerciseId)
         muscles.forEach(muscle => {
             if (!musclesUsed.hasOwnProperty(muscle)) musclesUsed[muscle] = 0
             musclesUsed[muscle] += exercisesDone[exerciseId]
         })
-    }
+    })
+    
     const allMusclesUsed = Object.values(exercisesDone).reduce((acc, x) => acc + x, 0)
     Object.keys(musclesUsed).forEach(muscle => {
         musclesUsed[muscle] = musclesUsed[muscle] / allMusclesUsed
@@ -192,6 +191,7 @@ async function postUserWorkouts(user){
 
 async function getUserTemplates(user){
     log(2, '/api/templates')
+
     let result = await user.userTemplates()
     if(result === false) return user.respondMissing()
     
