@@ -34,6 +34,7 @@ app.get('/api/user', (req, res) => getUserDetails(new User(req, res, db, log)))
 app.get('/api/diet/all', (req, res) => getDietAll(new User(req, res, db, log)))
 app.get('/api/templates', (req, res) => getUserTemplates(new User(req, res, db, log)))
 app.get('/api/admin/tables', (req, res) => getAdminTables(new User(req, res, db, log)));
+app.get('/api/exercises', (req, res) => getExercises(new User(req, res, db, log)))
 
 
 app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log)))
@@ -85,6 +86,18 @@ async function getDietAll(user){
     if (diet === false) return
 
     user.respondSuccess(diet)
+}
+
+async function getExercises(user){
+    log(2, '/api/exercises')
+
+    if (!(await user.isLoggedIn())) return false
+    let muscles = await exercises.exercises
+    muscles = Object.entries(muscles).map(([key, value]) => {
+        value.id = key
+        return value
+    })
+    user.respondSuccess(muscles)
 }
 async function postLogin(user){
     log(2, '/api/login')
