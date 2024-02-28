@@ -98,6 +98,22 @@ export default class MusclesView extends Component {
     
   }
   }
+  clearColor(){
+    const colors = ['var(--heat-blue)', 'var(--heat-yellow)', 'var(--heat-orange)', 'var(--heat-red)'];
+    var updatedMuscleData = this.state.muscleData;
+      for (var i = 0; i < this.state.muscleData.length; i++) {
+        var color = colors[0];
+        var muscle = document.getElementById(i);
+        updatedMuscleData[i].val = 0;
+        try{
+        muscle.style.fill = color;
+        }catch{
+
+        }
+      
+    }
+    this.setState({muscleData: updatedMuscleData})
+  }
   setColor = () => {
     const colors = ['var(--heat-blue)', 'var(--heat-yellow)', 'var(--heat-orange)', 'var(--heat-red)'];
 
@@ -160,6 +176,7 @@ export default class MusclesView extends Component {
   Draw() {
     var muscles = this.props.muscles;
     let t = []
+    this.clearColor()
     for (const [key,value] of Object.entries(muscles)) {
       const muscleName = key;
       const mappedValue = value;
@@ -183,7 +200,12 @@ export default class MusclesView extends Component {
       }
       
     }
-    this.setState({ tips: t })
+    if(Object.entries(muscles).length > 0){
+      this.setState({ tips: t })
+    }
+    else{
+      this.setState({ tips: [{text:"Little bit empty... Explore the site and create a workout!",level:0}] })
+    }
     this.muscleLoadAnimation()
   }
   componentDidUpdate(prevProps, prevState) {
@@ -195,6 +217,7 @@ export default class MusclesView extends Component {
     }
     if (this.props.muscles != prevProps.muscles) {
       this.Draw()
+      console.log(this.props.muscles)
     }
     if(this.props.autoRotate){
       this.props.array.forEach(muscle => {

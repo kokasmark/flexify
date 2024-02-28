@@ -658,6 +658,7 @@ iframe
   width: 400px;
   color: white;
   position: relative;
+  animation: tips-idle 1s infinite ease-in-out;
 }
 .home-tip .tip-icon{
   font-size: 50px;
@@ -1310,6 +1311,20 @@ iframe
   color: white;
   margin-top: 5%;
   margin-bottom: -10%;
+}
+@keyframes tips-idle {
+  0%{
+    transform: translateY(0px);
+  }
+  33%{
+    transform: translateY(-10px);
+  }
+  66%{
+    transform: translateY(10px);
+  }
+  100%{
+    transform: translateY(0px);
+  }
 }
 @keyframes scrollHint {
   0% {
