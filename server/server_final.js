@@ -80,6 +80,7 @@ async function getUserDetails(user){
 async function getDietAll(user){
     log(2, '/api/diet/all')
 
+    return user.respond(500, {reason: "Not implemented"})
     const diet = await user.dietAll()
     if (diet === false) return
 
@@ -155,7 +156,7 @@ async function postDietQuery(user){
     let result = await user.diet()
     if (result === false) return user.respondMissing()
 
-    user.respondSuccess({carbs: result.carbs, fat: result.fat, protein: result.protein})
+    user.respondSuccess({json: result})
 }
 
 async function postDietAdd(user){

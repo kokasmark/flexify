@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt")
 const crypto = require('crypto')
+const moment = require('moment');
 
 
 class User{
@@ -8,6 +9,7 @@ class User{
         this.res = res
         this.db = db
         this.log = log
+
         
         this.loggedIn = this.getUserId()
         this.admin = this.getAdmin()
@@ -64,6 +66,7 @@ class User{
             timespan: /^[0-9]+$/,
             location: /^(web)|(mobile)$/,
             time: /^.*$/,
+            json: /^.*$/,
         }
 
         let reqFields = this.req.body
@@ -186,33 +189,50 @@ class User{
         return token
     }
 
+    async getDiet(date){
+        let sql = "SELECT id, diet FROM calendar WHERE user_id=? AND date=?"
+        let result = await this.db.query(sql, [this.id, date], true)
+
+        if (result === undefined) result = {id: -1, diet: ''}
+        if (result.diet === ''){
+            let empty = {carbs: 0, fat: 0, protein: 0}
+            result.diet = {breakfast: empty, lunch: empty, dinner: empty, snacks: empty}
+        }
+        else result.diet = JSON.parse(result.diet)
+
+        return result
+    }
+
     async diet(){
         const post = this.validateFields(["date"])
         if (!post) return false
         if (!await this.isLoggedIn()) return false
 
-        let sql = "SELECT protein, carbs, fat FROM calendar WHERE user_id=? AND date=?"
-        let result = await this.db.query(sql, [this.id, post.date], true)
-        if (result === undefined) result = {carbs: 0, fat: 0, protein: 0}
-
-        return result
+        const result = await this.getDiet(post.date)
+        return result.diet
     }
 
     async dietAdd(){
-        const post = this.validateFields(["carbs", "fat", "protein"])
+        const post = this.validateFields(["json"])
         if (!post) return false
         if (!await this.isLoggedIn()) return false
 
-        let sql = "SELECT id FROM calendar WHERE user_id=? AND date=CURDATE()"
-        let result = await this.db.query(sql, [this.id])
-        if (!result.length){
-            sql ="INSERT INTO calendar (user_id, date, protein, carbs, fat) VALUES (?, CURDATE(), 0, 0, 0)"
-            result = await this.db.query(sql, [this.id])
+        let result = await this.getDiet(moment().format('YYYY-MM-DD'))
+        this.log(-1, result)
+        if (result.id === -1){
+            let sql ="INSERT INTO calendar (user_id, date, diet) VALUES (?, CURDATE(), ?)"
+            await this.db.query(sql, [this.id, JSON.stringify(post.json)])
+            return
         }
-        const id = result.length ? result[0].id : result.insertId
 
-        sql = `UPDATE calendar SET carbs=carbs+?, fat=fat+?, protein=protein+? WHERE id=?`
-        await this.db.query(sql, [post.carbs, post.fat, post.protein, id])
+        Object.entries(result.diet).forEach(([key, value]) => {
+            post.json[key].carbs += value.carbs
+            post.json[key].fat += value.fat
+            post.json[key].protein += value.protein
+        })
+
+        let sql = `UPDATE calendar SET diet=? WHERE id=?`
+        await this.db.query(sql, [JSON.stringify(post.json), result.id])
 
         return true
     }

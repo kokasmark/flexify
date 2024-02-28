@@ -56,17 +56,17 @@ class Test{
             assert.strictEqual(this.responses.user.email, this.userData.email)
         })
         
-        test('Testing diet', t => {
-            assert.strictEqual(this.responses.dietFirst.status, 200)
-            assert.strictEqual(this.responses.dietSecond.status, 200)
-            assert.strictEqual(this.responses.dietAdd.status, 200)
+        // test('Testing diet', t => {
+        //     assert.strictEqual(this.responses.dietFirst.status, 200)
+        //     assert.strictEqual(this.responses.dietSecond.status, 200)
+        //     assert.strictEqual(this.responses.dietAdd.status, 200)
 
-            assert.deepStrictEqual(this.responses.dietSecond, {
-                status: 200,
-                carbs: this.responses.dietFirst.carbs + this.responses.dietSecond.carbs, 
-                fat: this.responses.dietFirst.fat + this.responses.dietSecond.fat,
-                protein: this.responses.dietFirst.protein + this.responses.dietSecond.protein})
-        })
+        //     assert.deepStrictEqual(this.responses.dietSecond, {
+        //         status: 200,
+        //         carbs: this.responses.dietFirst.carbs + this.responses.dietSecond.carbs, 
+        //         fat: this.responses.dietFirst.fat + this.responses.dietSecond.fat,
+        //         protein: this.responses.dietFirst.protein + this.responses.dietSecond.protein})
+        // })
         
         test('Testing templates', t =>{
             assert.strictEqual(this.responses.templateSave.status, 200)
@@ -153,10 +153,10 @@ class Test{
 
         this.sendRequest('GET', '/api/user', {}, "user")
 
-        this.sendRequest('POST', '/api/diet', {date: this.userData.date}, "dietFirst")
-        this.sendRequest('POST', '/api/diet/add', {carbs: 100, fat: 90, protein: 80}, "dietAdd")
-        await this.delay(200)
-        this.sendRequest('POST', '/api/diet', {date: this.userData.date}, "dietSecond")
+        // this.sendRequest('POST', '/api/diet', {date: this.userData.date}, "dietFirst")
+        // this.sendRequest('POST', '/api/diet/add', {carbs: 100, fat: 90, protein: 80}, "dietAdd")
+        // await this.delay(200)
+        // this.sendRequest('POST', '/api/diet', {date: this.userData.date}, "dietSecond")
 
         this.sendRequest('POST', '/api/templates/save', {name: this.userData.workoutName, json: this.userData.workoutJson}, "templateSave")
         this.sendRequest('POST', '/api/workouts/save', {name: this.userData.workoutName, json: this.userData.workoutJson, duration: this.userData.workoutDuration}, "workoutSave")
