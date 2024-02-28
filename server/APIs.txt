@@ -140,7 +140,7 @@
 
     answer:
     {
-        teplates:   (JSON[])
+        templates:   (JSON[])
         [
             {
                 name:   (string)
