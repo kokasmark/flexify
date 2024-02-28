@@ -74,7 +74,7 @@ class CreatePage extends Component {
   };
   async getExerciseTemplates() {
     var r = await CallApi("exercises", {token: localStorage.getItem("loginToken"), location: 'web'})
-    this.setState({ getTemplates: r.json});
+    this.setState({ getTemplates: Object.values(r.json)});
   }
   chooseMuscleGroup = (g) => {
     if (g != null && g.name != '') {

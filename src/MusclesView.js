@@ -280,7 +280,7 @@ export default class MusclesView extends Component {
         </div>
         {this.props.showTips != null && <div className={'tips-container '+ this.state.animation} style={{ position: 'relative', top: -800, left: 650 }}>
           {this.state.tips.map((tip, index) => (
-            <div key={Math.random()} style={{ left: index % 2 == 0 ? -550 : 200, animation: `tip-load ${1+index/5}s ease-out` }} 
+            <div key={Math.random()} style={{ left: index % 2 == 0 ? -550 : 200, animation: `tip-load ${1+index/5}s ease-out`, marginTop: 30-(this.state.tips.length*10)}} 
             className='interactable home-tip' onMouseEnter={()=>this.highlight(tip.group)} onMouseLeave={()=>this.hide()}>
               {this.state.tip_icons[tip.level]}
               <div style={{ display: 'inline-block', width: 250 }} key={index} dangerouslySetInnerHTML={{ __html: tip.text }}></div>

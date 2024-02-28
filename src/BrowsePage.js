@@ -42,8 +42,7 @@ class BrowsePage extends Component {
 
   async getExerciseTemplates() {
     var r = await CallApi("exercises", { token: localStorage.getItem("loginToken"), location: 'web' })
-    console.log(r)
-    this.setState({ templates: r.json });
+    this.setState({ templates: Object.values(r.json) });
   }
   componentDidMount() {
     this.getExerciseTemplates();
