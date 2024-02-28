@@ -134,7 +134,7 @@ class User{
         if (!(await this.isLoggedIn())) return false
 
         let templates = []
-        let sql = 'SELECT workout.name, workout.json FROM workout WHERE workout.duration = "00:00:00" AND workout.user_id = ?'
+        let sql = 'SELECT workout.name, workout.json FROM workout WHERE workout.isTemplate = 1 AND workout.user_id = ?'
         let result = await this.db.query(sql, [this.id])
         for (const template of result){
             templates.push({name:template.name, json:template.json})
