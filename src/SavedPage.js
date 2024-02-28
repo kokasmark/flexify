@@ -85,7 +85,8 @@ class SavedPage extends Component {
   render() {
     return (
       <div className='page'>
-        <h1 className='title'>Saved Workouts</h1>
+        <h1 className='title'>Workouts</h1>
+        <h3 className='sub-title'>Start workouts from here without them being planned.</h3>
         <div className={`saved-workouts${this.state.details == true ? " details":""}`}>
           {this.state.savedTemplates.map((template,index) => (
             <div className={`workout-card${this.state.selectedCard == index ? " selected-card":""}${this.state.details == true ? " card-detail":""}`} 

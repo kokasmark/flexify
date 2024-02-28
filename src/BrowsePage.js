@@ -41,12 +41,8 @@ class BrowsePage extends Component {
       }
 
     async getExerciseTemplates() {
-      var r = await CallApi("templates/exercises",{ token: localStorage.getItem('loginToken')})
-      if (r.success) {
-        this.setState({ templates: r.data });
-      } else {
-
-      }
+      var r = await CallApi("exercises", {token: localStorage.getItem("loginToken"), location: 'web'})
+      this.setState({ templates: r });
       }
       componentDidMount(){
         this.getExerciseTemplates();
@@ -80,7 +76,7 @@ class BrowsePage extends Component {
                     {this.state.choosenGroup != null && (
   <div key={this.state.choosenGroup} className='browse-cards'>
     {this.state.templates.map((template, index) => (
-      JSON.parse(template.muscles).includes(this.state.choosenGroup) && (
+      template.muscles.includes(this.state.choosenGroup) && (
         <Card
           key={Math.random()}
           onMouseEnter={() => this.colorAffectedMuscles(template.muscles, false)}
@@ -91,7 +87,7 @@ class BrowsePage extends Component {
           <Card.Body>
             <div className='bottom'>
               <Card.Title>{template.name}</Card.Title>
-              <img style={{mixBlendMode: "multiply" }} src={require("./assets/exercises/" + template.gifUrl + ".gif")} />
+              <img style={{mixBlendMode: "multiply" }} src={require("./assets/exercises/" + template.gif_url + ".gif")} />
             </div>
           </Card.Body>
         </Card>

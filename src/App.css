@@ -1141,7 +1141,6 @@ iframe
   text-align: center;
   z-index: 10;
   margin-top: 100px;
-  animation: card-bottom-load 0.65s;
 }
 .saved-workouts .workout-card .saved-card-icon{
   width: 50%;
@@ -1195,6 +1194,11 @@ iframe
   text-align: center;
   color: white;
   margin-top: 5%;
+}
+.sub-title{
+  width: 100%;
+  text-align: center;
+  color: white;
 }
 .saved-workouts.details > div{
   filter: brightness(0.5) blur(3px);

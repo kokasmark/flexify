@@ -87,11 +87,15 @@ export default class MusclesView extends Component {
     this.setState({ muscleData: mData });
   }
   muscleLoadAnimation(){
-    console.log("muscle load")
+
     for (var i = 0; i < this.state.muscleData.length; i++) {
       var muscle = document.getElementById(i);
       try{
-        muscle.style.animation = `muscle-load ${this.state.front ? i/100 : (i-(this.state.men == true ? 138 : 87))/100}s ease-out`;
+        var parent = muscle.parentNode;
+      var nextSibling = muscle.nextSibling;
+      parent.removeChild(muscle); // Remove the element from the DOM
+      parent.insertBefore(muscle, nextSibling); // Re-insert the element to trigger reflow
+      muscle.style.animation = `muscle-load ${(this.state.front ? i / 100 : (i - (this.state.men ? 138 : 87)) / 100) + (Math.random() * 1.3)}s ease-out`; // Apply the animation again
       }catch{
 
       }
@@ -215,13 +219,16 @@ export default class MusclesView extends Component {
       this.muscleLoadAnimation()
     }
     if (this.props.muscles != prevProps.muscles) {
-      this.Draw()
       this.muscleLoadAnimation()
+      this.Draw()
     }
     if(this.props.autoRotate){
       this.props.array.forEach(muscle => {
         this.updateMuscleGroup(muscle, 2)
       });
+    }
+    if(this.state.muscleData != prevState.muscleData){
+      this.muscleLoadAnimation()
     }
   }
   async AutoRotate(){
