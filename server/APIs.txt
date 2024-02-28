@@ -3,11 +3,6 @@
     X-Token: reqired
     # Get the details of user
 
-    request:
-    {
-
-    }
-
     answer:
     {
         success:    (boolean)
@@ -78,9 +73,13 @@
     answer:
     {
         success:    (boolean)
-        carbs:      (int)   calendar.carbs
-        fat:        (int)   calendar.fat
-        protein:    (int)   calendar.protein
+        json:       (JSON)  calendar.diet   
+        {
+            breakfast:  (JSON): {carbs: (int), fat: (int), protein: (int)}
+            lunch:      (JSON): {carbs: (int), fat: (int), protein: (int)}
+            dinner:     (JSON): {carbs: (int), fat: (int), protein: (int)}
+            snacks:     (JSON): {carbs: (int), fat: (int), protein: (int)}
+        }
     }
 
     status:
@@ -88,4 +87,85 @@
         400: POST field(s) missing or invalid (regex)
         401: Token missing or invalid
 
-/api/diet/
+/api/diet/add
+    POST
+    X-Token: required
+    # Add macros to current date
+
+    request:
+    {
+        json:       (JSON)  calendar.diet   
+        {
+            breakfast:  (JSON): {carbs: (int), fat: (int), protein: (int)}
+            lunch:      (JSON): {carbs: (int), fat: (int), protein: (int)}
+            dinner:     (JSON): {carbs: (int), fat: (int), protein: (int)}
+            snacks:     (JSON): {carbs: (int), fat: (int), protein: (int)}
+        }    
+    }
+
+    answer:
+    {
+        success:    (boolean)
+    }
+
+    status:
+        200: OK
+        400: POST field(s) missing or invalid (regex)
+        401: Token missing or invalid
+
+/api/exercises
+    GET
+    X-Token: required
+    # Get all exercises
+
+    answer:
+    {
+        json:       (JSON[])
+        [
+            {
+                "name":     (string)
+                "muscles":  (string[])
+                "type":     (string) "rep" || "time"
+                "gif_url":  (string)
+                "id":       (string)
+            }  
+        ]
+        success:    (boolean)
+    }
+
+/api/templates
+    GET
+    X-Token: required
+    # Get user's templates
+
+    answer:
+    {
+        templates:   (JSON[])
+        [
+            {
+                name:   (string)
+                json:   (JSON[])
+                [
+                    {
+                        exercise_id:    (string)
+                        set_data:       (JSON[])
+                        [
+                            {
+                                duration:   (int)
+                            },
+                            {
+                                reps:   (string)
+                                weight: (string)
+                            },
+                        ]
+                    },
+                ]
+            },
+        ]
+        success:    (bool)
+    }
+
+/api/templates/save
+    POST
+    X-Token: reqired
+    # Save user's template
