@@ -10,7 +10,6 @@ class User{
         this.db = db
         this.log = log
 
-        
         this.loggedIn = this.getUserId()
         this.admin = this.getAdmin()
         this.alreadyRes = false
@@ -90,7 +89,7 @@ class User{
         let paddedDate = `${date[0]}-${date[1]}`
         let sql = 'SELECT DATE_FORMAT(calendar.date, "%Y-%m-%d") as date FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT( calendar.date, "%Y-%m") = ? AND calendar.user_id = ?'
         let result = await this.db.query(sql, [paddedDate, this.id])
-        this.log(-1, result)
+        
         return result.map(x => x.date)
     }
 
@@ -101,19 +100,17 @@ class User{
 
         let sql = 'SELECT workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN workout ON calendar_workout.workout_id = workout.id WHERE calendar.user_id = ? AND calendar.date >= DATE_SUB(CURDATE(), INTERVAL ? DAY) AND workout.isTemplate = 0'
         let result = await this.db.query(sql, [this.id, post.timespan])
-        let workouts = []
-        result.forEach(row => {
-            row.json = JSON.parse(row.json)
-            workouts.push(row)
-        })
+        let workouts = result.map(row => JSON.parse(row.json))
+
         return workouts
     }
 
     async userDetails(){
         if (!(await this.isLoggedIn())) return false
+        
         let sql = 'SELECT username, email FROM user WHERE id=?'
+        
         return this.db.query(sql, [this.id], true)
-
     }
 
     async userWorkoutsMonth(){
@@ -123,22 +120,19 @@ class User{
 
         let sql = 'SELECT workout.id, workout.name, workout.json, workout.time FROM calendar_workout INNER JOIN workout ON calendar_workout.workout_id = workout.id INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT(calendar.date, "%Y-%m-%d") = ? AND workout.user_id = ? AND workout.isTemplate = 0'
         let result = await this.db.query(sql, [post.date, this.id])
-        if (result && result.length > 0){
-            let workoutsArray = result.map((x) => x)
-            return workoutsArray
-        }
-        return []
+        
+        return result.map((x) => x)
     }
 
     async userTemplates(){
         if (!(await this.isLoggedIn())) return false
 
-        let templates = []
         let sql = 'SELECT workout.name, workout.json FROM workout WHERE workout.isTemplate = 1 AND workout.user_id = ?'
         let result = await this.db.query(sql, [this.id])
-        for (const template of result){
-            templates.push({name:template.name, json:template.json})
-        }
+        const templates = result.map(template => {
+            return {name:template.name, json:template.json}
+        })
+
         return templates
     }
 
@@ -181,6 +175,7 @@ class User{
 
     async updateToken(id, location){
         const token = await this.generateToken(32)
+
         let sql = 'DELETE FROM login WHERE location=? AND user_id=?'
         this.db.query(sql, [location, id], true)
         sql = 'INSERT INTO login (location, user_id, token) VALUES (?, ?, ?)'
@@ -221,7 +216,7 @@ class User{
         this.log(-1, result)
         if (result.id === -1){
             let sql ="INSERT INTO calendar (user_id, date, diet) VALUES (?, CURDATE(), ?)"
-            await this.db.query(sql, [this.id, JSON.stringify(post.json)])
+            this.db.query(sql, [this.id, JSON.stringify(post.json)])
             return
         }
 
@@ -232,7 +227,7 @@ class User{
         })
 
         let sql = `UPDATE calendar SET diet=? WHERE id=?`
-        await this.db.query(sql, [JSON.stringify(post.json), result.id])
+        this.db.query(sql, [JSON.stringify(post.json), result.id])
 
         return true
     }
@@ -241,7 +236,7 @@ class User{
         if (!await this.isLoggedIn()) return false
 
         let sql = "SELECT date, carbs, fat, protein FROM calendar WHERE user_id=?"
-        return await this.db.query(sql, [this.id])
+        return this.db.query(sql, [this.id])
     }
 
     async saveWorkout(){
@@ -273,7 +268,7 @@ class User{
         if (!await this.isLoggedIn()) return false
 
         let sql = 'INSERT INTO workout (user_id, name, time, isTemplate, json ) VALUES (?, ?, "{}", 1, ?)'
-        let result = await this.db.query(sql, [this.id, post.name, post.json])
+        this.db.query(sql, [this.id, post.name, post.json])
 
         return true
     }
@@ -318,11 +313,11 @@ class User{
     async resetPassword(){
         const post = this.validateFields(["password", "reset_token"])
         if (!post) return false
-        this.log(-1, 'ok')
 
         let sql = 'SELECT user_id FROM login_reset WHERE token = ?'
         let result = await this.db.query(sql, [post.reset_token])
         if (result.length == 0) return false
+
         const id = result[0].user_id
         const hash = await this.generateHash(post.password)
         this.db.query('UPDATE user SET password=? WHERE id=?', [hash, id])
@@ -335,6 +330,7 @@ class User{
 
     async getTables(){
         if (!await this.isAdmin()) return false
+
         return Object.keys(this.db.structure)
     }
 
@@ -343,7 +339,7 @@ class User{
         return bcrypt.hash(password, 10).catch(err => log(1, err))
     }
     async compareHash(password, hash){
-        return await (bcrypt.compare(password, hash).catch(err => this.log(1, err)))
+        return bcrypt.compare(password, hash).catch(err => this.log(1, err))
     }
     async generateToken(length){
         return crypto.randomBytes(length).toString('hex');
@@ -352,8 +348,7 @@ class User{
 
 
     respond(response_code, json={}){
-        json.success = false
-        if (response_code == 200) json.success = true
+        json.success = response_code == 200
 
         if (!this.alreadyRes){
             this.res.status(response_code).json(json)
@@ -361,11 +356,9 @@ class User{
         }
     }
     respondSuccess(json={}){
-        json.success = true
         this.respond(200, json)
     }
     respondMissing(){
-        
         this.respond(400, {reason: 'Missing or invalid POST field(s)', success: false})
     }
 
@@ -373,15 +366,15 @@ class User{
     sendRequest(method, url, body){
         const request = require('request')
         const options = {
-            'method': method,
-            'url': url,
-            'headers': {'Content-Type': 'application/json'},
+            method: method,
+            url: url,
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(body)
         }
-        request(options, function (error) {
-            if (error) throw new Error(error);
+
+        request(options, error => {
+            if (error) this.log(1, error)
         })
-    
     }
 
 }

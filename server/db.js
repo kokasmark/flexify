@@ -1,6 +1,6 @@
-const mysql = require('mysql2');
-const dotenv = require('dotenv');
-dotenv.config();
+const mysql = require('mysql2')
+const dotenv = require('dotenv')
+dotenv.config()
 
 class DB{
     constructor(log){
@@ -12,10 +12,14 @@ class DB{
                 database: process.env.DB_DATABASE,
               });
         this.conn.connect((err) => {
-            if (err) this.log(1, 'Error connecting to MySQL:' + err)
-            else     this.log(1, 'Connected to MySQL');
+            if (err) {
+                this.log(0, 'Error connecting to MySQL: ' + err)
+                throw new Error(err)
+            }
+            else this.log(1, 'Connected to MySQL')
         });
 
+        this.tables = []
         this.structure = {}
         this.didInitStructure = false
     }
@@ -33,9 +37,11 @@ class DB{
         
         const sql = `SELECT group_concat(COLUMN_NAME) AS structure, TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'flexify' GROUP BY TABLE_NAME`
         let result = await this.query(sql)
+        
         result.forEach(table => {
+            this.tables.push(table.TABLE_NAME)
             this.structure[table.TABLE_NAME] = table.structure.split(',')
-        });
+        })
         this.didInitStructure = true
 
         return true
