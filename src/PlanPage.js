@@ -35,7 +35,8 @@ class PlanPage extends Component {
     events: [],
     newEvent: null,
     addWorkoutPopUp: false,
-    savedTemplates: []
+    savedTemplates: [],
+    currentRange: null
   }
   async getSavedTemplates() {
     var r = await CallApi("templates", {token: localStorage.getItem('loginToken')})
@@ -53,7 +54,6 @@ class PlanPage extends Component {
       r.dates.forEach(date => {
         updatedLoaded[date] = {}
       });
-      console.log(r.dates)
       this.setState({ loaded: updatedLoaded, events: [] });
     } else {
 
@@ -64,7 +64,6 @@ class PlanPage extends Component {
     if (r.success) {
       var updatedLoaded = this.state.loaded
       updatedLoaded[date] = r.data
-      console.log(date,r.data)
       this.parseEvent(r.data)
       this.setState({ loaded: updatedLoaded });
     } else {
@@ -114,7 +113,6 @@ class PlanPage extends Component {
     });
   }
   async saveWorkout(data, time){
-    console.log(time)
     var r = await CallApi("workouts/save", {token: localStorage.getItem('loginToken'), name: data.name, time: JSON.stringify(time), json: JSON.stringify(data.json), duration: "00:00:00"})
     if (r.success) {
       swal("Success!", `${data.name} was saved!`, "success")
@@ -125,19 +123,51 @@ class PlanPage extends Component {
   componentDidMount() {
     this.getWorkouts(new Date().getFullYear() + '-' + (new Date().getMonth() + 1));
     this.getSavedTemplates();
+  }
 
-    // var calendarMonthView = document.querySelector('.rbc-month.view')
-    // console.log(calendarMonthView)
+  async daysAnimation(){
+    //console.log("DAYS ANIMATION")
+    var calendarMonthView = document.querySelector('.rbc-month-view')
+    
+    if(calendarMonthView != undefined){
+      await new Promise(resolve => setTimeout(resolve, 100))
+      var offset = 0;
+      calendarMonthView.childNodes.forEach((row)  => {
+        //console.log(row.childNodes.length)
+        if(row.childNodes.length == 2){
+        var bg = row.childNodes[0]
+        var content = row.childNodes[1].childNodes[0]
+        //console.log("!",bg, content)
+        for(var i = 0; i < bg.childNodes.length; i++){
+          //console.log(content)
+          offset += 0.05;
+          try{
+            bg.childNodes[i].style.animation = `day-load 1s ${offset}s forwards`;
+            content.childNodes[i].style.animation = `day-load 1s ${offset}s forwards`;
+            
+          }catch{
+  
+          }
+          
+        }
+      }
+      });
+    }
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.loaded != this.state.loaded) {
+      this.daysAnimation()
       Object.keys(this.state.loaded).map((date) => {
         console.log(date)
         this.getWorkoutsData(date)
+        
       });
     }
     if (prevState.selectedDay != this.state.selectedDay) {
       console.log(this.state.selectedDay)
+    }
+    if(prevState.currentRange != this.state.currentRange){
+      this.daysAnimation()
     }
   }
   navigate(e) {
@@ -187,7 +217,7 @@ class PlanPage extends Component {
           style={{ filter: this.state.addWorkoutPopUp ? "blur(3px)" : "" }}
           onSelectEvent={(e) => this.handleEventClick(e)}
           onRangeChange={range => {
-            console.log(range)
+            this.setState({currentRange: range})
         }}
         />
 

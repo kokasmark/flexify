@@ -198,7 +198,7 @@ export async function CallApi(route, args) {
     try {
         const response = await fetch(`http://${host}:3001/api/${route}`, requestOptions);
         const data = await response.json();
-        console.log(`Response to ${route}: ${JSON.stringify(data)}`)
+        //console.log(`Response to ${route}: ${JSON.stringify(data)}`)
         return data; // Return the data from the API call
     } catch (error) {
         throw error; // Throw any errors that occur during the API call

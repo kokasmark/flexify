@@ -960,6 +960,7 @@ iframe
 }
 .calendar .rbc-month-view{
   box-shadow: 5px 5px 10px var(--shadow);
+  animation: calendar-bg-load 2s;
 }
 .calendar .rbc-header.rbc-today{
   z-index: 1;
@@ -969,6 +970,9 @@ iframe
   z-index: 1;
   text-shadow: 0 0 5px #fff;
   background-color: var(--contrast) !important;
+}
+.calendar .rbc-date-cell{
+  opacity: 0;
 }
 .calendar .rbc-button-link:hover{
   text-shadow: 0 0 5px #fff;
@@ -988,6 +992,7 @@ iframe
 .calendar .rbc-day-bg{
   background-color: #2d3549;
   transition: 0.5s;
+  opacity: 0;
 }
 .calendar .rbc-time-view .rbc-event{
   margin-left: 5px;
@@ -995,8 +1000,15 @@ iframe
 .calendar .rbc-event{
   animation: grow 0.5s ease;
 }
+.calendar .rbc-month-view .rbc-event{
+  transform: scale(0);
+  animation: grow 0.5s ease 2s forwards;
+}
 .calendar .rbc-event:hover{
   text-shadow: 0 0 5px #fff;
+}
+.calendar .rbc-time-content::-webkit-scrollbar {
+  display: none;
 }
 .calendar .rbc-event-content{
   text-align: center;
@@ -1338,6 +1350,7 @@ iframe
 }
 .rbc-time-view{
   border: 2px solid var(--bg) !important;
+  box-shadow: 5px 5px 10px var(--shadow);
 }
 .rbc-header{
   border-bottom: 2px solid var(--bg) !important;
@@ -1346,6 +1359,14 @@ iframe
   border-bottom: 2px solid var(--bg) !important;
 }
 
+@keyframes calendar-bg-load {
+  0%{
+    box-shadow: none;
+  }
+  95%{
+    box-shadow: none;
+  }
+}
 @keyframes day-load {
   0%{
     opacity: 0;
