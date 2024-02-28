@@ -21,6 +21,8 @@ import { IoIosCloseCircleOutline } from "react-icons/io"
 import {CallApi} from "./api";
 moment.locale('en-GB');
 
+
+
 class PlanPage extends Component {
 
   localizer = momentLocalizer(moment)
@@ -76,16 +78,10 @@ class PlanPage extends Component {
     this.setState((prevState) => {
         var updatedEvents = [...prevState.events];
         var start = new Date(JSON.parse(d.time).start);
-        var end;
-        if (d.duration !== "00:00:00") {
-            var durationParts = d.duration.split(":");
-            var durationMilliseconds = (+durationParts[0] * 60 * 60 * 1000) +
-                                        (+durationParts[1] * 60 * 1000) +
-                                        (+durationParts[2] * 1000);
-            end = new Date(start.getTime() + durationMilliseconds);
-        } else {
-            end = new Date(JSON.parse(d.time).end);
-        }
+        var end = new Date(JSON.parse(d.time).end);
+        
+            
+        
         console.log(end);
         updatedEvents.push({
             "title": d.name,
@@ -129,6 +125,9 @@ class PlanPage extends Component {
   componentDidMount() {
     this.getWorkouts(new Date().getFullYear() + '-' + (new Date().getMonth() + 1));
     this.getSavedTemplates();
+
+    // var calendarMonthView = document.querySelector('.rbc-month.view')
+    // console.log(calendarMonthView)
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.loaded != this.state.loaded) {

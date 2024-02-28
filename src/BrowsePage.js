@@ -42,10 +42,11 @@ class BrowsePage extends Component {
 
     async getExerciseTemplates() {
       var r = await CallApi("exercises", {token: localStorage.getItem("loginToken"), location: 'web'})
-      this.setState({ templates: r });
+      console.log(r)
+      this.setState({ templates: r.json});
       }
       componentDidMount(){
-        this.getExerciseTemplates();
+        this.getExerciseTemplates(); 
       }
       colorAffectedMuscles(muscles, leave){
         var affected = JSON.parse(muscles);
@@ -68,7 +69,7 @@ class BrowsePage extends Component {
             <div className='page'>
               <div className='browse-page-header'>
                 <h1>Browse Exercises</h1>
-                <h3>Click on a muscle to list the exercises that work on it</h3>
+                <h3>Click on a muscle to list the exercises that work on it.</h3>
               </div>
                     <div className='browse-muscle' style={{ position: 'absolute',left: this.state.choosenGroup == null ? "24%" : "0%" }}>
                         <MusclesView ref={this.muscleRef}chooseCallback={this.chooseMuscleGroup} />
@@ -85,10 +86,9 @@ class BrowsePage extends Component {
           style={{ animation: `card-load ${0.5 + index / 10}s ease-out`, backgroundColor: "transparent" }}
         >
           <Card.Body>
-            <div className='bottom'>
               <Card.Title>{template.name}</Card.Title>
-              <img style={{mixBlendMode: "multiply" }} src={require("./assets/exercises/" + template.gif_url + ".gif")} />
-            </div>
+              <div className='gif-container'><img style={{mixBlendMode: "multiply" }} src={require("./assets/exercises/" + template.gif_url + ".gif")} /></div>
+              
           </Card.Body>
         </Card>
       )

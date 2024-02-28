@@ -92,12 +92,12 @@ async function getExercises(user){
     log(2, '/api/exercises')
 
     if (!(await user.isLoggedIn())) return false
-    let exercises = await exercises.exercises
-    exercises = Object.entries(exercises).map(([key, value]) => {
+    let local_exercises = await exercises.exercises
+    local_exercises = Object.entries(local_exercises).map(([key, value]) => {
         value.id = parseInt(key)
         return value
     })
-    user.respondSuccess({json: exercises})
+    user.respondSuccess({json: local_exercises})
 }
 async function postLogin(user){
     log(2, '/api/login')
