@@ -100,7 +100,10 @@ class User{
 
         let sql = 'SELECT workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN workout ON calendar_workout.workout_id = workout.id WHERE calendar.user_id = ? AND calendar.date >= DATE_SUB(CURDATE(), INTERVAL ? DAY) AND workout.isTemplate = 0'
         let result = await this.db.query(sql, [this.id, post.timespan])
-        let workouts = result.map(row => JSON.parse(row.json))
+        let workouts = result.map(row => {
+            row.json = JSON.parse(row.json)
+            return row
+        })
 
         return workouts
     }

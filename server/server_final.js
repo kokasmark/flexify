@@ -144,14 +144,13 @@ async function postUserMuscles(user){
         })
     })
 
-    Object.keys(exercisesDone).forEach(async exerciseId => {
+    for (const exerciseId of Object.keys(exercisesDone)){
         let muscles = await exercises.getMuscles(exerciseId)
         muscles.forEach(muscle => {
             if (!musclesUsed.hasOwnProperty(muscle)) musclesUsed[muscle] = 0
             musclesUsed[muscle] += exercisesDone[exerciseId]
         })
-    })
-    
+    }
     const allMusclesUsed = Object.values(exercisesDone).reduce((acc, x) => acc + x, 0)
     Object.keys(musclesUsed).forEach(muscle => {
         musclesUsed[muscle] = musclesUsed[muscle] / allMusclesUsed
