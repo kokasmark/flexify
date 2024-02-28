@@ -736,6 +736,10 @@ iframe
   background-color: var(--bg);
   border-radius: 10px;
   text-align: center;
+  animation: from-top 0.5s ease-out;
+}
+.diet-add-popup.close{
+  animation: to-bottom 0.5s ease-in !important;
 }
 .diet-add-popup img{
   filter: invert(1) drop-shadow(5px 5px 1px rgb(0 0 0 / 0.8)) !important;
@@ -1311,6 +1315,30 @@ iframe
   color: white;
   margin-top: 5%;
   margin-bottom: -10%;
+}
+@keyframes from-bottom {
+  0%{
+    transform: translateY(1000px);
+  }
+  100%{
+    transform: translateY(0px);
+  }
+}
+@keyframes to-bottom {
+  0%{
+    transform: translateY(0px);
+  }
+  100%{
+    transform: translateY(1000px);
+  }
+}
+@keyframes from-top {
+  0%{
+    transform: translateY(-1000px);
+  }
+  100%{
+    transform: translateY(0px);
+  }
 }
 @keyframes tips-idle {
   0%{

@@ -21,7 +21,8 @@ class DietPage extends Component {
       Lunch:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
       Dinner:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
       Snacks:  {totalCalories: 0, average: 300, icons: ["icon-chips", "icon-cupcake", "icon-popcorn", "icon-apple"],foods: []}
-    }
+    },
+    animation: ''
   }
 
   addFood = (meal) => {
@@ -143,6 +144,11 @@ class DietPage extends Component {
       return { meals: updatedMeals };
     });
   }
+  async closePopUp(){
+    this.setState({animation: ' close'})
+    await new Promise(res => setTimeout(res, 490))
+    this.setState({selectedMeal: null, animation: ''})
+  }
   render() {
     return (
       <div className='page'>
@@ -193,8 +199,8 @@ class DietPage extends Component {
           </div>
         </div>
 
-        {this.state.selectedMeal != null && <div className='diet-add-popup highlight'>
-          <h2 className='interactable' onClick={()=>this.setState({selectedMeal: null})}>x</h2>
+        {this.state.selectedMeal != null && <div className={'diet-add-popup highlight'+this.state.animation}>
+          <h2 className='interactable' onClick={()=>this.closePopUp()}>x</h2>
           <img src={this.state.selectedMeal.icon} style={{marginTop: 50}}/>
           <h1>{this.state.selectedMeal.name}</h1>
           <div style={{width: '100%', marginLeft: '7.5%'}}>

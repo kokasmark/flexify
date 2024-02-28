@@ -77,8 +77,19 @@ export function user_muscles(args){
 export function user(args){
     return justTokenArgs(args);
 }
-export function templates_exercises(args){
-    return justTokenArgs(args);
+export function exercises(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+
+
+
+  var requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+  return requestOptions;
 }
 export function templates(args){
     return justTokenArgs(args);
@@ -143,6 +154,26 @@ export function workouts_save(args){
 
   return requestOptions;
 }
+export function templates_save(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    token: args.token,
+    name: args.name,
+    json: args.json,
+    location: "web"
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
 export async function CallApi(route, args) {
     const apiFunctions = 
     {   login,
@@ -150,8 +181,9 @@ export async function CallApi(route, args) {
         user,
 
         user_muscles,
-        templates_exercises,
+        exercises,
         templates,
+        templates_save,
         workouts_dates,
         workouts_data,
         workouts_save
@@ -166,7 +198,7 @@ export async function CallApi(route, args) {
     try {
         const response = await fetch(`http://${host}:3001/api/${route}`, requestOptions);
         const data = await response.json();
-        console.log("Data: "+data)
+        console.log(`Response to ${route}: ${JSON.stringify(data)}`)
         return data; // Return the data from the API call
     } catch (error) {
         throw error; // Throw any errors that occur during the API call

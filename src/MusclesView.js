@@ -59,7 +59,7 @@ export default class MusclesView extends Component {
     muscleData: [],
     frontLastKey: 138,
     animation: 'fade-in',
-    tips: [{text:"Little bit empty... Explore the site and create a workout!",level:0}],
+    tips: [{text:"You have no finished workouts in this time period!",level:0}],
     tip_icons: [<RiMoreFill className='tip-icon' style={{color: "var(--heat-yellow)"}}/>, <RiCheckboxCircleLine className='tip-icon' style={{color: "var(--heat-orange)"}}/>, <RiErrorWarningLine className='tip-icon' style={{color: "var(--heat-red)"}}/>]
   }
   getGroup() {
@@ -106,7 +106,7 @@ export default class MusclesView extends Component {
         var muscle = document.getElementById(i);
         updatedMuscleData[i].val = 0;
         try{
-        muscle.style.fill = color;
+          muscle.style.fill = color;
         }catch{
 
         }
@@ -204,9 +204,8 @@ export default class MusclesView extends Component {
       this.setState({ tips: t })
     }
     else{
-      this.setState({ tips: [{text:"Little bit empty... Explore the site and create a workout!",level:0}] })
+      this.setState({ tips: [{text:"You have no finished workouts in this time period!",level:0}] })
     }
-    this.muscleLoadAnimation()
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.front !== this.state.front) {
@@ -217,7 +216,7 @@ export default class MusclesView extends Component {
     }
     if (this.props.muscles != prevProps.muscles) {
       this.Draw()
-      console.log(this.props.muscles)
+      this.muscleLoadAnimation()
     }
     if(this.props.autoRotate){
       this.props.array.forEach(muscle => {

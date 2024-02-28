@@ -73,13 +73,8 @@ class CreatePage extends Component {
     });
   };
   async getExerciseTemplates() {
-    var r = await CallApi("templates", {token: localStorage.getItem("loginToken"), location: 'web'})
-
-    if (r.success) {
-      this.setState({ getTemplates: r.data });
-    } else {
-
-    }
+    var r = await CallApi("exercises", {token: localStorage.getItem("loginToken"), location: 'web'})
+    this.setState({ getTemplates: r});
   }
   chooseMuscleGroup = (g) => {
     if (g != null && g.name != '') {
@@ -95,96 +90,25 @@ class CreatePage extends Component {
     }
 
   }
-  parseSearchString = (search) => {
-    const decodedString = decodeURIComponent(search); // Decoding URL-encoded characters
-    const queryString = decodedString.substring(1); // Removing the leading "?" character
-    const params = new URLSearchParams(queryString);
-
-    return queryString;
-  };
 
   componentDidUpdate(prevProps, prevState) {
-
-    // if (prevProps.import != this.props.import) {
-    //   console.log('Importing workout: ' + this.props.import);
-    // }
-
-    // if (prevState.importedWorkout != this.state.importedWorkout) {
-    //   if (!this.state.importDone) {
-    //     for (var i = 0; i < this.state.importedWorkout.data.length; i++) {
-    //       document.getElementById(`create-reps-${i}`).value = JSON.parse(this.state.importedWorkout.data[i].set_data).length;
-
-    //     }
-    //     const updatedExercises = [...prevState.exercises];
-    //     for (var i = 0; i < this.state.importedWorkout.data.length; i++) {
-    //       const l = JSON.parse(this.state.importedWorkout.data[i].set_data).length;
-
-    //       updatedExercises[i] = Number(l);
-
-    //     }
-    //     this.setState({ exercises: updatedExercises });
-    //   }
-    // }
-    // if (prevState.savedTemplates !== this.state.savedTemplates) {
-    //   if (this.props.import.length > 0) {
-    //     if (!this.state.importDone) {
-    //       const matchingWorkout = this.state.savedTemplates.find((workout) =>
-    //         workout.name === this.parseSearchString(this.props.import)
-    //       );
-    //       this.setState({ importedWorkout: matchingWorkout })
-    //       document.getElementById('create-name').value = matchingWorkout.name + ' Copy';
-
-    //       for (var i = 0; i < matchingWorkout.data.length; i++) {
-    //         this.addCard({ name: matchingWorkout.data[i].comment, type: JSON.parse(matchingWorkout.data[i].set_data)[0].reps != 0 ? 'rep' : 'time', exercise_template_id: matchingWorkout.data[i].exercise_template_id})
-    //       }
-    //     }
-    //   } else {
-    //     console.log('There is nothing to import!');
-    //     this.setState({ importDone: true });
-    //   }
-    // }
-    // if (prevState.exercises != this.state.exercises) {
-    //   if (!this.state.importDone) {
-    //     var a = 0;
-    //     for (var i = 0; i < this.state.exercises.length; i++) {
-    //       a++;
-    //       for (var ii = 0; ii < this.state.exercises[i]; ii++) {
-    //         try {
-    //           document.getElementById(i + "-" + ii + "-rep").value = JSON.parse(this.state.importedWorkout.data[i].set_data)[ii].reps;
-    //           document.getElementById(i + "-" + ii + "-weight").value = JSON.parse(this.state.importedWorkout.data[i].set_data)[ii].weight;
-    //         } catch {
-    //           document.getElementById(i + "-" + ii + "-rep").value = JSON.parse(this.state.importedWorkout.data[i].set_data)[ii].time;
-    //         }
-
-    //       }
-    //     }
-    //     this.setState({ importActions: a })
-    //   }
-    // }
-    // if (prevState.importActions != this.state.importActions) {
-    //   if (this.state.importActions == this.state.importedWorkout.data.length) {
-    //     this.setState({ importDone: true })
-    //     swal(GetString("alert-workout-imported")[0], this.state.importedWorkout.name + GetString("alert-workout-imported")[1], 'success')
-    //   }
-    // }
   }
   addCard(template = null) {
       if(this.state.exerciseNum < 50){
           this.setState((prevState) => ({
         exerciseNum: prevState.exerciseNum + 1,
         exercises: [...prevState.exercises, 0],
-        exerciseTemplates: template ? [...prevState.exerciseTemplates, template] : [...prevState.exerciseTemplates, { name: 'Empty', type: 'rep' }]
+        exerciseTemplates: [...prevState.exerciseTemplates, template]
       }));
     }else{
       swal("Error!", "Too many exercise cards!\n(limit: 50)","error")
     }
   }
-  selectTemplate(name, type, id) {
+  selectTemplate(name, type) {
     // Create a new card data object with the given name and type
     const newCard = {
       name: name,
-      type: type,
-      id: id
+      type: type
     };
   }
   deleteCard(index) {
@@ -258,7 +182,7 @@ class CreatePage extends Component {
     this.addCard(this.state.currentTemplateGrabbed);
   };
 
-  saveWorkout() {
+  async saveWorkout() {
 
     var data = [
     ]
@@ -272,34 +196,17 @@ class CreatePage extends Component {
           set_data.push({ time: document.getElementById(i + "-" + ii + "-rep").value, weight: 0, reps: 0 })
         }
       }
-      data.push({ id: this.state.exerciseTemplates[i].exercise_template_id, set_data: set_data, comment: this.state.exerciseTemplates[i].name })
+      data.push({ exercise_id: this.state.exerciseTemplates[i].id, set_data: set_data, name: this.state.exerciseTemplates[i].name })
     }
 
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({
-      token: localStorage.getItem('loginToken'), name: document.getElementById('create-name').value
-      , comment: 'Empty', data: data
-    });
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
-    fetch(`http://${host}:3001/api/templates/save_workout`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        var r = JSON.parse(response);
-        if (r.success) {
-          swal(GetString("alert-workout-saved")[0], `${document.getElementById('create-name').value}` + GetString("alert-workout-saved")[1], "success")
-        } else {
-          swal(GetString("alert-general-error")[0], GetString("alert-general-error")[1], "error")
-        }
-      })
-      .catch(error => console.log('error', error));
+    var r = await CallApi("templates/save", {
+      token: localStorage.getItem('loginToken'), name: document.getElementById('create-name').value, json: JSON.stringify(data)
+    })
+    if (r.success) {
+      swal(GetString("alert-workout-saved")[0], `${document.getElementById('create-name').value}` + GetString("alert-workout-saved")[1], "success")
+    } else {
+      swal(GetString("alert-general-error")[0], GetString("alert-general-error")[1], "error")
+    }
   }
   componentDidMount() {
    
@@ -352,7 +259,7 @@ class CreatePage extends Component {
           <div className='create-muscles' style={{ position: 'relative', top: 150 }}>
             <MusclesView ref={this.muscleRef} chooseCallback={this.chooseMuscleGroup} />
           </div>
-          <div className='anim create-templates' style={{ color: 'white', position: 'relative', top: -600, left: '20%',height: 500, width: 300 }}>
+          <div className='anim create-templates' style={{ color: 'white', position: 'relative', top: -600, left: '20%',height: 500, width: 300,animation: 'from-top 0.5s ease-out' }}>
             <h1 style={{ marginTop: 5, textAlign: 'center' }}>{GetString("create-template")}</h1>
             {this.state.getTemplates.map((template, index) => (
               <div>
@@ -361,18 +268,19 @@ class CreatePage extends Component {
                     onDragStart={(e) => this.dragStart(e, index, template)}
                     onDragEnd={(e) =>this.dragEnd(e)}
                     onDrop={this.drop} onMouseEnter={() => this.colorAffectedMuscles(template.muscles, false)} onMouseLeave={() => this.colorAffectedMuscles(template.muscles, true)} 
-                    onClick={() => this.selectTemplate(template.name, template.type, template.id)} key={index} className='interactable exercise-card'
+                    onClick={() => this.selectTemplate(template.name, template.type)} key={index} className='interactable exercise-card'
                     style={{animation: `exercise-card-load ${index/5}s ease-out`}}>
                     <div className='bottom'>
                       <h2>{template.name}</h2>
-                      <p style={{ marginTop: -10, fontSize: 11 }}>({template.muscles.replaceAll("[", "").replaceAll("]", "").replaceAll('"', "")})</p>
+                      <p style={{ marginTop: -10, fontSize: 11 }}>({String(template.muscles)})</p>
                     </div>
                   </div>}
               </div>
             ))}
           </div>
           <div onDragOver={this.dragOver}
-            onDrop={this.createWorkoutDrop} className='create-drop' style={{ color: 'white', position: 'relative', top: -1100, left: 1050, outline: "#fff"}}>
+            onDrop={this.createWorkoutDrop} className='create-drop' 
+            style={{ color: 'white', position: 'relative', top: -1100, left: 1050, outline: "#fff", animation: 'from-bottom 0.5s ease-out'}}>
             <div className={`create-workout anim ${this.state.currentTemplateGrabbed != '' ? 'highlight' : ''}`} ref={this.containerRef} style={exerciseCards.length == 0 ? { position: 'relative', left: 50, height: 200, textAlign: 'center' }
               : { position: 'relative', left: 50, textAlign: 'center' }}>
               <input id='create-name' style={{ display: 'inline-block' }} placeholder='Name'></input>
