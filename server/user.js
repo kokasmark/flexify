@@ -272,8 +272,8 @@ class User{
         if (!post) return false
         if (!await this.isLoggedIn()) return false
 
-        let sql = 'INSERT INTO workout (user_id, duration, name, json) VALUES (?, ?, ?, ?)'
-        let result = await this.db.query(sql, [this.id, "00:00:00", post.name, post.json])
+        let sql = 'INSERT INTO workout (user_id, name, json) VALUES (?, ?, ?, ?)'
+        let result = await this.db.query(sql, [this.id, post.name, post.json])
 
         let workoutId = result.insertId
         sql = "SELECT id FROM calendar WHERE user_id=? AND date=CURDATE()"
