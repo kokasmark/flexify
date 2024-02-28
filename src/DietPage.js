@@ -147,7 +147,7 @@ class DietPage extends Component {
     return (
       <div className='page'>
         <div className='plate-container' style={{filter: this.state.selectedMeal != null ? 'blur(3px)' : ''}}>
-          <div className='diet-plate interactable' onClick={()=>this.setState({selectedMeal: {name: 'Breakfast', icon: require('./assets/foods/icon-croissant.png')}})}>
+          <div className='diet-plate interactable' style={{animation: `card-load-${2 % 2 == 0 ? 'up': 'down'} ${2/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'Breakfast', icon: require('./assets/foods/icon-croissant.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Breakfast</h1>
             
@@ -158,7 +158,7 @@ class DietPage extends Component {
             
             <h1 id="kcal-Breakfast">{this.state.meals["Breakfast"].totalCalories}kcal</h1>
           </div>
-          <div className='diet-plate interactable' onClick={()=>this.setState({selectedMeal: {name: 'Lunch', icon: require('./assets/foods/icon-hamburger.png')}})}>
+          <div className='diet-plate interactable' style={{animation: `card-load-${3 % 2 == 0 ? 'up': 'down'} ${3/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'Lunch', icon: require('./assets/foods/icon-hamburger.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Lunch</h1>
             
@@ -169,7 +169,7 @@ class DietPage extends Component {
             
             <h1 id="kcal-Lunch">{this.state.meals["Lunch"].totalCalories}kcal</h1>
           </div>
-          <div className='diet-plate interactable' onClick={()=>this.setState({selectedMeal: {name: 'Dinner', icon: require('./assets/foods/icon-steak.png')}})}>
+          <div className='diet-plate interactable' style={{animation: `card-load-${4 % 2 == 0 ? 'up': 'down'} ${4/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'Dinner', icon: require('./assets/foods/icon-steak.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Dinner</h1>
             
@@ -180,7 +180,7 @@ class DietPage extends Component {
             
             <h1 id="kcal-Dinner">{this.state.meals["Dinner"].totalCalories}kcal</h1>
           </div>
-          <div className='diet-plate interactable' onClick={()=>this.setState({selectedMeal: {name: 'Snacks', icon: require('./assets/foods/icon-cupcake.png')}})}>
+          <div className='diet-plate interactable' style={{animation: `card-load-${5 % 2 == 0 ? 'up': 'down'} ${5/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'Snacks', icon: require('./assets/foods/icon-cupcake.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Snacks</h1>
             
