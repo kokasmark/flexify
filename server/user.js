@@ -31,7 +31,7 @@ class User{
     }
 
     async getAdmin(){
-        if (!await this.loggedIn) return false
+        if (!await this.isLoggedIn()) return false
         let result = await this.db.query('SELECT is_admin FROM user WHERE id = ?', [this.id], true)
         return !!result.is_admin
     }
