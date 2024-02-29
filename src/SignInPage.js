@@ -32,6 +32,7 @@ class SignInPage extends Component {
   };
   async validate(){
     var r = await CallApi("login", {user: document.getElementById("username").value, password: document.getElementById("password").value})
+    console.log(r)
     if (r.success) {
       localStorage.setItem("loginToken", r.token);
       console.log("Validating");

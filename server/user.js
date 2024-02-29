@@ -4,14 +4,14 @@ const moment = require('moment');
 
 
 class User{
-    constructor(req, res, db, log){
+    constructor(req, res, db, log, hasToken = true){
         this.req = req
         this.res = res
         this.db = db
         this.log = log
 
         this.loggedIn = this.getUserId()
-        this.admin = this.getAdmin()
+        this.admin = hasToken ? this.getAdmin() : false
         this.alreadyRes = false
     }
 

@@ -21,7 +21,7 @@ export function login(args){
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      username: args.user,
+      user: args.user,
       password: args.password,
       location: "web",
     });
