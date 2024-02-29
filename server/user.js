@@ -4,15 +4,15 @@ const moment = require('moment');
 
 
 class User{
-    constructor(req, res, db, log, hasToken = true){
+    constructor(req, res, db, log){
         this.req = req
         this.res = res
         this.db = db
         this.log = log
 
         this.loggedIn = this.getUserId()
-        this.admin = hasToken ? this.getAdmin() : false
-        this.alreadyRes = false
+        this.admin = this.getAdmin()
+        this.alreadyResponded = false
     }
 
     async getUserId(){
@@ -31,19 +31,19 @@ class User{
     }
 
     async getAdmin(){
-        if (!await this.isLoggedIn()) return false
+        if (!await this.loggedIn) return false
+        
         let result = await this.db.query('SELECT is_admin FROM user WHERE id = ?', [this.id], true)
         return !!result.is_admin
     }
     async isAdmin(){
-        await this.admin
-        if (await this.admin){
-            await this.db.initStructure()
-            return true
-        }
+        if (!await this.isLoggedIn() || !await this.admin){
+            this.respond(401, {reason: 'Unauthorized'})
+            return false
+        } 
 
-        this.respond(401, {reason: 'Unauthorized'})
-        return false
+        await this.db.initStructure()
+        return true
     }
 
     validateFields(fieldList){
@@ -395,9 +395,9 @@ class User{
     respond(response_code, json={}){
         json.success = response_code == 200
 
-        if (!this.alreadyRes){
+        if (!this.alreadyResponded){
             this.res.status(response_code).json(json)
-            this.alreadyRes = true
+            this.alreadyResponded = true
         }
     }
     respondSuccess(json={}){

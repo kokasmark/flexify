@@ -37,8 +37,8 @@ app.get('/api/admin/tables', (req, res) => getAdminTables(new User(req, res, db,
 app.get('/api/exercises', (req, res) => getExercises(new User(req, res, db, log)))
 
 
-app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log,false)))
-app.post('/api/signup', (req, res) => postUserRegister(new User(req, res, db, log,false)))
+app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log)))
+app.post('/api/signup', (req, res) => postUserRegister(new User(req, res, db, log)))
 
 app.post('/api/workouts/dates', (req, res) => postWorkoutsDates(new User(req, res, db, log)))
 app.post('/api/workouts/data', (req, res) => postUserWorkouts(new User(req, res, db, log)))
