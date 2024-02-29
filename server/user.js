@@ -193,7 +193,7 @@ class User{
 
         if (result === undefined) result = {id: -1, diet: ''}
         if (result.diet === ''){
-            let empty = {carbs: 0, fat: 0, protein: 0}
+            let empty = []
             result.diet = {breakfast: empty, lunch: empty, dinner: empty, snacks: empty}
         }
         else result.diet = JSON.parse(result.diet)
@@ -216,18 +216,11 @@ class User{
         if (!await this.isLoggedIn()) return false
 
         let result = await this.getDiet(moment().format('YYYY-MM-DD'))
-        this.log(-1, result)
         if (result.id === -1){
             let sql ="INSERT INTO calendar (user_id, date, diet) VALUES (?, CURDATE(), ?)"
             this.db.query(sql, [this.id, JSON.stringify(post.json)])
             return
         }
-
-        Object.entries(result.diet).forEach(([key, value]) => {
-            post.json[key].carbs += value.carbs
-            post.json[key].fat += value.fat
-            post.json[key].protein += value.protein
-        })
 
         let sql = `UPDATE calendar SET diet=? WHERE id=?`
         this.db.query(sql, [JSON.stringify(post.json), result.id])
