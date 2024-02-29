@@ -369,6 +369,17 @@ class User{
         return true
     }
 
+    async deleteTableData(){
+        const post = this.validateFields(["table", "id"])
+        if (!post) return false
+        if (!await this.isAdmin()) return false
+        if (!this.db.tables.includes(post.table)) return false
+
+        let sql = `DELETE FROM ${post.table} WHERE id = ?`
+        this.db.query(sql, [post.id])
+
+        return true
+    }
 
     async generateHash(password){
         return bcrypt.hash(password, 10).catch(err => log(1, err))
