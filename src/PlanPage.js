@@ -254,18 +254,19 @@ class PlanPage extends Component {
     });
   }
   handleEventClick(e) {
-    console.log(e)
-    swal({
-      title: `Wanna start ${e.title}?`,
-      buttons: ["Cancel", "Start"],
-      icon: 'warning'
-    }).then((result) => {
-      if (result) {
-        localStorage.setItem("started-workout", e.data)
-        console.log(window.location)
-        window.location.href = `${window.location.origin}/workout`
-      }
-    });
+      if(!e.isFinished){
+        swal({
+          title: `Wanna start ${e.title}?`,
+          buttons: ["Cancel", "Start"],
+          icon: 'warning'
+        }).then((result) => {
+          if (result) {
+            localStorage.setItem("started-workout", e.data)
+            console.log(window.location)
+            window.location.href = `${window.location.origin}/workout`
+          }
+        });
+    }
   }
   render() {
     return (
