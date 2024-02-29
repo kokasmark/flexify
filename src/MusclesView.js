@@ -7,7 +7,7 @@ import { ReactComponent as W_MusclesBack } from './assets/women-muscles-back.svg
 import { ReactComponent as Icon_rotate } from './assets/icon-rotate.svg';
 import icon_lightbulb from './assets/icon-lightbulb.png'
 import GetString from './language';
-import { RiErrorWarningLine, RiCheckboxCircleLine,RiMoreFill } from "react-icons/ri";
+import { RiErrorWarningLine, RiCheckboxCircleLine, RiMoreFill } from "react-icons/ri";
 
 
 export default class MusclesView extends Component {
@@ -59,8 +59,8 @@ export default class MusclesView extends Component {
     muscleData: [],
     frontLastKey: 138,
     animation: 'fade-in',
-    tips: [{text:"You have no finished workouts in this time period!",level:0}],
-    tip_icons: [<RiMoreFill className='tip-icon' style={{color: "var(--heat-yellow)"}}/>, <RiCheckboxCircleLine className='tip-icon' style={{color: "var(--heat-orange)"}}/>, <RiErrorWarningLine className='tip-icon' style={{color: "var(--heat-red)"}}/>]
+    tips: [{ text: "You have no finished workouts in this time period!", level: 0 }],
+    tip_icons: [<RiMoreFill className='tip-icon' style={{ color: "var(--heat-yellow)" }} />, <RiCheckboxCircleLine className='tip-icon' style={{ color: "var(--heat-orange)" }} />, <RiErrorWarningLine className='tip-icon' style={{ color: "var(--heat-red)" }} />]
   }
   getGroup() {
     return this.state.men == true ? this.state.groups.men : this.state.groups.women;
@@ -86,50 +86,50 @@ export default class MusclesView extends Component {
     }
     this.setState({ muscleData: mData });
   }
-  muscleLoadAnimation(){
+  muscleLoadAnimation() {
 
     for (var i = 0; i < this.state.muscleData.length; i++) {
       var muscle = document.getElementById(i);
-      try{
+      try {
         var parent = muscle.parentNode;
-      var nextSibling = muscle.nextSibling;
-      parent.removeChild(muscle); // Remove the element from the DOM
-      parent.insertBefore(muscle, nextSibling); // Re-insert the element to trigger reflow
-      muscle.style.animation = `muscle-load ${(this.state.front ? i / 100 : (i - (this.state.men ? 138 : 87)) / 100) + (Math.random() * 1.3)}s ease-out`; // Apply the animation again
-      }catch{
+        var nextSibling = muscle.nextSibling;
+        parent.removeChild(muscle); // Remove the element from the DOM
+        parent.insertBefore(muscle, nextSibling); // Re-insert the element to trigger reflow
+        muscle.style.animation = `muscle-load ${(this.state.front ? i / 100 : (i - (this.state.men ? 138 : 87)) / 100) + (Math.random() * 1.3)}s ease-out`; // Apply the animation again
+      } catch {
 
       }
-    
+
+    }
   }
-  }
-  clearColor(){
+  clearColor() {
     const colors = ['var(--heat-blue)', 'var(--heat-yellow)', 'var(--heat-orange)', 'var(--heat-red)'];
     var updatedMuscleData = this.state.muscleData;
-      for (var i = 0; i < this.state.muscleData.length; i++) {
-        var color = colors[0];
-        var muscle = document.getElementById(i);
-        updatedMuscleData[i].val = 0;
-        try{
-          muscle.style.fill = color;
-        }catch{
+    for (var i = 0; i < this.state.muscleData.length; i++) {
+      var color = colors[0];
+      var muscle = document.getElementById(i);
+      updatedMuscleData[i].val = 0;
+      try {
+        muscle.style.fill = color;
+      } catch {
 
-        }
-      
+      }
+
     }
-    this.setState({muscleData: updatedMuscleData})
+    this.setState({ muscleData: updatedMuscleData })
   }
   setColor = () => {
     const colors = ['var(--heat-blue)', 'var(--heat-yellow)', 'var(--heat-orange)', 'var(--heat-red)'];
 
-      for (var i = 0; i < this.state.muscleData.length; i++) {
-        var muscle = document.getElementById(i);
-        var color = colors[parseInt(this.state.muscleData[i].val)];
-        try{
+    for (var i = 0; i < this.state.muscleData.length; i++) {
+      var muscle = document.getElementById(i);
+      var color = colors[parseInt(this.state.muscleData[i].val)];
+      try {
         muscle.style.fill = color;
-        }catch{
+      } catch {
 
-        }
-      
+      }
+
     }
   }
   updateMuscleGroup(group, value) {
@@ -146,6 +146,7 @@ export default class MusclesView extends Component {
       muscles = svgContainer.children[0].children[0].children;//THE PARENT OF THE MUSCLES
     }
     const colors = ['var(--heat-blue)', 'var(--heat-yellow)', 'var(--heat-orange)', 'var(--heat-red)'];
+    var colorOffset = Math.random();
     for (var i = 0; i < this.getGroup()[group].length; i++) {
       try {
         var muscle = muscles[this.state.front == true ? this.getGroup()[group][i] : this.getGroup()[group][i] - (this.state.men == true ? 138 : 87)];
@@ -153,7 +154,8 @@ export default class MusclesView extends Component {
         this.state.muscleData[key].val = value != -1 ? value : this.state.muscleData[key].val;
         var color = colors[parseInt(this.state.muscleData[key].val)];
         muscle.style.fill = color;
-        muscle.style.filter = `brightness(${Math.min(Math.max(0.85, Math.random() +0.5),1)})`
+        muscle.style.filter = `brightness(${Math.min(Math.max(0.85, colorOffset + 0.5), 1.1)})`
+        //muscle.style.animation = `muscle-idle 2s infinite`
       } catch {
         continue;
       }
@@ -176,13 +178,13 @@ export default class MusclesView extends Component {
   }
   async rotate() {
     await new Promise(r => setTimeout(r, 200))
-    this.setState({ front: !this.state.front});
+    this.setState({ front: !this.state.front });
   }
   Draw() {
     var muscles = this.props.muscles;
     let t = []
     this.clearColor()
-    for (const [key,value] of Object.entries(muscles)) {
+    for (const [key, value] of Object.entries(muscles)) {
       const muscleName = key;
       const mappedValue = value;
       this.updateMuscleGroup(muscleName, mappedValue);
@@ -190,26 +192,26 @@ export default class MusclesView extends Component {
       if (document.getElementById(this.findMuscleIndex(muscleName)) != null) {
         switch (mappedValue) {
           case 1:
-            t.push({text: GetString("tip-level-1").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`),level: 0, group: muscleName})
+            t.push({ text: GetString("tip-level-1").replace("!muscle!", `<strong style="color: ${colors[mappedValue]}">${GetString('muscle-' + muscleName)}</strong>`), level: 0, group: muscleName })
             break;
           case 2:
-            t.push({text: GetString("tip-level-2").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`),level: 1, group: muscleName})
+            t.push({ text: GetString("tip-level-2").replace("!muscle!", `<strong style="color: ${colors[mappedValue]}">${GetString('muscle-' + muscleName)}</strong>`), level: 1, group: muscleName })
             break;
           case 3:
-            t.push({text: GetString("tip-level-3").replace("!muscle!",`<strong style="color: ${colors[mappedValue]}">${GetString('muscle-'+muscleName)}</strong>`),level: 2, group: muscleName})
+            t.push({ text: GetString("tip-level-3").replace("!muscle!", `<strong style="color: ${colors[mappedValue]}">${GetString('muscle-' + muscleName)}</strong>`), level: 2, group: muscleName })
             break;
           default:
             break;
         }
 
       }
-      
+
     }
-    if(Object.entries(muscles).length > 0){
+    if (Object.entries(muscles).length > 0) {
       this.setState({ tips: t })
     }
-    else{
-      this.setState({ tips: [{text:"You have no finished workouts in this time period!",level:0}] })
+    else {
+      this.setState({ tips: [{ text: "You have no finished workouts in this time period!", level: 0 }] })
     }
   }
   componentDidUpdate(prevProps, prevState) {
@@ -223,46 +225,61 @@ export default class MusclesView extends Component {
       this.muscleLoadAnimation()
       this.Draw()
     }
-    if(this.props.autoRotate){
+    if (this.props.autoRotate) {
       this.props.array.forEach(muscle => {
         this.updateMuscleGroup(muscle, 2)
       });
     }
-    if(this.state.muscleData != prevState.muscleData){
+    if (this.state.muscleData != prevState.muscleData) {
       this.muscleLoadAnimation()
     }
   }
-  async AutoRotate(){
-    
+  async AutoRotate() {
+
     await new Promise(r => setTimeout(r, 3000))
-    if(this.props.autoRotate == true){
+    if (this.props.autoRotate == true) {
       this.rotate()
     }
     this.AutoRotate()
-    
+
   }
   componentDidMount() {
     this.setState({ men: (localStorage.getItem('anatomy') != null ? (localStorage.getItem('anatomy') == "Masculine" ? true : false) : true) })
     this.createMuscleData();
-    if(this.props.autoRotate != null){
+    if (this.props.autoRotate != null) {
       this.AutoRotate()
     }
+    this.tipIconAnimation()
   }
-  highlight(group){
-      for (var i = 0; i < this.state.muscleData.length; i++) {
-        var muscle = document.getElementById(i);
-        var color = "var(--contrast-A)";
-        try{
-          muscle.style.fill = color;
-        }catch{
+  highlight(group) {
+    for (var i = 0; i < this.state.muscleData.length; i++) {
+      var muscle = document.getElementById(i);
+      var color = "var(--contrast-A)";
+      try {
+        muscle.style.fill = color;
+      } catch {
 
-        }
       }
+    }
 
-      this.updateMuscleGroup(group,-1)
+    this.updateMuscleGroup(group, -1)
   }
-  hide(){
+  hide() {
     this.setColor()
+  }
+  async tipIconAnimation(){
+    var tipContainer = document.querySelector('.tips-container')
+    await new Promise(r => setTimeout(r, 10));
+    let tipIcons = tipContainer.querySelectorAll('.icon-container')
+
+    for(var i = 0; i < tipIcons.length; i++){
+      if(i !== 0) tipIcons[i-1].style.animation = 'none';
+      tipIcons[i].style.animation = 'tip-icon-idle 1.5s';
+      await new Promise(r => setTimeout(r, 1500));
+      if(i == tipIcons.length-1) tipIcons[i].style.animation = 'none';
+    }
+    this.tipIconAnimation()
+  
   }
   render() {
     return (
@@ -278,14 +295,28 @@ export default class MusclesView extends Component {
 
           {this.props.autoRotate == null && <Icon_rotate className='interactable' style={{ transform: 'scale(2)', position: 'relative', top: -175, left: 500, fill: '#fff !important' }} onClick={() => this.rotate()} />}
         </div>
-        {this.props.showTips != null && <div className={'tips-container '+ this.state.animation} style={{ position: 'relative', top: -800, left: 650 }}>
-          {this.state.tips.map((tip, index) => (
-            <div key={Math.random()} style={{ left: index % 2 == 0 ? -550 : 200, animation: `tip-load ${1+index/5}s ease-out`, marginTop: 30-(this.state.tips.length*10)}} 
-            className='interactable home-tip' onMouseEnter={()=>this.highlight(tip.group)} onMouseLeave={()=>this.hide()}>
-              {this.state.tip_icons[tip.level]}
-              <div style={{ display: 'inline-block', width: 250 }} key={index} dangerouslySetInnerHTML={{ __html: tip.text }}></div>
-            </div>
-          ))}
+        {this.props.showTips != null && <div className={'tips-container ' + this.state.animation} style={{ position: 'relative', top: -800, left: 650 }}>
+        {this.state.tips.map((tip, index) => (
+    <div 
+        key={Math.random()} 
+        style={{ 
+            left: index % 2 === 0 ? -550 : 200, 
+            animation: `tip-load ${1 + index / 5}s ease-out`, 
+            marginTop: 50 - (this.state.tips.length * 10)
+        }} 
+        className='interactable home-tip' 
+        onMouseEnter={() => this.highlight(tip.group)} 
+        onMouseLeave={() => this.hide()}
+    >
+        <div  className='icon-container' >
+            {this.state.tip_icons[tip.level]}
+        </div>
+        <div style={{ display: 'inline-block', width: 250 }} key={index} dangerouslySetInnerHTML={{ __html: tip.text }}></div>
+    </div>
+))}
+
+
+
         </div>}
       </div>
     );

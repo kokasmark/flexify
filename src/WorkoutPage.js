@@ -37,10 +37,10 @@ class WorkoutPage extends Component {
     var r = await CallApi("exercises", { token: localStorage.getItem("loginToken"), location: 'web' })
     this.setState({ templates: Object.values(r.json) });
   }
-  getMusclesTrained(exercise) {
-    var id = this.state.workout.json[exercise].name
+  getMusclesTrained(e) {
+    var id = this.state.workout.json[e].name
     this.state.templates.forEach(exercise => {
-      if(exercise.name == this.state.workout.json[exercise].name){
+      if(exercise.name == id){
         this.setState({muscles: exercise.muscles})
       }
     });
@@ -98,7 +98,7 @@ class WorkoutPage extends Component {
     if (this.state.workout != prevState.workout) {
       this.getMusclesTrained()
     }
-    if(this.state.templates != prevProps.state.templates){
+    if(this.state.templates != prevState.templates){
       this.getMusclesTrained(0)
     }
   }
@@ -156,7 +156,7 @@ class WorkoutPage extends Component {
             </div>
 
             <div className={'workout-middle-panel' + (this.state.paused ? ' workout-paused' : '')}>
-              <MusclesView autoRotate={this.state.paused ? false : true} array={this.state.muscles} />
+              <MusclesView autoRotate={this.state.paused ? false : true} array={this.state.muscles}/>
             </div>
 
           </div>
