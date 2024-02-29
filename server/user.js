@@ -31,7 +31,7 @@ class User{
     }
 
     async getAdmin(){
-        if (!await this.loggedIn) return false
+        if (!await this.isLoggedIn()) return false
         let result = await this.db.query('SELECT is_admin FROM user WHERE id = ?', [this.id], true)
         return !!result.is_admin
     }
@@ -141,11 +141,11 @@ class User{
     }
 
     async login(){
-        const post = this.validateFields(["username", "password", "location"])
+        const post = this.validateFields(["user", "password", "location"])
         if (!post) return false
 
-        let sql = 'SELECT id, password FROM user WHERE username = ?'
-        let result = await this.db.query(sql, [post.username], true)
+        let sql = 'SELECT id, password FROM user WHERE username = ? OR email = ?'
+        let result = await this.db.query(sql, [post.user, post.user], true)
         if (!result) return 0
 
         const id = result.id
@@ -369,6 +369,17 @@ class User{
         return true
     }
 
+    async deleteTableData(){
+        const post = this.validateFields(["table", "id"])
+        if (!post) return false
+        if (!await this.isAdmin()) return false
+        if (!this.db.tables.includes(post.table)) return false
+
+        let sql = `DELETE FROM ${post.table} WHERE id = ?`
+        this.db.query(sql, [post.id])
+
+        return true
+    }
 
     async generateHash(password){
         return bcrypt.hash(password, 10).catch(err => log(1, err))
