@@ -112,7 +112,7 @@ class User{
     async userDetails(){
         if (!(await this.isLoggedIn())) return false
         
-        let sql = 'SELECT username, email FROM user WHERE id=?'
+        let sql = 'SELECT username, email, is_admin FROM user WHERE id=?'
         
         return this.db.query(sql, [this.id], true)
     }

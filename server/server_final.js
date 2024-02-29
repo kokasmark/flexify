@@ -79,7 +79,7 @@ async function getUserDetails(user){
     const details = await user.userDetails()
     if (!details) return
 
-    user.respondSuccess({username: details.username, email: details.email})
+    user.respondSuccess({username: details.username, email: details.email, isAdmin: details.is_admin})
 }
 
 async function getDietAll(user){
