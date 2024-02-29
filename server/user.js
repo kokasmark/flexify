@@ -33,10 +33,10 @@ class User{
     async getAdmin(){
         if (!await this.loggedIn) return false
         let result = await this.db.query('SELECT is_admin FROM user WHERE id = ?', [this.id], true)
-
         return !!result.is_admin
     }
     async isAdmin(){
+        await this.admin
         if (await this.admin){
             await this.db.initStructure()
             return true
@@ -329,7 +329,30 @@ class User{
     async getTables(){
         if (!await this.isAdmin()) return false
 
-        return Object.keys(this.db.structure)
+        return this.db.tables
+    }
+
+    async getTableData(){
+        const post = this.validateFields(["table", "page"])
+        if (!post) return false
+        if (!await this.isAdmin()) return false
+        if (!this.db.tables.includes(post.table)) return false
+
+        let sql = `SELECT * FROM ${post.table} LIMIT 10 OFFSET ${parseInt(post.page) * 10}`
+        let result = await this.db.query(sql)
+        if (result.length == 0) return {headers: [this.db.structure[post.table]], body:[]}
+
+        // const rowNames = this.db.structure[post.table];
+        const rowNames = Object.keys(result[0]);
+        let toReturn = {headers: rowNames, body: []}
+        for(let idx = 0; idx < rowNames.length; idx++){
+            toReturn.body.push([])
+            Object.values(result).forEach( row => {
+                toReturn.body[idx].push(row[rowNames[idx]])
+            })
+        }
+
+        return toReturn
     }
 
 
