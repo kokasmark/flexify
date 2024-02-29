@@ -1375,19 +1375,52 @@ iframe
 }
 .admin .table{
   position: absolute;
-  width: 80%;
+  width: 60%;
   height: 70%;
   top: 25%;
-  left: 10%;
+  right: 10%;
   border: 1px solid var(--contrast);
   overflow: hidden;
 }
 .admin .table-btns{
   position: absolute;
-  width: 80%;
+  width: 60%;
   top: 21%;
-  left: 10%;
+  right: 10%;
   display: flex;
+}
+.admin .controls{
+  width: 20%;
+  height: 70%;
+  position: absolute;
+  left: 5%;
+  top: 25%;
+  border-radius: 10px;
+  color: white;
+  text-align: center;
+}
+.admin .controls .btns{
+  margin-top: 10px;
+  border: 1px solid var(--contrast);
+  border-radius: 10px;
+}
+.admin .controls .updates{
+  border: 1px solid var(--contrast);
+  color: white;
+  text-align: center;
+  height: 50%;
+  border-radius: 10px;
+}
+.admin .controls .btn{
+  border-radius: 10px;
+  width: 80%;
+  margin-top: 10px;
+  padding: 10px;
+  color: white;
+  text-align: center;
+}
+.admin .controls .updates::-webkit-scrollbar-thumb{
+  background-color: white !important;
 }
 .admin .table-btns .btn.selected{
   background-color: var(--contrast) !important;
@@ -1420,6 +1453,15 @@ margin-top: 10px;
 }
 .admin .table .body .row input:disabled{
   background-color: var(--darker-contrast);
+}
+.admin .row .delete-btn{
+  position: absolute;
+  background-color: transparent;
+  color: red;
+  width: 40px;
+  height: 40px;
+  font-size: 12px;
+  right: 10px;
 }
 @keyframes tip-icon-idle {
   100%{
