@@ -1463,6 +1463,26 @@ margin-top: 10px;
   font-size: 12px;
   right: 10px;
 }
+
+.rbc-event-content {
+  position: relative;
+  font-size: 15px !important;
+  font-weight:500;
+}
+.finished-event{
+  background-color: #22cc33 !important;
+}
+.finished-event::after {
+  content: url('./assets/icon-progress.png'); /* Use the path to your icon */
+  transform: scale(0.1);
+  width: 10%; /* Adjust size as needed */
+  height: 40px; /* Adjust size as needed */
+  padding: 5px; /* Adjust spacing as needed */
+  right: 60%;
+  top: 15%;
+  filter: invert(1);
+  position: absolute;
+}
 @keyframes tip-icon-idle {
   100%{
     transform: rotateY(720deg);

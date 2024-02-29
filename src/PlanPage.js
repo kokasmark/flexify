@@ -21,7 +21,17 @@ import { IoIosCloseCircleOutline } from "react-icons/io"
 import {CallApi} from "./api";
 moment.locale('en-GB');
 
+const eventStyleGetter = (event, start, end, isSelected) => {
+  let classNames = 'rbc-event-content';
 
+  if (event.isFinished) {
+    classNames += ' finished-event'; // Add a class for finished events
+  }
+
+  return {
+    className: classNames
+  };
+};
 
 class PlanPage extends Component {
 
@@ -40,7 +50,6 @@ class PlanPage extends Component {
   }
   async getSavedTemplates() {
     var r = await CallApi("templates", {token: localStorage.getItem('loginToken')})
-    console.log(r)
     if (r.success) {
       this.setState({ savedTemplates: r.templates })
     } else {
@@ -86,7 +95,8 @@ class PlanPage extends Component {
             "title": d.name,
             "start": start,
             "end": end,
-            data: JSON.stringify(d)
+            data: JSON.stringify(d),
+            isFinished: d.isFinished == 1
         });
         return { events: updatedEvents };
     });
@@ -275,6 +285,7 @@ class PlanPage extends Component {
           onRangeChange={range => {
             this.setState({currentRange: range})
         }}
+        eventPropGetter={eventStyleGetter}
         />
 
         {this.state.addWorkoutPopUp && <div className='calendar-add-popup'>
