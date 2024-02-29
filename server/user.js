@@ -343,13 +343,12 @@ class User{
         if (result.length == 0) return {headers: this.db.structure[post.table], body:[]}
 
         const rowNames = Object.keys(result[0]);
-        let toReturn = {headers: rowNames, body: []}
-        for(let idx = 0; idx < rowNames.length; idx++){
-            toReturn.body.push([])
-            Object.values(result).forEach( row => {
-                toReturn.body[idx].push(row[rowNames[idx]])
-            })
-        }
+        let toReturn = {headers: rowNames, body: Array(rowNames.length).fill([])}
+
+        let idx = 0
+        result.forEach( row => {
+            toReturn.body[idx++] = Object.values(row)
+        })
 
         return toReturn
     }

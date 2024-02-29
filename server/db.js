@@ -42,7 +42,6 @@ class DB{
             this.structure[table.TABLE_NAME] = table.structure.split(',')
         })
         this.didInitStructure = true
-        this.log(-1, this.structure)
 
         return true
     }
