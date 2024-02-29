@@ -48,7 +48,8 @@ class User{
 
     validateFields(fieldList){
         const regex = {
-            token: /^([a-f0-9]){64}$/,
+            token: /^.*$/,
+            // token: /^([a-f0-9]){64}$/,
             email: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
             //TODO: uncomment when done testing 
             //password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
@@ -236,7 +237,7 @@ class User{
     }
 
     async saveWorkout(){
-        const post = this.validateFields(["name", "json", "time"])
+        const post = this.validateFields(["name", "json", "time", "date"])
         if (!post) return false
         if (!await this.isLoggedIn()) return false
 
@@ -244,11 +245,11 @@ class User{
         let result = await this.db.query(sql, [this.id, post.name, post.json, post.time])
 
         let workoutId = result.insertId
-        sql = "SELECT id FROM calendar WHERE user_id=? AND date=CURDATE()"
-        result = await this.db.query(sql, [this.id])
+        sql = "SELECT id FROM calendar WHERE user_id=? AND date=?"
+        result = await this.db.query(sql, [this.id, post.date])
         if (!result.length){
-            sql ="INSERT INTO calendar (user_id, date, protein, carbs, fat) VALUES (?, CURDATE(), 0, 0, 0)"
-            result = await this.db.query(sql, [this.id])
+            sql ="INSERT INTO calendar (user_id, date, protein, carbs, fat) VALUES (?, ?, 0, 0, 0)"
+            result = await this.db.query(sql, [this.id, post.date])
         }
         const calendarId = result.length ? result[0].id : result.insertId
 
@@ -276,12 +277,13 @@ class User{
     }
 
     async validateResetToken(){
-        let post = this.validateFields(["reset_token"])
+        this.log(-1, this.req.body)
+        let post = this.validateFields(["token"])
         if (!post) return false
 
         await this.deleteExpiredResetTokens()
         let sql = 'SELECT user_id FROM login_reset WHERE token = ?;'
-        let result = await this.db.query(sql, [post.reset_token])
+        let result = await this.db.query(sql, [post.token])
 
         if (!result.length) return false
         return true
@@ -307,17 +309,17 @@ class User{
     }
 
     async resetPassword(){
-        const post = this.validateFields(["password", "reset_token"])
+        const post = this.validateFields(["password", "token"])
         if (!post) return false
 
         let sql = 'SELECT user_id FROM login_reset WHERE token = ?'
-        let result = await this.db.query(sql, [post.reset_token])
+        let result = await this.db.query(sql, [post.token])
         if (result.length == 0) return false
 
         const id = result[0].user_id
         const hash = await this.generateHash(post.password)
         this.db.query('UPDATE user SET password=? WHERE id=?', [hash, id])
-        this.db.query('DELETE FROM login_reset WHERE token=?', [post.reset_token])
+        this.db.query('DELETE FROM login_reset WHERE token=?', [post.token])
 
         return true
     }
