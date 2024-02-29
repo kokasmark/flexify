@@ -31,7 +31,7 @@ class SignInPage extends Component {
     cardIndex: 1,
   };
   async validate(){
-    var r = await CallApi("login", {username: document.getElementById("username").value, password: document.getElementById("password").value})
+    var r = await CallApi("login", {user: document.getElementById("username").value, password: document.getElementById("password").value})
     if (r.success) {
       localStorage.setItem("loginToken", r.token);
       console.log("Validating");

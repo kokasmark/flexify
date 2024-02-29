@@ -659,14 +659,18 @@ iframe
   color: white;
   position: relative;
   animation: tips-idle 1s infinite ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.home-tip .tip-icon{
+.home-tip .icon-container{
+  width: 50px;
+  height: 50px;
   font-size: 50px;
-  margin-bottom: 20%;
+  margin-bottom: 10%;
   margin-right: 10px;
-  animation: beat 1s ease-in-out infinite;
 }
-.home-tip img{
+.home-tip .icon-container img{
   filter: invert(86%) sepia(25%) saturate(6802%) hue-rotate(343deg) brightness(106%) contrast(97%) drop-shadow(5px 5px 2px rgb(0 0 0 / 0.4)) !important;
 }
 .footer {
@@ -1365,6 +1369,60 @@ iframe
   height: 2px !important;
   background-color: var(--contrast) !important;
 }
+.admin{
+  height: 100vh;
+  width: 100vw;
+}
+.admin .table{
+  position: absolute;
+  width: 80%;
+  height: 70%;
+  top: 25%;
+  left: 10%;
+  border: 1px solid var(--contrast);
+}
+.admin .table-btns{
+  position: absolute;
+  width: 80%;
+  top: 21%;
+  left: 10%;
+  display: flex;
+}
+.admin .table-btns .btn.selected{
+  background-color: var(--contrast) !important;
+}
+.admin .table-btns .btn{
+  background-color: var(--contrast-A);
+  border-radius: 5px 5px 0px 0px;
+  color: white;
+  margin-right: 10px;
+  transition: 0.5s;
+}
+.admin .table .header{
+  background-color: var(--contrast);
+  display: flex;
+  color: white;
+}
+@keyframes tip-icon-idle {
+  100%{
+    transform: rotateY(720deg);
+  }
+}
+@keyframes tip-icon-delay {
+  0%{
+    transform: none !important;
+    background-color: red !important;
+  }
+  100%{
+    transform: none;
+    background-color: red;
+  }
+}
+@keyframes muscle-idle {
+  50%{
+    filter: brightness(1.2);
+  }
+}
 @keyframes calendar-bg-load {
   0%{
     box-shadow: none;
@@ -1594,7 +1652,7 @@ iframe
     transform: scale(1);
   }
   50% {
-    transform: scale(0.8);
+    transform: scale(0.9);
   }
   100%{
     transform: scale(1);

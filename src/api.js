@@ -21,7 +21,7 @@ export function login(args){
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      username: args.username,
+      username: args.user,
       password: args.password,
       location: "web",
     });
@@ -174,6 +174,27 @@ export function templates_save(args){
 
   return requestOptions;
 }
+export function admin_tables(args){
+  return justTokenArgs(args);
+}
+export function admin_data(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    table: args.table,
+    page: args.page
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
 export async function CallApi(route, args) {
     const apiFunctions = 
     {   login,
@@ -186,7 +207,10 @@ export async function CallApi(route, args) {
         templates_save,
         workouts_dates,
         workouts_data,
-        workouts_save
+        workouts_save,
+
+        admin_tables,
+        admin_data
     }; 
     const apiFunc = apiFunctions[route.replace("/","_")]; // Get the corresponding API function based on the route
     if (!apiFunc) {
