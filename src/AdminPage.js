@@ -61,9 +61,23 @@ class AdminPage extends Component {
         </div>
         <div className='table'>
             <div className='header'>
-            {this.state.data.headers.map((header, index) => (
-            <h3 style={{width: `calc(100% / ${this.state.data.headers.length})`}}>{header}</h3>
-          ))}
+              {this.state.data.headers.map((header, index) => (
+              <h3 style={{width: `calc(100% / ${this.state.data.headers.length} - 40px)`, marginLeft: 20, marginRight: 20}}>{header}</h3>
+            ))}
+            </div>
+
+            <div className='body'>
+            {this.state.data.body.map((row, rIndex) => (
+               <div className='row' key={Math.random()} style={{animation: `from-bottom ${rIndex/5}s ease-out`}}>
+                  {row.map((data, index) => (
+                    <input id={`${this.state.selectedTable}-${rIndex}-${index}`} key={`${this.state.selectedTable}-${rIndex}-${index}`} 
+                    style={{width: `calc(100% / ${this.state.data.headers.length} - 40px)`, marginLeft: 20, marginRight: 20}} 
+                    defaultValue={data}
+                    disabled={this.state.data.headers[index] == "id"}
+                    ></input>
+                ))}
+               </div>
+            ))}
             </div>
         </div>
         <NavBarWrapper/>
