@@ -1482,7 +1482,7 @@ margin-top: 10px;
   width: 40px; /* Adjust size as needed */
   height: 40px; /* Adjust size as needed */
   padding: 5px; /* Adjust spacing as needed */
-  right: 50%;
+  left: 20%;
   top: 30px;
   filter: invert(1);
   position: absolute;
