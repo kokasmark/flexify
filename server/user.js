@@ -343,7 +343,7 @@ class User{
         if (result.length == 0) return {headers: this.db.structure[post.table], body:[]}
 
         const rowNames = Object.keys(result[0]);
-        let toReturn = {headers: rowNames, body: Array(rowNames.length).fill([])}
+        let toReturn = {headers: rowNames, body: Array(result.length).fill([])}
 
         let idx = 0
         result.forEach( row => {
