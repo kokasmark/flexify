@@ -37,12 +37,12 @@ class DB{
         
         const sql = `SELECT group_concat(COLUMN_NAME) AS structure, TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'flexify' GROUP BY TABLE_NAME`
         let result = await this.query(sql)
-        
         result.forEach(table => {
             this.tables.push(table.TABLE_NAME)
             this.structure[table.TABLE_NAME] = table.structure.split(',')
         })
         this.didInitStructure = true
+        this.log(-1, this.structure)
 
         return true
     }

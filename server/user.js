@@ -340,7 +340,7 @@ class User{
 
         let sql = `SELECT * FROM ${post.table} LIMIT 10 OFFSET ${parseInt(post.page) * 10}`
         let result = await this.db.query(sql)
-        if (result.length == 0) return {headers: [this.db.structure[post.table]], body:[]}
+        if (result.length == 0) return {headers: this.db.structure[post.table], body:[]}
 
         const rowNames = Object.keys(result[0]);
         let toReturn = {headers: rowNames, body: []}
