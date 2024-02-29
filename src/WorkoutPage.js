@@ -13,6 +13,7 @@ import swal from 'sweetalert';
 import { useNavigate } from 'react-router-dom';
 import MusclesView from './MusclesView';
 import GetString from './language';
+import { CallApi } from './api';
 
 const WorkoutPageWrapper = () => {
   const navigate = useNavigate();
@@ -22,49 +23,39 @@ const WorkoutPageWrapper = () => {
 
 class WorkoutPage extends Component {
   state = {
-    workout: localStorage.getItem("started-workout") ? JSON.parse(localStorage.getItem("started-workout")) : null,
+    workout: this.parseJson(localStorage.getItem("started-workout")) ? this.parseJson(localStorage.getItem("started-workout")) : null,
     currentExercise: 0,
     currentSet: 0,
     seconds: 0,
     breakSeconds: 0,
     durationSeconds: 0,
     paused: false,
-    muscles: []
+    muscles: [],
+    templates: []
+  }
+  async getExerciseTemplates() {
+    var r = await CallApi("exercises", { token: localStorage.getItem("loginToken"), location: 'web' })
+    this.setState({ templates: Object.values(r.json) });
   }
   getMusclesTrained(exercise) {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ id: this.state.workout.data[exercise].exercise_template_id });
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
-    fetch(`http://${host}:3001/api/exercise/muscles`, requestOptions)
-      .then(response => response.text())
-      .then((response) => {
-        var r = JSON.parse(response);
-        if (r.success) {
-          this.setState({ muscles: JSON.parse(r.muscles) });
-        } else {
-
-        }
-      })
-      .catch(error => console.log('error', error));
+    var id = this.state.workout.json[exercise].name
+    this.state.templates.forEach(exercise => {
+      if(exercise.name == this.state.workout.json[exercise].name){
+        this.setState({muscles: exercise.muscles})
+      }
+    });
+    
   }
   back() {
     const { navigate } = this.props;
     navigate('/');
   }
   next() {
-    if (this.state.currentSet + 1 < JSON.parse(this.state.workout.data[this.state.currentExercise].set_data).length) {
+    if (this.state.currentSet + 1 < this.parseJson(this.state.workout.json[this.state.currentExercise].set_data).length) {
       this.setState({ currentSet: this.state.currentSet + 1,durationSeconds: this.state.seconds })
     }
     else {
-      if (this.state.currentExercise + 1 < this.state.workout.data.length) {
+      if (this.state.currentExercise + 1 < this.state.workout.json.length) {
         this.setState({ currentSet: 0, currentExercise: this.state.currentExercise + 1})
         this.getMusclesTrained(this.state.currentExercise + 1)
       } else {
@@ -83,9 +74,18 @@ class WorkoutPage extends Component {
     }
     this.timer()
   }
+  parseJson(input){
+    try{
+      return JSON.parse(input)
+    }
+    catch{
+      return input
+    }
+  }
   componentDidMount() {
+    console.log(this.parseJson(this.state.workout.json))
     this.timer()
-    this.getMusclesTrained(0)
+    this.getExerciseTemplates()
   }
   startBreak() {
     this.setState({ paused: true })
@@ -97,6 +97,9 @@ class WorkoutPage extends Component {
     }
     if (this.state.workout != prevState.workout) {
       this.getMusclesTrained()
+    }
+    if(this.state.templates != prevProps.state.templates){
+      this.getMusclesTrained(0)
     }
   }
   async break() {
@@ -128,7 +131,7 @@ class WorkoutPage extends Component {
                 <h1 className={'workout-timer'}>{this.state.paused == false ? new Date((this.state.seconds) * 1000).toISOString().slice(11, 19) : new Date(this.state.breakSeconds * 1000).toISOString().slice(14, 19)}</h1>
                 {this.state.paused == false &&
                   <div>
-                    {JSON.parse(this.state.workout.data[this.state.currentExercise].set_data)[this.state.currentSet].reps == 0 && <h3 className={'workout-timer duration-timer'}>{new Date((this.state.seconds-(this.state.durationSeconds)) * 1000).toISOString().slice(11, 19)}</h3>}
+                    {this.parseJson(this.state.workout.json)[this.state.currentExercise].set_data[this.state.currentSet].reps == 0 && <h3 className={'workout-timer duration-timer'}>{new Date((this.state.seconds-(this.state.durationSeconds)) * 1000).toISOString().slice(11, 19)}</h3>}
                   </div> 
                 }
               </div>
@@ -136,16 +139,16 @@ class WorkoutPage extends Component {
             </div>
 
             <div className={'workout-right-panel' + (this.state.paused ? ' workout-paused' : '')}>
-              <h4 className='current-set'>{this.state.currentSet + 1} / {JSON.parse(this.state.workout.data[this.state.currentExercise].set_data).length} Set</h4>
-              <h3>{this.state.workout.data[this.state.currentExercise].comment}</h3>
+              <h4 className='current-set'>{this.state.currentSet + 1} / {this.parseJson(this.state.workout.json)[this.state.currentExercise].set_data.length} Set</h4>
+              <h3>{this.state.workout.json[this.state.currentExercise].comment}</h3>
               <div className='workout-settings'>
 
-                {JSON.parse(this.state.workout.data[this.state.currentExercise].set_data)[this.state.currentSet].reps > 0 ?
+                {this.parseJson(this.state.workout.json)[this.state.currentExercise].set_data[this.state.currentSet].reps > 0 ?
                   <span>
-                    <p><Icon_weight /> <b>{JSON.parse(this.state.workout.data[this.state.currentExercise].set_data)[this.state.currentSet].weight}</b> kg</p>
-                    <p><Icon_reps /> <b>{JSON.parse(this.state.workout.data[this.state.currentExercise].set_data)[this.state.currentSet].reps}</b></p></span>
+                    <p><Icon_weight /> <b>{this.parseJson(this.state.workout.json)[this.state.currentExercise].set_data[this.state.currentSet].weight}</b> kg</p>
+                    <p><Icon_reps /> <b>{this.parseJson(this.state.workout.json)[this.state.currentExercise].set_data[this.state.currentSet].reps}</b></p></span>
                   :
-                  <p><Icon_time /> <b>{JSON.parse(this.state.workout.data[this.state.currentExercise].set_data)[this.state.currentSet].time} s</b></p>}
+                  <p><Icon_time /> <b>{this.parseJson(this.state.workout.json)[this.state.currentExercise].set_data[this.state.currentSet].time} s</b></p>}
               </div>
               <button className={'workout-control-btn ' + (this.state.paused ? '' : 'interactable')} disabled={this.state.paused} onClick={() => this.next()}>Next</button>
               <button className={'workout-control-btn ' + (this.state.paused ? '' : 'interactable')} disabled={this.state.paused} onClick={() => this.startBreak()}>Break(30s)</button>

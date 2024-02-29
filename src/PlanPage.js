@@ -85,7 +85,8 @@ class PlanPage extends Component {
         updatedEvents.push({
             "title": d.name,
             "start": start,
-            "end": end
+            "end": end,
+            data: JSON.stringify(d)
         });
         return { events: updatedEvents };
     });
@@ -113,7 +114,7 @@ class PlanPage extends Component {
     });
   }
   async saveWorkout(data, time){
-    var r = await CallApi("workouts/save", {token: localStorage.getItem('loginToken'), name: data.name, time: JSON.stringify(time), json: JSON.stringify(data.json), duration: "00:00:00"})
+    var r = await CallApi("workouts/save", {token: localStorage.getItem('loginToken'), name: data.name, time: JSON.stringify(time), json: JSON.stringify(data.json)})
     if (r.success) {
       swal("Success!", `${data.name} was saved!`, "success")
     } else {
@@ -243,6 +244,7 @@ class PlanPage extends Component {
     });
   }
   handleEventClick(e) {
+    console.log(e)
     swal({
       title: `Wanna start ${e.title}?`,
       buttons: ["Cancel", "Start"],
