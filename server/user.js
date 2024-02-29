@@ -342,7 +342,6 @@ class User{
         let result = await this.db.query(sql)
         if (result.length == 0) return {headers: [this.db.structure[post.table]], body:[]}
 
-        // const rowNames = this.db.structure[post.table];
         const rowNames = Object.keys(result[0]);
         let toReturn = {headers: rowNames, body: []}
         for(let idx = 0; idx < rowNames.length; idx++){
@@ -353,6 +352,21 @@ class User{
         }
 
         return toReturn
+    }
+
+    async updateTableData(){
+        const post = this.validateFields(["table", "id", "values"])
+        if (!post) return false
+        if (!await this.isAdmin()) return false
+        if (!this.db.tables.includes(post.table)) return false
+
+        let sql = `UPDATE ${post.table} SET `
+        Object.entries(post.values).forEach(([key, value]) => sql += `${key}='${value}',`)
+        sql = sql.slice(0, -1)
+        sql += ` WHERE id = ?`
+        this.db.query(sql, [post.id])
+
+        return true
     }
 
 

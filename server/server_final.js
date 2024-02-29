@@ -55,6 +55,7 @@ app.post('/api/reset/validate', (req, res) => postResetValidate(new User(req, re
 app.post('/api/reset', (req, res) => postResetPassword(new User(req, res, db, log)));
 
 app.post('/api/admin/data', (req, res) => postAdminData(new User(req, res, db, log)));
+app.post('/api/admin/update', (req, res) => postAdminUpdate(new User(req, res, db, log)));
 
 // Leave at the end, otherwise captures all GET requests
 app.get("*", (_, res) => {res.sendFile('index.html', { root })})
@@ -244,6 +245,15 @@ async function postAdminData(user){
     if(result === false) return user.respondMissing()
 
     user.respondSuccess({json: result})
+}
+
+async function postAdminUpdate(user){
+    log(2, '/api/admin/update')
+
+    let result = await user.updateTableData()
+    if(result === false) return user.respondMissing()
+
+    user.respondSuccess()
 }
 
 async function postResetGenerate(user){
