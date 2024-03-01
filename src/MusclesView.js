@@ -36,7 +36,7 @@ export default class MusclesView extends Component {
         glutes: [174, 175, 172, 173, 176, 177],
         calves: [206, 207, 208, 209],
         hamstrings: [198, 202, 200, 204, 192, 193, 201, 205, 203, 199],
-        toes: [121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,214,215,216,217,218,219,138]
+        toes: [121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,214,215,216,217,218,219]
       },
 
       women: {
@@ -116,7 +116,7 @@ export default class MusclesView extends Component {
           var nextSibling = muscle.nextSibling;
           parent.removeChild(muscle); // Remove the element from the DOM
           parent.insertBefore(muscle, nextSibling); // Re-insert the element to trigger reflow
-          muscle.style.animation = `muscle-load ${(this.state.front ? i / 100 : (i) / 100)+(ii/ Object.values(group).length)*1.5}s linear`; // Apply the animation again
+          muscle.style.animation = `muscle-load ${(ii/6) + (m[i]/this.state.muscleData.length)-0.5}s linear`; // Apply the animation again
         } catch {
 
         }
