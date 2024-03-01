@@ -1491,8 +1491,23 @@ margin-top: 10px;
   height: 0;
 }
 @keyframes tip-icon-idle {
+  0%{
+    transform: translateY(0px);
+  }
+  10%{
+    transform: translateY(-10px);
+  }
+  20%{
+    transform: translateY(0px);
+  }
+  30%{
+    transform: translateY(-10px);
+  }
+  40%{
+    transform: translateY(0px);
+  }
   100%{
-    transform: rotateY(720deg);
+    transform: translateY(0px);
   }
 }
 @keyframes tip-icon-delay {
