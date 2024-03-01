@@ -62,6 +62,7 @@ export default class MusclesView extends Component {
     muscleData: [],
     frontLastKey: 138,
     animation: 'fade-in',
+    tipAnimation: '',
     tips: [{ text: "You have no finished workouts in this time period!", level: 0 }],
     tip_icons: [<RiMoreFill className='tip-icon' style={{ color: "var(--heat-yellow)" }} />, <RiCheckboxCircleLine className='tip-icon' style={{ color: "var(--heat-orange)" }} />, <RiErrorWarningLine className='tip-icon' style={{ color: "var(--heat-red)" }} />]
   }
@@ -91,37 +92,37 @@ export default class MusclesView extends Component {
   }
   muscleLoadAnimation() {
 
-    // for (var i = 0; i < this.state.muscleData.length; i++) {
-    //   var muscle = document.getElementById(i);
-    //   try {
-    //     var parent = muscle.parentNode;
-    //     var nextSibling = muscle.nextSibling;
-    //     parent.removeChild(muscle); // Remove the element from the DOM
-    //     parent.insertBefore(muscle, nextSibling); // Re-insert the element to trigger reflow
-    //     muscle.style.animation = `muscle-load ${(this.state.front ? i / 100 : (i - (this.state.men ? 138 : 87)) / 100) + (Math.random() * 1.3)}s linear`; // Apply the animation again
-    //   } catch {
+    for (var i = 0; i < this.state.muscleData.length; i++) {
+      var muscle = document.getElementById(i);
+      try {
+        var parent = muscle.parentNode;
+        var nextSibling = muscle.nextSibling;
+        parent.removeChild(muscle); // Remove the element from the DOM
+        parent.insertBefore(muscle, nextSibling); // Re-insert the element to trigger reflow
+        muscle.style.animation = `muscle-load ${(this.state.front ? i / 100 : (i - (this.state.men ? 138 : 87)) / 100)}s linear`; // Apply the animation again
+      } catch {
 
-    //   }
-
-    // }
-
-    var group = this.getGroup()
-    var ii = 0
-    Object.values(group).forEach(m => {
-      ii++
-      for(var i = 0; i < m.length; i++){
-        var muscle = document.getElementById(m[i]);
-        try {
-          var parent = muscle.parentNode;
-          var nextSibling = muscle.nextSibling;
-          parent.removeChild(muscle); // Remove the element from the DOM
-          parent.insertBefore(muscle, nextSibling); // Re-insert the element to trigger reflow
-          muscle.style.animation = `muscle-load ${(ii/6) + (m[i]/this.state.muscleData.length)-0.5}s linear`; // Apply the animation again
-        } catch {
-
-        }
       }
-    });
+
+    }
+
+    // var group = this.getGroup()
+    // var ii = 0
+    // Object.values(group).forEach(m => {
+    //   ii++
+    //   for(var i = 0; i < m.length; i++){
+    //     var muscle = document.getElementById(m[i]);
+    //     try {
+    //       var parent = muscle.parentNode;
+    //       var nextSibling = muscle.nextSibling;
+    //       parent.removeChild(muscle); // Remove the element from the DOM
+    //       parent.insertBefore(muscle, nextSibling); // Re-insert the element to trigger reflow
+    //       muscle.style.animation = `muscle-load ${(ii/6) + (m[i]/this.state.muscleData.length)-0.5}s linear`; // Apply the animation again
+    //     } catch {
+
+    //     }
+    //   }
+    // });
   
   }
   clearColor() {
@@ -199,8 +200,9 @@ export default class MusclesView extends Component {
     return data;
   }
   async rotate() {
-    await new Promise(r => setTimeout(r, 200))
-    this.setState({ front: !this.state.front });
+    this.setState({tipAnimation: '-leave', animation: "fade-out"})
+    await new Promise(r => setTimeout(r, 1000))
+    this.setState({ front: !this.state.front,tipAnimation: '',animation: "fade-in" });
   }
   Draw() {
     var muscles = this.props.muscles;
@@ -317,13 +319,13 @@ export default class MusclesView extends Component {
 
           {this.props.autoRotate == null && <Icon_rotate className='interactable' style={{ transform: 'scale(2)', position: 'relative', top: -175, left: 500, fill: '#fff !important' }} onClick={() => this.rotate()} />}
         </div>
-        {this.props.showTips != null && <div className={'tips-container ' + this.state.animation} style={{ position: 'relative', top: -800, left: 650 }}>
+        {this.props.showTips != null && <div className={'tips-container'} style={{ position: 'relative', top: -800, left: 650 }}>
         {this.state.tips.map((tip, index) => (
     <div 
         key={Math.random()} 
         style={{ 
             left: index % 2 === 0 ? -550 : 200, 
-            animation: `tip-load ${1 + index / 5}s ease-out`, 
+            animation: `tip-load${this.state.tipAnimation} ${1 + (this.state.tipAnimation == "-leave" ? ((1/(index+1))*this.state.tips.length):(index)) / 5}s ${this.state.tipAnimation == "-leave" ? "ease-in":"ease-out"}`, 
             marginTop: 50 - (this.state.tips.length * 10)
         }} 
         className='interactable home-tip' 
