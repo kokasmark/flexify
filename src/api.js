@@ -232,6 +232,24 @@ export function admin_delete(args){
 
   return requestOptions;
 }
+export function admin_insert(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    table: args.table,
+    values: args.values
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
 export async function CallApi(route, args) {
     const apiFunctions = 
     {   login,
@@ -249,7 +267,8 @@ export async function CallApi(route, args) {
         admin_tables,
         admin_data,
         admin_update,
-        admin_delete
+        admin_delete,
+        admin_insert
     }; 
     const apiFunc = apiFunctions[route.replace("/","_")]; // Get the corresponding API function based on the route
     if (!apiFunc) {

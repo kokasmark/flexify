@@ -1368,49 +1368,50 @@ iframe
   height: 2px !important;
   background-color: var(--contrast) !important;
 }
-.admin{
-  height: 100vh;
+.admin-root{
   width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 100px;
+  margin-top: 10%;
+}
+.admin{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .admin .table{
-  position: absolute;
-  width: 60%;
+  width: 80%;
   height: 70%;
-  top: 25%;
-  right: 10%;
   border: 1px solid var(--contrast);
   overflow: hidden;
 }
 .admin .table-btns{
-  position: absolute;
   width: 60%;
-  top: 21%;
-  right: 10%;
   display: flex;
 }
-.admin .controls{
+.controls{
   width: 20%;
   height: 70%;
-  position: absolute;
-  left: 5%;
-  top: 25%;
   border-radius: 10px;
   color: white;
   text-align: center;
 }
-.admin .controls .btns{
+.controls .btns{
   margin-top: 10px;
   border: 1px solid var(--contrast);
   border-radius: 10px;
 }
-.admin .controls .updates{
+.controls .updates{
   border: 1px solid var(--contrast);
   color: white;
   text-align: center;
   height: 50%;
   border-radius: 10px;
 }
-.admin .controls .btn{
+.controls .btn{
   border-radius: 10px;
   width: 80%;
   margin-top: 10px;
@@ -1418,7 +1419,7 @@ iframe
   color: white;
   text-align: center;
 }
-.admin .controls .updates::-webkit-scrollbar-thumb{
+.controls .updates::-webkit-scrollbar-thumb{
   background-color: white !important;
 }
 .admin .table-btns .btn.selected{
@@ -1439,30 +1440,41 @@ iframe
 .admin .table .body{
 margin-top: 10px;
 }
-.admin .table .body .row{
+.admin .table .row{
   background-color: var(--contrast);
   margin-bottom: 10px;
   padding: 5px;
   height: calc(100%/10 - 10px);
 }
-.admin .table .body .row input{
+
+.admin .table .body input{
   background-color: var(--contrast-A);
   color: white;
   height: 90%;
 }
-.admin .table .body .row input:disabled{
+.admin .table .row input:disabled{
   background-color: var(--darker-contrast);
+}
+.admin .row.add{
+  height: 50px;
 }
 .admin .row .delete-btn{
   position: absolute;
   background-color: transparent;
-  color: red;
+  color: white;
   width: 40px;
   height: 40px;
-  font-size: 12px;
-  right: 10px;
+  fill: white;
 }
-
+.admin .page-btns{
+  color: white;
+  font-size: 50px;
+  display: flex;
+}
+.admin .page-btns p{
+  margin-top: -5px;
+  font-size: 40px;
+}
 .rbc-event-content {
   position: relative;
   font-size: 15px !important;
