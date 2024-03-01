@@ -18,7 +18,7 @@ app.listen(3001, () => {log(1, `Server listening on port ${3001}`);});
 dotenv.config();
 const DEBUG_LEVEL = process.env.DEBUG_LEVEL
 const db = new DB(log)
-const exercises = new Exercises(db)
+let exercises = new Exercises(db)
 
 function log(level, message){
     if (process.env.RUN_TESTS == 1 && process.env.DEBUG_WHILE_TEST == 0) return
