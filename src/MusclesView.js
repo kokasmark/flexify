@@ -17,23 +17,26 @@ export default class MusclesView extends Component {
     men: true,
     groups: {
       men: {
+        head: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,138,139,140,141,142,143,144,145],
+        neck: [18, 19, 20],
         traps: [146, 147, 148, 149, 21, 22, 23, 24],
         shoulder: [26, 27, 29, 30, 150, 151],
+        midBack: [152, 153],
+        lats: [156, 157],
         chest: [25, 28, 31, 32],
         biceps: [33, 34],
-        triceps: [154, 155, 159, 160, 155, 158, 161],
-        lats: [156, 157],
+        triceps: [154, 155, 159, 160, 155, 158, 161,35,36,54,53],
+        forearm: [55, 59, 65, 69, 63, 56, 60, 67, 64, 70, 164, 162, 167, 168, 163, 169, 166, 165,],
+        hand: [81,83,89,86,95,97,99,100,90,80,84,85,102,101,98,96,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197],
         abs: [45, 46, 51, 52, 57, 58, 66, 68],
         obliques: [37, 38, 39, 40, 41, 42, 44, 43, 44, 47, 49, 48, 50, 61, 62, 170, 171],
-        quadriceps: [71, 73, 91, 104, 72, 74, 92, 103, 75, 77],
-        calves: [206, 207, 208, 209],
-        leg: [105, 113, 117, 107, 115, 119, 106, 114, 118, 108, 116, 120, 212, 210, 211, 213],
-        forearm: [55, 59, 65, 69, 63, 56, 60, 67, 64, 70, 164, 162, 167, 168, 163, 169, 166, 165],
-        glutes: [174, 175, 172, 173, 176, 177],
-        hamstrings: [198, 202, 200, 204, 192, 193, 201, 205, 203, 199],
         adductors: [76, 79, 87, 93, 94, 88, 82, 78],
-        midBack: [152, 153],
-        neck: [18, 19, 20]
+        quadriceps: [71, 73, 91, 104, 72, 74, 92, 103, 75, 77],
+        leg: [105, 113, 117, 107, 115, 119, 106, 114, 118, 108, 116, 120, 212, 210, 211, 213,109,110,111,112],
+        glutes: [174, 175, 172, 173, 176, 177],
+        calves: [206, 207, 208, 209],
+        hamstrings: [198, 202, 200, 204, 192, 193, 201, 205, 203, 199],
+        toes: [121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,214,215,216,217,218,219]
       },
 
       women: {
@@ -59,6 +62,7 @@ export default class MusclesView extends Component {
     muscleData: [],
     frontLastKey: 138,
     animation: 'fade-in',
+    tipAnimation: '',
     tips: [{ text: "You have no finished workouts in this time period!", level: 0 }],
     tip_icons: [<RiMoreFill className='tip-icon' style={{ color: "var(--heat-yellow)" }} />, <RiCheckboxCircleLine className='tip-icon' style={{ color: "var(--heat-orange)" }} />, <RiErrorWarningLine className='tip-icon' style={{ color: "var(--heat-red)" }} />]
   }
@@ -95,12 +99,31 @@ export default class MusclesView extends Component {
         var nextSibling = muscle.nextSibling;
         parent.removeChild(muscle); // Remove the element from the DOM
         parent.insertBefore(muscle, nextSibling); // Re-insert the element to trigger reflow
-        muscle.style.animation = `muscle-load ${(this.state.front ? i / 100 : (i - (this.state.men ? 138 : 87)) / 100) + (Math.random() * 1.3)}s ease-out`; // Apply the animation again
+        muscle.style.animation = `muscle-load ${(this.state.front ? i / 100 : (i - (this.state.men ? 138 : 87)) / 100)}s linear`; // Apply the animation again
       } catch {
 
       }
 
     }
+
+    // var group = this.getGroup()
+    // var ii = 0
+    // Object.values(group).forEach(m => {
+    //   ii++
+    //   for(var i = 0; i < m.length; i++){
+    //     var muscle = document.getElementById(m[i]);
+    //     try {
+    //       var parent = muscle.parentNode;
+    //       var nextSibling = muscle.nextSibling;
+    //       parent.removeChild(muscle); // Remove the element from the DOM
+    //       parent.insertBefore(muscle, nextSibling); // Re-insert the element to trigger reflow
+    //       muscle.style.animation = `muscle-load ${(ii/6) + (m[i]/this.state.muscleData.length)-0.5}s linear`; // Apply the animation again
+    //     } catch {
+
+    //     }
+    //   }
+    // });
+  
   }
   clearColor() {
     const colors = ['var(--heat-blue)', 'var(--heat-yellow)', 'var(--heat-orange)', 'var(--heat-red)'];
@@ -177,8 +200,9 @@ export default class MusclesView extends Component {
     return data;
   }
   async rotate() {
-    await new Promise(r => setTimeout(r, 200))
-    this.setState({ front: !this.state.front });
+    this.setState({tipAnimation: '-leave', animation: "fade-out"})
+    await new Promise(r => setTimeout(r, 950))
+    this.setState({ front: !this.state.front,tipAnimation: '',animation: "fade-in" });
   }
   Draw() {
     var muscles = this.props.muscles;
@@ -295,13 +319,13 @@ export default class MusclesView extends Component {
 
           {this.props.autoRotate == null && <Icon_rotate className='interactable' style={{ transform: 'scale(2)', position: 'relative', top: -175, left: 500, fill: '#fff !important' }} onClick={() => this.rotate()} />}
         </div>
-        {this.props.showTips != null && <div className={'tips-container ' + this.state.animation} style={{ position: 'relative', top: -800, left: 650 }}>
+        {this.props.showTips != null && <div className={'tips-container'} style={{ position: 'relative', top: -800, left: 650 }}>
         {this.state.tips.map((tip, index) => (
     <div 
         key={Math.random()} 
         style={{ 
             left: index % 2 === 0 ? -550 : 200, 
-            animation: `tip-load ${1 + index / 5}s ease-out`, 
+            animation: `tip-load${this.state.tipAnimation} ${1 + (this.state.tipAnimation == "-leave" ? ((1/(index+1))*this.state.tips.length):(index)) / 5}s ${this.state.tipAnimation == "-leave" ? "ease-in":"ease-out"}`, 
             marginTop: 50 - (this.state.tips.length * 10)
         }} 
         className='interactable home-tip' 
