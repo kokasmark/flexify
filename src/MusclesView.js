@@ -201,7 +201,7 @@ export default class MusclesView extends Component {
   }
   async rotate() {
     this.setState({tipAnimation: '-leave', animation: "fade-out"})
-    await new Promise(r => setTimeout(r, 1000))
+    await new Promise(r => setTimeout(r, 950))
     this.setState({ front: !this.state.front,tipAnimation: '',animation: "fade-in" });
   }
   Draw() {
