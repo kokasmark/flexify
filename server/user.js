@@ -369,6 +369,25 @@ class User{
         return true
     }
 
+    async insertTableData(){
+        const post = this.validateFields(["table", "values"])
+        if (!post) return false
+        if (!await this.isAdmin()) return false
+        if (!this.db.tables.includes(post.table)) return false
+
+        this.log(-1, post.values)
+        let sql = `INSERT INTO ${post.table} (`
+        Object.keys(post.values).forEach((key) => sql += `${key},`)
+        sql = sql.slice(0, -1)
+        sql += `) VALUES(`
+        Object.values(post.values).forEach((key) => sql += `'${key}',`)
+        sql = sql.slice(0, -1)
+        sql += `);`
+        this.db.query(sql, [post.id])
+
+        return true
+    }
+
     async deleteTableData(){
         const post = this.validateFields(["table", "id"])
         if (!post) return false

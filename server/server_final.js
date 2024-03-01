@@ -57,6 +57,7 @@ app.post('/api/reset', (req, res) => postResetPassword(new User(req, res, db, lo
 app.post('/api/admin/data', (req, res) => postAdminData(new User(req, res, db, log)));
 app.post('/api/admin/update', (req, res) => postAdminUpdate(new User(req, res, db, log)));
 app.post('/api/admin/delete', (req, res) => postAdminDelete(new User(req, res, db, log)));
+app.post('/api/admin/insert', (req, res) => postAdminInsert(new User(req, res, db, log)));
 
 // Leave at the end, otherwise captures all GET requests
 app.get("*", (_, res) => {res.sendFile('index.html', { root })})
@@ -261,6 +262,15 @@ async function postAdminDelete(user){
     log(2, '/api/admin/delete')
 
     let result = await user.deleteTableData()
+    if(result === false) return user.respondMissing()
+
+    user.respondSuccess()
+}
+
+async function postAdminInsert(user){
+    log(2, '/api/admin/insert')
+
+    let result = await user.insertTableData()
     if(result === false) return user.respondMissing()
 
     user.respondSuccess()
