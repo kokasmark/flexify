@@ -24,13 +24,12 @@
   }
 
   .timePeriod{
-    width: 70% !important;
     margin-left: 'auto' !important;
   }
   .timePeriod p{
     font-size: 10px !important;
     width: fit-content !important;
-    margin: -2px !important;
+    margin: -20px !important;
     margin-left: 20px !important;
   }
   .container{
@@ -44,19 +43,15 @@
   .container::-webkit-scrollbar {
     display: none;
   }
-  .home-chart{
-    margin-top: 0 !important;
-    position: relative;
-    left: auto !important;
-    margin-right: 22vw;
-    top: 650px !important;
-    transform: scale(0.7);
-  }
   .muscle-container-home{
+    width: 50%;
     position: relative;
-    top: -700px !important;
-    right: 270px !important;
+    top: 0px !important;
+    right: 30% !important;
     transform: scale(0.8);
+  }
+  .tips-container{
+    transform: translateX(-200px) scale(0.7);
   }
   .home-calendar{
     position: relative;
@@ -197,10 +192,14 @@
     top: -770px !important;
   }
   .muscle-container-home{
-    transform: scale(0.8) !important;
+    width: 50%;
     position: relative;
-    top: -600px !important;
-    right: 40px !important;
+    top: 0px !important;
+    right: 30% !important;
+    transform: scale(0.8);
+  }
+  .tips-container{
+    transform: translateX(-200px) scale(0.7);
   }
   .home-chart{
     transform: scale(0.8) !important;
@@ -1486,6 +1485,10 @@ margin-top: 10px;
   top: 30px;
   filter: invert(1);
   position: absolute;
+}
+.break {
+  flex-basis: 100%;
+  height: 0;
 }
 @keyframes tip-icon-idle {
   100%{
