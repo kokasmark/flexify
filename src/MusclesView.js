@@ -325,7 +325,7 @@ export default class MusclesView extends Component {
         key={Math.random()} 
         style={{ 
             left: index % 2 === 0 ? -550 : 200, 
-            animation: `tip-load${this.state.tipAnimation} ${1 + (this.state.tipAnimation == "-leave" ? ((1/(index+1))*this.state.tips.length):(index)) / 5}s ${this.state.tipAnimation == "-leave" ? "ease-in":"ease-out"}`, 
+            animation: `tip-load${this.state.tipAnimation} ${1 + (this.state.tipAnimation == "-leave" ? (this.state.tips.length-index):(index)) / 5}s  ${this.state.tipAnimation == "-leave" ? "ease-in":"ease-out"}`, 
             marginTop: 50 - (this.state.tips.length * 10)
         }} 
         className='interactable home-tip' 
