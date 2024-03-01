@@ -366,6 +366,7 @@ class User{
         sql += ` WHERE id = ?`
         this.db.query(sql, [post.id])
 
+        if (post.table === "exercise") return 1
         return true
     }
 
@@ -380,9 +381,14 @@ class User{
         sql = sql.slice(0, -1) + `) VALUES(`
         Object.values(post.values).forEach((key) => sql += `'${key}',`)
         sql = sql.slice(0, -1) + `);`
-        
-        this.db.query(sql, [post.id])
+        try{
+            this.db.query(sql, [post.id])
+        }
+        catch {
+            return 0
+        }
 
+        if (post.table === "exercise") return 1
         return true
     }
 
@@ -395,6 +401,7 @@ class User{
         let sql = `DELETE FROM ${post.table} WHERE id = ?`
         this.db.query(sql, [post.id])
 
+        if (post.table === "exercise") return 1
         return true
     }
 

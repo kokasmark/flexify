@@ -255,6 +255,8 @@ async function postAdminUpdate(user){
     let result = await user.updateTableData()
     if(result === false) return user.respondMissing()
 
+    if(result === 1) exercises = new Exercises(db)
+
     user.respondSuccess()
 }
 
@@ -264,6 +266,8 @@ async function postAdminDelete(user){
     let result = await user.deleteTableData()
     if(result === false) return user.respondMissing()
 
+    if(result === 1) exercises = new Exercises(db)
+
     user.respondSuccess()
 }
 
@@ -272,6 +276,9 @@ async function postAdminInsert(user){
 
     let result = await user.insertTableData()
     if(result === false) return user.respondMissing()
+
+    if(result === 0) return user.respond(500, {reason: "SQL error"})
+    if(result === 1) exercises = new Exercises(db)
 
     user.respondSuccess()
 }
