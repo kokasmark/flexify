@@ -375,14 +375,12 @@ class User{
         if (!await this.isAdmin()) return false
         if (!this.db.tables.includes(post.table)) return false
 
-        this.log(-1, post.values)
         let sql = `INSERT INTO ${post.table} (`
         Object.keys(post.values).forEach((key) => sql += `${key},`)
-        sql = sql.slice(0, -1)
-        sql += `) VALUES(`
+        sql = sql.slice(0, -1) + `) VALUES(`
         Object.values(post.values).forEach((key) => sql += `'${key}',`)
-        sql = sql.slice(0, -1)
-        sql += `);`
+        sql = sql.slice(0, -1) + `);`
+        
         this.db.query(sql, [post.id])
 
         return true
