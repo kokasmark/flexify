@@ -264,7 +264,7 @@ class User{
         if (!post) return false
         if (!await this.isLoggedIn()) return false
 
-        let sql = 'INSERT INTO workout (user_id, name, time, isTemplate, json ) VALUES (?, ?, "{}", 1, ?)'
+        let sql = 'INSERT INTO workout (user_id, name, time, isTemplate, isFinished,json ) VALUES (?, ?, "{}", 1, 0,?)'
         this.db.query(sql, [this.id, post.name, post.json])
 
         return true
