@@ -250,6 +250,40 @@ export function admin_insert(args){
 
   return requestOptions;
 }
+export function diet(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    date: args.date,
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
+export function diet_add(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    json: args.json,
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
 export async function CallApi(route, args) {
     const apiFunctions = 
     {   login,
@@ -263,6 +297,8 @@ export async function CallApi(route, args) {
         workouts_dates,
         workouts_data,
         workouts_save,
+        diet,
+        diet_add,
 
         admin_tables,
         admin_data,
