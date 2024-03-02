@@ -75,10 +75,10 @@
         success:    (boolean)
         json:       (JSON)  calendar.diet   
         {
-            breakfast:  (JSON): {carbs: (int), fat: (int), protein: (int)}
-            lunch:      (JSON): {carbs: (int), fat: (int), protein: (int)}
-            dinner:     (JSON): {carbs: (int), fat: (int), protein: (int)}
-            snacks:     (JSON): {carbs: (int), fat: (int), protein: (int)}
+            breakfast:  (JSON[]): [{%food%: (string)=%kcal%: (int)},]
+            lunch:      (JSON[]): [{%food%: (string)=%kcal%: (int)},]
+            dinner:     (JSON[]): [{%food%: (string)=%kcal%: (int)},]
+            snacks:     (JSON[]): [{%food%: (string)=%kcal%: (int)},]
         }
     }
 
@@ -96,10 +96,10 @@
     {
         json:       (JSON)  calendar.diet   
         {
-            breakfast:  (JSON): {carbs: (int), fat: (int), protein: (int)}
-            lunch:      (JSON): {carbs: (int), fat: (int), protein: (int)}
-            dinner:     (JSON): {carbs: (int), fat: (int), protein: (int)}
-            snacks:     (JSON): {carbs: (int), fat: (int), protein: (int)}
+            breakfast:  (JSON[]): [{%food%: (string)=%kcal%: (int)},]
+            lunch:      (JSON[]): [{%food%: (string)=%kcal%: (int)},]
+            dinner:     (JSON[]): [{%food%: (string)=%kcal%: (int)},]
+            snacks:     (JSON[]): [{%food%: (string)=%kcal%: (int)},]
         }    
     }
 
