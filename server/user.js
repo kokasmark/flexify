@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt")
 const crypto = require('crypto')
-const moment = require('moment');
+const moment = require('moment')
 
 
 class User{
@@ -264,7 +264,7 @@ class User{
         if (!post) return false
         if (!await this.isLoggedIn()) return false
 
-        let sql = 'INSERT INTO workout (user_id, name, time, isTemplate, json ) VALUES (?, ?, "{}", 1, ?)'
+        let sql = 'INSERT INTO workout (user_id, name, time, isTemplate, isFinished,json ) VALUES (?, ?, "{}", 1, 0,?)'
         this.db.query(sql, [this.id, post.name, post.json])
 
         return true
@@ -300,7 +300,8 @@ class User{
 
         const id = result[0].id
         const reset_token = await this.generateToken(16)
-        this.sendRequest('POST', serverUrl, {username: result[0].username, email: result[0].email, token: reset_token})
+        const email_token = await this.generateHash(process.env.EMAIL_TOKEN)
+        this.sendRequest('POST', serverUrl, {username: result[0].username, email: result[0].email, token: reset_token, email_token: email_token})
 
         sql = "INSERT INTO login_reset (user_id, token) VALUES (?, ?)"
         this.db.query(sql, [id, reset_token])
@@ -365,6 +366,29 @@ class User{
         sql += ` WHERE id = ?`
         this.db.query(sql, [post.id])
 
+        if (post.table === "exercise") return 1
+        return true
+    }
+
+    async insertTableData(){
+        const post = this.validateFields(["table", "values"])
+        if (!post) return false
+        if (!await this.isAdmin()) return false
+        if (!this.db.tables.includes(post.table)) return false
+
+        let sql = `INSERT INTO ${post.table} (`
+        Object.keys(post.values).forEach((key) => sql += `${key},`)
+        sql = sql.slice(0, -1) + `) VALUES(`
+        Object.values(post.values).forEach((key) => sql += `'${key}',`)
+        sql = sql.slice(0, -1) + `);`
+        try{
+            this.db.query(sql, [post.id])
+        }
+        catch {
+            return 0
+        }
+
+        if (post.table === "exercise") return 1
         return true
     }
 
@@ -377,6 +401,7 @@ class User{
         let sql = `DELETE FROM ${post.table} WHERE id = ?`
         this.db.query(sql, [post.id])
 
+        if (post.table === "exercise") return 1
         return true
     }
 
@@ -417,8 +442,9 @@ class User{
             body: JSON.stringify(body)
         }
 
-        request(options, error => {
+        request(options, (error, response) => {
             if (error) this.log(1, error)
+            console.log(response.statusCode)
         })
     }
 

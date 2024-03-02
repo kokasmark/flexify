@@ -18,7 +18,7 @@ app.listen(3001, () => {log(1, `Server listening on port ${3001}`);});
 dotenv.config();
 const DEBUG_LEVEL = process.env.DEBUG_LEVEL
 const db = new DB(log)
-const exercises = new Exercises(db)
+let exercises = new Exercises(db)
 
 function log(level, message){
     if (process.env.RUN_TESTS == 1 && process.env.DEBUG_WHILE_TEST == 0) return
@@ -57,6 +57,7 @@ app.post('/api/reset', (req, res) => postResetPassword(new User(req, res, db, lo
 app.post('/api/admin/data', (req, res) => postAdminData(new User(req, res, db, log)));
 app.post('/api/admin/update', (req, res) => postAdminUpdate(new User(req, res, db, log)));
 app.post('/api/admin/delete', (req, res) => postAdminDelete(new User(req, res, db, log)));
+app.post('/api/admin/insert', (req, res) => postAdminInsert(new User(req, res, db, log)));
 
 // Leave at the end, otherwise captures all GET requests
 app.get("*", (_, res) => {res.sendFile('index.html', { root })})
@@ -254,6 +255,8 @@ async function postAdminUpdate(user){
     let result = await user.updateTableData()
     if(result === false) return user.respondMissing()
 
+    if(result === 1) exercises = new Exercises(db)
+
     user.respondSuccess()
 }
 
@@ -262,6 +265,20 @@ async function postAdminDelete(user){
 
     let result = await user.deleteTableData()
     if(result === false) return user.respondMissing()
+
+    if(result === 1) exercises = new Exercises(db)
+
+    user.respondSuccess()
+}
+
+async function postAdminInsert(user){
+    log(2, '/api/admin/insert')
+
+    let result = await user.insertTableData()
+    if(result === false) return user.respondMissing()
+
+    if(result === 0) return user.respond(500, {reason: "SQL error"})
+    if(result === 1) exercises = new Exercises(db)
 
     user.respondSuccess()
 }
