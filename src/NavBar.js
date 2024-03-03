@@ -54,6 +54,7 @@ class Navbar extends Component {
     const today = new Date();
   
     sortedDates.push(today);
+    console.log(sortedDates)
     if(sortedDates.length === 1) streak = 1
     for (let i = 1; i < sortedDates.length; i++) {
 

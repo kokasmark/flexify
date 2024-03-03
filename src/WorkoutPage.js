@@ -169,7 +169,7 @@ class WorkoutPage extends Component {
 
             <div className={'workout-right-panel' + (this.state.paused ? ' workout-paused' : '')}>
               <h4 className='current-set'>{this.state.currentSet + 1} / {this.parseJson(this.state.workout.json)[this.state.currentExercise].set_data.length} Set</h4>
-              <h3>{this.parseJson(this.state.workout.json)[this.state.currentExercise].comment}</h3>
+              <h3>{this.parseJson(this.state.workout.json)[this.state.currentExercise].name}</h3>
               <div className='workout-settings'>
 
                 {this.parseJson(this.state.workout.json)[this.state.currentExercise].set_data[this.state.currentSet].reps > 0 ?

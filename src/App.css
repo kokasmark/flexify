@@ -961,10 +961,6 @@ iframe
 .calendar .rbc-today{
   background-color: var(--darker-contrast) !important;
 }
-.calendar .rbc-month-view{
-  box-shadow: 5px 5px 10px var(--shadow);
-  animation: calendar-bg-load 2s;
-}
 .calendar .rbc-header.rbc-today{
   z-index: 1;
   background-color: var(--darker-contrast) !important;
@@ -1355,7 +1351,6 @@ iframe
 }
 .rbc-time-view{
   border: 2px solid var(--bg) !important;
-  box-shadow: 5px 5px 10px var(--shadow);
 }
 .rbc-header{
   border-bottom: 2px solid var(--bg) !important;
