@@ -47,6 +47,8 @@ app.post('/api/workouts/save', (req, res) => postSaveWorkout(new User(req, res, 
 app.post('/api/workouts/finish', (req, res) => postFinishWorkout(new User(req, res, db, log)))
 
 app.post('/api/templates/save', (req, res) => postSaveTemplate(new User(req, res, db, log)))
+app.post('/api/templates/delete', (req, res) => postDeleteTemplate(new User(req, res, db, log)))
+
 app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
 
 app.post('/api/diet', (req, res) => postDietQuery(new User(req, res, db, log)));
@@ -247,6 +249,15 @@ async function postSaveTemplate(user){
     log(2, '/api/templates/save')
 
     let result = await user.saveTemplate()
+    if(result === false) return user.respondMissing()
+    
+    user.respondSuccess()
+}
+
+async function postDeleteTemplate(user){
+    log(2, '/api/templates/delete')
+
+    let result = await user.deleteTemplate()
     if(result === false) return user.respondMissing()
     
     user.respondSuccess()

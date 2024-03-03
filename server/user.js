@@ -295,6 +295,17 @@ class User{
         return true
     }
 
+    async deleteTemplate(){
+        const post = this.validateFields(["id"])
+        if (!post) return false
+        if (!await this.isLoggedIn()) return false
+
+        let sql = 'DELETE FROM workout WHERE id=? and isTemplate=1'
+        this.db.query(sql, [post.id])
+
+        return true
+    }
+
 
     async deleteExpiredResetTokens(){
         let sql = 'DELETE FROM login_reset WHERE created < (CURRENT_TIMESTAMP()  - INTERVAL 10 MINUTE);'
