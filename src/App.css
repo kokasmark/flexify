@@ -1502,6 +1502,26 @@ margin-top: 10px;
   flex-basis: 100%;
   height: 0;
 }
+.diet-date{
+  color: white;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  top: 20%;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  width: 30%;
+  left: 35%;
+}
+.diet-date h1{
+  font-size: 80px;
+  width: 100%;
+}
+.diet-date .icon{
+  width: 100px;
+  height: 100px;
+}
 @keyframes tip-icon-idle {
   0%{
     transform: translateY(0px);

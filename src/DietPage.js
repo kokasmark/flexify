@@ -10,6 +10,16 @@ import NavBarWrapper from './NavBar';
 import { host } from './constants'
 import swal from 'sweetalert';
 import { CallApi } from './api';
+import { GrFormNext } from "react-icons/gr";
+import { GrFormPrevious } from "react-icons/gr";
+
+
+Date.prototype.addDays = function(days) {
+  var date = new Date(this.valueOf());
+  date.setDate(date.getDate() + days);
+  return date;
+}
+
 class DietPage extends Component {
   state = {
     carbs: 0,
@@ -23,9 +33,23 @@ class DietPage extends Component {
       dinner:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
       snacks:  {totalCalories: 0, average: 300, icons: ["icon-chips", "icon-cupcake", "icon-popcorn", "icon-apple"],foods: []}
     },
-    animation: ''
+    animation: '',
+    dateForApi: new Date()
   }
+  async dietUpdate(updatedMeals){
+    let json = {}
+    Object.keys(updatedMeals).forEach(meal => {
+      var foods = []
+      for(var i = 0; i < updatedMeals[meal].foods.length; i++){
+        foods.push(updatedMeals[meal].foods[i])
+      }
+      json[meal] = foods
+    });
+    var r = await CallApi("diet/add",  {token: localStorage.getItem("loginToken"),json: json})
+    if(r.success){
 
+    }
+  }
   addFood = (meal) => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -56,10 +80,12 @@ class DietPage extends Component {
         var d = data[0];
         console.log(d)
         if(d != undefined){
+
         this.setState((prevState) => {
           var updatedMeals = { ...prevState.meals };
           updatedMeals[meal].totalCalories = updatedMeals[meal].totalCalories + Math.ceil(d.calories);
           updatedMeals[meal].foods.push({name: foodName, calories:  Math.ceil(d.calories)})
+          this.dietUpdate(updatedMeals)
           this.manageParticles(meal, updatedMeals[meal].totalCalories)
           return { meals: updatedMeals };
         });
@@ -141,6 +167,7 @@ class DietPage extends Component {
       var updatedMeals = { ...prevState.meals };
       updatedMeals[meal].totalCalories -= updatedMeals[meal].foods[index].calories
       updatedMeals[meal].foods.splice(index,1)
+      this.dietUpdate(updatedMeals)
       this.manageParticles(meal, updatedMeals[meal].totalCalories)
       return { meals: updatedMeals };
     });
@@ -151,7 +178,14 @@ class DietPage extends Component {
     this.setState({selectedMeal: null, animation: ''})
   }
   async getDiet(){
-    var r = await CallApi("diet",  {token: localStorage.getItem("loginToken"), date: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`})
+    this.setState({meals: {
+      breakfast: {totalCalories: 0, average: 300, icons: ["icon-apple", "icon-croissant", "icon-egg", "icon-sausage"],foods: []},
+      lunch:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
+      dinner:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
+      snacks:  {totalCalories: 0, average: 300, icons: ["icon-chips", "icon-cupcake", "icon-popcorn", "icon-apple"],foods: []}
+    }})//RESET
+
+    var r = await CallApi("diet",  {token: localStorage.getItem("loginToken"), date: `${this.state.dateForApi.getFullYear()}-${this.state.dateForApi.getMonth()+1}-${this.state.dateForApi.getDate()}`})
     if(r.success){
       console.log(r.json)
       var meals = r.json;
@@ -174,6 +208,11 @@ class DietPage extends Component {
   render() {
     return (
       <div className='page'>
+        <div className='diet-date'>
+          <GrFormPrevious className='icon interactable' onClick={()=> {this.setState({dateForApi: this.state.dateForApi.addDays(-1) }); this.getDiet()}} />
+          <h1>{`${this.state.dateForApi.getFullYear()}-${this.state.dateForApi.getMonth()+1}-${this.state.dateForApi.getDate()}`}</h1>
+          <GrFormNext className='icon interactable' onClick={()=> {this.setState({dateForApi: this.state.dateForApi.addDays(1) }); this.getDiet()}} />
+        </div>
         <div className='plate-container' style={{filter: this.state.selectedMeal != null ? 'blur(3px)' : ''}}>
           <div className='diet-plate interactable' style={{animation: `card-load-${2 % 2 == 0 ? 'up': 'down'} ${2/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'breakfast', icon: require('./assets/foods/icon-croissant.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
@@ -224,14 +263,14 @@ class DietPage extends Component {
         {this.state.selectedMeal != null && <div className={'diet-add-popup highlight'+this.state.animation}>
           <h2 className='interactable' onClick={()=>this.closePopUp()}>x</h2>
           <img src={this.state.selectedMeal.icon} style={{marginTop: 50}}/>
-          <h1>{this.state.selectedMeal.name}</h1>
+          <h1>{this.state.selectedMeal.name.charAt(0).toUpperCase() + this.state.selectedMeal.name.slice(1)}</h1>
           <div style={{width: '100%', marginLeft: '7.5%'}}>
             <input style={{width: '60%', marginLeft: '-14%'}} placeholder='What did you eat?' id='food-name'></input>
             <input style={{width: '10%', marginLeft: '1%'}} placeholder='100g' id='food-amount'></input>
           </div>
           <div className='foods-added-container'>
           {this.state.meals[this.state.selectedMeal.name].foods.map((food, index) => (
-            <div key={index} className='foods-added'>
+            <div key={index} className='foods-added' style={{animation: `grow ${(index+1)/5}s ease-out`}}>
               <p style={{ display: 'inline' }}>{food.name} {food.calories}kcal</p>
               <Icon_remove className='interactable remove' onClick={()=> this.removeFood(this.state.selectedMeal.name,index)}/>
             </div>
