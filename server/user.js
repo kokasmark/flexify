@@ -253,7 +253,7 @@ class User{
         sql = "SELECT id FROM calendar WHERE user_id=? AND date=?"
         result = await this.db.query(sql, [this.id, post.date])
         if (!result.length){
-            sql ="INSERT INTO calendar (user_id, date, protein, carbs, fat) VALUES (?, ?, 0, 0, 0)"
+            sql ="INSERT INTO calendar (user_id, date) VALUES (?, ?)"
             result = await this.db.query(sql, [this.id, post.date])
         }
         const calendarId = result.length ? result[0].id : result.insertId
