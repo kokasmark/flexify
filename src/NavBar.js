@@ -54,25 +54,25 @@ class Navbar extends Component {
     const today = new Date();
   
     sortedDates.push(today);
-  
-    for (let i = 0; i < sortedDates.length; i++) {
+    if(sortedDates.length === 1) streak = 1
+    for (let i = 1; i < sortedDates.length; i++) {
 
-        const daysdiff = new Date(sortedDates[i]).getDate() - new Date(sortedDates[i-1]).getDate()
+        const daysdiff = new Date(sortedDates[i].date).getDate() - new Date(sortedDates[i-1].date).getDate()
         if(daysdiff > 2){
           streak = 0;
         }else{
           streak++;
         }
-      
+        console.log(sortedDates[i].date, streak)
     }
-  
+    
     this.setState({ streak: streak });
   }
   
   
   
   async getWorkouts() {
-    var r = await CallApi("workouts/dates", {token: localStorage.getItem('loginToken'), date: this.state.dateForApi})
+    var r = await CallApi("workouts/finished", {token: localStorage.getItem('loginToken')})
     if (r.success) {
       this.setState({ dates: r.dates });
     } else {

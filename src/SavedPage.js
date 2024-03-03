@@ -82,6 +82,11 @@ class SavedPage extends Component {
       this.setState({selectedCard: index})
     }
   }
+  startWorkout(template){
+    localStorage.setItem("started-workout", JSON.stringify(template)); 
+    localStorage.setItem("workout-isCalendar", false)
+    window.location.href = `${window.location.origin}/workout`
+  }
   render() {
     return (
       <div className='page'>
@@ -106,7 +111,7 @@ class SavedPage extends Component {
                   </div>}
                 </div>
                 {this.state.details == false && <div>
-                <Link to={"/workout"} onClick={()=> localStorage.setItem("started-workout", JSON.stringify(template))}><FaPlay className='control-btn interactable'/></Link>
+                <FaPlay onClick={()=> this.startWorkout(template)} className='control-btn interactable'/>
                   <MdDelete className='control-btn interactable'/>
                   </div>}
                   
