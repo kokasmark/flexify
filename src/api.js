@@ -317,6 +317,23 @@ export function diet_add(args){
 
   return requestOptions;
 }
+export function templates_delete(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    id: args.id,
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
 export async function CallApi(route, args) {
     const apiFunctions = 
     {   login,
@@ -327,6 +344,7 @@ export async function CallApi(route, args) {
         exercises,
         templates,
         templates_save,
+        templates_delete,
         workouts_dates,
         workouts_data,
         workouts_save,
