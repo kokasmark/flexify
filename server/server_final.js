@@ -35,6 +35,7 @@ app.get('/api/diet/all', (req, res) => getDietAll(new User(req, res, db, log)))
 app.get('/api/templates', (req, res) => getUserTemplates(new User(req, res, db, log)))
 app.get('/api/admin/tables', (req, res) => getAdminTables(new User(req, res, db, log)))
 app.get('/api/exercises', (req, res) => getExercises(new User(req, res, db, log)))
+app.get('/api/workouts/finished', (req, res) => getWorkoutsFinished(new User(req, res, db, log)))
 
 
 app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log)))
@@ -43,6 +44,7 @@ app.post('/api/signup', (req, res) => postUserRegister(new User(req, res, db, lo
 app.post('/api/workouts/dates', (req, res) => postWorkoutsDates(new User(req, res, db, log)))
 app.post('/api/workouts/data', (req, res) => postUserWorkouts(new User(req, res, db, log)))
 app.post('/api/workouts/save', (req, res) => postSaveWorkout(new User(req, res, db, log)))
+app.post('/api/workouts/finish', (req, res) => postFinishWorkout(new User(req, res, db, log)))
 
 app.post('/api/templates/save', (req, res) => postSaveTemplate(new User(req, res, db, log)))
 app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
@@ -126,6 +128,16 @@ async function postWorkoutsDates(user){
     log(2, '/api/workouts/dates')
 
     let dates = await user.workoutDates()
+    if (dates === false) return user.respondMissing()
+
+    user.respondSuccess({dates: dates})
+}
+
+
+async function getWorkoutsFinished(user){
+    log(2, '/api/workouts/finished')
+
+    let dates = await user.workoutFinished()
     if (dates === false) return user.respondMissing()
 
     user.respondSuccess({dates: dates})
@@ -219,6 +231,15 @@ async function postSaveWorkout(user){
     let result = await user.saveWorkout()
     if(result === false) return user.respondMissing()
     
+    user.respondSuccess({id: result})
+}
+
+async function postFinishWorkout(user){
+    log(2, '/api/workouts/finish')
+
+    let result = await user.finishWorkout()
+    if(result === false) return user.respondMissing()
+    
     user.respondSuccess()
 }
 
@@ -309,4 +330,5 @@ async function postResetPassword(user){
 
     user.respondSuccess()
 }
+
 

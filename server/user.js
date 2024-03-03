@@ -130,16 +130,16 @@ class User{
         let sql = 'SELECT workout.id, workout.name, workout.json, workout.time, workout.isFinished FROM calendar_workout INNER JOIN workout ON calendar_workout.workout_id = workout.id INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT(calendar.date, "%Y-%m-%d") = ? AND workout.user_id = ? AND workout.isTemplate = 0'
         let result = await this.db.query(sql, [post.date, this.id])
         
-        return result.map((x) => x)
+        return result
     }
 
     async userTemplates(){
         if (!(await this.isLoggedIn())) return false
 
-        let sql = 'SELECT workout.name, workout.json FROM workout WHERE workout.isTemplate = 1 AND workout.user_id = ?'
+        let sql = 'SELECT workout.name, workout.json, workout.id FROM workout WHERE workout.isTemplate = 1 AND workout.user_id = ?'
         let result = await this.db.query(sql, [this.id])
         const templates = result.map(template => {
-            return {name:template.name, json:template.json}
+            return {id: template.id, name:template.name, json:template.json}
         })
 
         return templates
@@ -259,9 +259,29 @@ class User{
         const calendarId = result.length ? result[0].id : result.insertId
 
         sql = 'INSERT INTO calendar_workout (calendar_id, workout_id) VALUES (?, ?)'
-        this.db.query(sql, [calendarId, workoutId])
+        result = await this.db.query(sql, [calendarId, workoutId])
         
+        return result.insertId
+    }
+
+    async finishWorkout(){
+        const post = this.validateFields(["id"])
+        if (!post) return false
+        if (!await this.isLoggedIn()) return false
+
+        let sql = 'UPDATE workout SET isFinished=1 WHERE id=?'
+        this.db.query(sql, [post.id])
+
         return true
+    }
+
+    async workoutFinished(){
+        if (!await this.isLoggedIn()) return false
+
+        let sql = 'SELECT date from workout WHERE workout.user_id = ? AND workout.isTemplate = 0 AND workout.isFinished=1'
+        let result = await this.db.query(sql, [this.id])
+        
+        return result
     }
 
     async saveTemplate(){
