@@ -177,7 +177,7 @@ class DietPage extends Component {
     await new Promise(res => setTimeout(res, 490))
     this.setState({selectedMeal: null, animation: ''})
   }
-  async getDiet(){
+  async getDiet(date){
     this.setState({meals: {
       breakfast: {totalCalories: 0, average: 300, icons: ["icon-apple", "icon-croissant", "icon-egg", "icon-sausage"],foods: []},
       lunch:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
@@ -185,7 +185,7 @@ class DietPage extends Component {
       snacks:  {totalCalories: 0, average: 300, icons: ["icon-chips", "icon-cupcake", "icon-popcorn", "icon-apple"],foods: []}
     }})//RESET
 
-    var r = await CallApi("diet",  {token: localStorage.getItem("loginToken"), date: `${this.state.dateForApi.getFullYear()}-${this.state.dateForApi.getMonth()+1}-${this.state.dateForApi.getDate()}`})
+    var r = await CallApi("diet",  {token: localStorage.getItem("loginToken"), date: `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`})
     if(r.success){
       console.log(r.json)
       var meals = r.json;
@@ -203,15 +203,15 @@ class DietPage extends Component {
     }
   }
   componentDidMount(){
-    this.getDiet()
+    this.getDiet(new Date())
   }
   render() {
     return (
       <div className='page'>
-        <div className='diet-date'>
-          <GrFormPrevious className='icon interactable' onClick={()=> {this.setState({dateForApi: this.state.dateForApi.addDays(-1) }); this.getDiet()}} />
+        <div className='diet-date'  style={{filter: this.state.selectedMeal != null ? 'blur(3px)' : ''}}>
+          <GrFormPrevious className='icon interactable' onClick={()=> {this.setState({dateForApi: this.state.dateForApi.addDays(-1) }); this.getDiet(this.state.dateForApi.addDays(-1))}} />
           <h1>{`${this.state.dateForApi.getFullYear()}-${this.state.dateForApi.getMonth()+1}-${this.state.dateForApi.getDate()}`}</h1>
-          <GrFormNext className='icon interactable' onClick={()=> {this.setState({dateForApi: this.state.dateForApi.addDays(1) }); this.getDiet()}} />
+          <GrFormNext className='icon interactable' onClick={()=> {this.setState({dateForApi: this.state.dateForApi.addDays(1) }); this.getDiet(this.state.dateForApi.addDays(1))}} />
         </div>
         <div className='plate-container' style={{filter: this.state.selectedMeal != null ? 'blur(3px)' : ''}}>
           <div className='diet-plate interactable' style={{animation: `card-load-${2 % 2 == 0 ? 'up': 'down'} ${2/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'breakfast', icon: require('./assets/foods/icon-croissant.png')}})}>

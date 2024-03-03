@@ -142,6 +142,7 @@ export function workouts_save(args){
     duration: args.duration,
     json: args.json,
     time: args.time,
+    date: args.date,
     location: "web",
   });
 
@@ -149,6 +150,38 @@ export function workouts_save(args){
     method: "POST",
     headers: myHeaders,
     body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
+export function workouts_finish(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    id: args.id,
+    location: "web",
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
+export function workouts_finished(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+
+
+  var requestOptions = {
+    method: "GET",
+    headers: myHeaders,
     redirect: "follow",
   };
 
@@ -297,6 +330,8 @@ export async function CallApi(route, args) {
         workouts_dates,
         workouts_data,
         workouts_save,
+        workouts_finish,
+        workouts_finished,
         diet,
         diet_add,
 
