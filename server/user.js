@@ -72,9 +72,14 @@ class User{
         let reqFields = this.req.body
         let toReturn = {}
         for (const field of fieldList){
-            if (!reqFields.hasOwnProperty(field)) return false
-
-            if (regex.hasOwnProperty(field) && !regex[field].test(reqFields[field])) return false
+            if (!reqFields.hasOwnProperty(field)) {
+                this.log(0, `Missing POST field: ${field}`)
+                return false
+            }
+            if (regex.hasOwnProperty(field) && !regex[field].test(reqFields[field])) {
+                this.log(0, `Regex for field [${field}] failed with: ${reqFields[field]}`)
+                return false
+            }
             toReturn[field] = reqFields[field]
         }
         return toReturn
