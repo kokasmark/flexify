@@ -104,7 +104,7 @@ class User{
         if (!post) return false
         if (!(await this.isLoggedIn())) return false
 
-        let sql = 'SELECT workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN workout ON calendar_workout.workout_id = workout.id WHERE calendar.user_id = ? AND calendar.date >= DATE_SUB(CURDATE(), INTERVAL ? DAY) AND workout.isTemplate = 0'
+        let sql = 'SELECT workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN workout ON calendar_workout.workout_id = workout.id WHERE calendar.user_id = ? AND calendar.date >= DATE_SUB(CURDATE(), INTERVAL ? DAY) AND workout.isTemplate = 0 AND workout.isFinished=1'
         let result = await this.db.query(sql, [this.id, post.timespan])
         let workouts = result.map(row => {
             row.json = JSON.parse(row.json)
@@ -261,7 +261,7 @@ class User{
         sql = 'INSERT INTO calendar_workout (calendar_id, workout_id) VALUES (?, ?)'
         result = await this.db.query(sql, [calendarId, workoutId])
         
-        return result.insertId
+        return workoutId
     }
 
     async finishWorkout(){
