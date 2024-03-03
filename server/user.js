@@ -278,7 +278,7 @@ class User{
     async workoutFinished(){
         if (!await this.isLoggedIn()) return false
 
-        let sql = 'SELECT date from workout WHERE workout.user_id = ? AND workout.isTemplate = 0 AND workout.isFinished=1'
+        let sql = 'SELECT calendar.date from workout INNER JOIN calendar_workout ON calendar_workout.workout_id=workout.id INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE workout.user_id = 1 AND workout.isTemplate = 0 AND workout.isFinished=1'
         let result = await this.db.query(sql, [this.id])
         
         return result
