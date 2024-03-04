@@ -21,7 +21,7 @@ export function login(args){
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      username: args.user,
+      user: args.user,
       password: args.password,
       location: "web",
     });
@@ -142,6 +142,7 @@ export function workouts_save(args){
     duration: args.duration,
     json: args.json,
     time: args.time,
+    date: args.date,
     location: "web",
   });
 
@@ -149,6 +150,38 @@ export function workouts_save(args){
     method: "POST",
     headers: myHeaders,
     body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
+export function workouts_finish(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    id: args.id,
+    location: "web",
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
+export function workouts_finished(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+
+
+  var requestOptions = {
+    method: "GET",
+    headers: myHeaders,
     redirect: "follow",
   };
 
@@ -195,6 +228,112 @@ export function admin_data(args){
 
   return requestOptions;
 }
+export function admin_update(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    table: args.table,
+    id: args.id,
+    values: args.values
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
+export function admin_delete(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    table: args.table,
+    id: args.id
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
+export function admin_insert(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    table: args.table,
+    values: args.values
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
+export function diet(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    date: args.date,
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
+export function diet_add(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    json: args.json,
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
+export function templates_delete(args){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Token", args.token)
+  var raw = JSON.stringify({
+    id: args.id,
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return requestOptions;
+}
 export async function CallApi(route, args) {
     const apiFunctions = 
     {   login,
@@ -205,12 +344,20 @@ export async function CallApi(route, args) {
         exercises,
         templates,
         templates_save,
+        templates_delete,
         workouts_dates,
         workouts_data,
         workouts_save,
+        workouts_finish,
+        workouts_finished,
+        diet,
+        diet_add,
 
         admin_tables,
-        admin_data
+        admin_data,
+        admin_update,
+        admin_delete,
+        admin_insert
     }; 
     const apiFunc = apiFunctions[route.replace("/","_")]; // Get the corresponding API function based on the route
     if (!apiFunc) {

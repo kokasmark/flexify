@@ -11,7 +11,6 @@ class Exercises{
         result.forEach(row => {
             row.muscles = JSON.parse(row.muscles)
             muscles[row.id] = row
-            delete muscles[row.id].id
         });
 
         return muscles

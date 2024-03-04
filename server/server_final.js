@@ -18,7 +18,7 @@ app.listen(3001, () => {log(1, `Server listening on port ${3001}`);});
 dotenv.config();
 const DEBUG_LEVEL = process.env.DEBUG_LEVEL
 const db = new DB(log)
-const exercises = new Exercises(db)
+let exercises = new Exercises(db)
 
 function log(level, message){
     if (process.env.RUN_TESTS == 1 && process.env.DEBUG_WHILE_TEST == 0) return
@@ -35,6 +35,7 @@ app.get('/api/diet/all', (req, res) => getDietAll(new User(req, res, db, log)))
 app.get('/api/templates', (req, res) => getUserTemplates(new User(req, res, db, log)))
 app.get('/api/admin/tables', (req, res) => getAdminTables(new User(req, res, db, log)))
 app.get('/api/exercises', (req, res) => getExercises(new User(req, res, db, log)))
+app.get('/api/workouts/finished', (req, res) => getWorkoutsFinished(new User(req, res, db, log)))
 
 
 app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log)))
@@ -43,8 +44,11 @@ app.post('/api/signup', (req, res) => postUserRegister(new User(req, res, db, lo
 app.post('/api/workouts/dates', (req, res) => postWorkoutsDates(new User(req, res, db, log)))
 app.post('/api/workouts/data', (req, res) => postUserWorkouts(new User(req, res, db, log)))
 app.post('/api/workouts/save', (req, res) => postSaveWorkout(new User(req, res, db, log)))
+app.post('/api/workouts/finish', (req, res) => postFinishWorkout(new User(req, res, db, log)))
 
 app.post('/api/templates/save', (req, res) => postSaveTemplate(new User(req, res, db, log)))
+app.post('/api/templates/delete', (req, res) => postDeleteTemplate(new User(req, res, db, log)))
+
 app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
 
 app.post('/api/diet', (req, res) => postDietQuery(new User(req, res, db, log)));
@@ -57,6 +61,7 @@ app.post('/api/reset', (req, res) => postResetPassword(new User(req, res, db, lo
 app.post('/api/admin/data', (req, res) => postAdminData(new User(req, res, db, log)));
 app.post('/api/admin/update', (req, res) => postAdminUpdate(new User(req, res, db, log)));
 app.post('/api/admin/delete', (req, res) => postAdminDelete(new User(req, res, db, log)));
+app.post('/api/admin/insert', (req, res) => postAdminInsert(new User(req, res, db, log)));
 
 // Leave at the end, otherwise captures all GET requests
 app.get("*", (_, res) => {res.sendFile('index.html', { root })})
@@ -79,7 +84,7 @@ async function getUserDetails(user){
     const details = await user.userDetails()
     if (!details) return
 
-    user.respondSuccess({username: details.username, email: details.email})
+    user.respondSuccess({username: details.username, email: details.email, isAdmin: details.is_admin})
 }
 
 async function getDietAll(user){
@@ -125,6 +130,16 @@ async function postWorkoutsDates(user){
     log(2, '/api/workouts/dates')
 
     let dates = await user.workoutDates()
+    if (dates === false) return user.respondMissing()
+
+    user.respondSuccess({dates: dates})
+}
+
+
+async function getWorkoutsFinished(user){
+    log(2, '/api/workouts/finished')
+
+    let dates = await user.workoutFinished()
     if (dates === false) return user.respondMissing()
 
     user.respondSuccess({dates: dates})
@@ -218,6 +233,15 @@ async function postSaveWorkout(user){
     let result = await user.saveWorkout()
     if(result === false) return user.respondMissing()
     
+    user.respondSuccess({id: result})
+}
+
+async function postFinishWorkout(user){
+    log(2, '/api/workouts/finish')
+
+    let result = await user.finishWorkout()
+    if(result === false) return user.respondMissing()
+    
     user.respondSuccess()
 }
 
@@ -225,6 +249,15 @@ async function postSaveTemplate(user){
     log(2, '/api/templates/save')
 
     let result = await user.saveTemplate()
+    if(result === false) return user.respondMissing()
+    
+    user.respondSuccess()
+}
+
+async function postDeleteTemplate(user){
+    log(2, '/api/templates/delete')
+
+    let result = await user.deleteTemplate()
     if(result === false) return user.respondMissing()
     
     user.respondSuccess()
@@ -254,6 +287,8 @@ async function postAdminUpdate(user){
     let result = await user.updateTableData()
     if(result === false) return user.respondMissing()
 
+    if(result === 1) exercises = new Exercises(db)
+
     user.respondSuccess()
 }
 
@@ -262,6 +297,20 @@ async function postAdminDelete(user){
 
     let result = await user.deleteTableData()
     if(result === false) return user.respondMissing()
+
+    if(result === 1) exercises = new Exercises(db)
+
+    user.respondSuccess()
+}
+
+async function postAdminInsert(user){
+    log(2, '/api/admin/insert')
+
+    let result = await user.insertTableData()
+    if(result === false) return user.respondMissing()
+
+    if(result === 0) return user.respond(500, {reason: "SQL error"})
+    if(result === 1) exercises = new Exercises(db)
 
     user.respondSuccess()
 }
@@ -292,4 +341,5 @@ async function postResetPassword(user){
 
     user.respondSuccess()
 }
+
 

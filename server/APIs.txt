@@ -75,10 +75,10 @@
         success:    (boolean)
         json:       (JSON)  calendar.diet   
         {
-            breakfast:  (JSON): {carbs: (int), fat: (int), protein: (int)}
-            lunch:      (JSON): {carbs: (int), fat: (int), protein: (int)}
-            dinner:     (JSON): {carbs: (int), fat: (int), protein: (int)}
-            snacks:     (JSON): {carbs: (int), fat: (int), protein: (int)}
+            breakfast:  (JSON[]): [{%food%: (string)=%kcal%: (int)},]
+            lunch:      (JSON[]): [{%food%: (string)=%kcal%: (int)},]
+            dinner:     (JSON[]): [{%food%: (string)=%kcal%: (int)},]
+            snacks:     (JSON[]): [{%food%: (string)=%kcal%: (int)},]
         }
     }
 
@@ -96,10 +96,10 @@
     {
         json:       (JSON)  calendar.diet   
         {
-            breakfast:  (JSON): {carbs: (int), fat: (int), protein: (int)}
-            lunch:      (JSON): {carbs: (int), fat: (int), protein: (int)}
-            dinner:     (JSON): {carbs: (int), fat: (int), protein: (int)}
-            snacks:     (JSON): {carbs: (int), fat: (int), protein: (int)}
+            breakfast:  (JSON[]): [{%food%: (string)=%kcal%: (int)},]
+            lunch:      (JSON[]): [{%food%: (string)=%kcal%: (int)},]
+            dinner:     (JSON[]): [{%food%: (string)=%kcal%: (int)},]
+            snacks:     (JSON[]): [{%food%: (string)=%kcal%: (int)},]
         }    
     }
 
@@ -143,29 +143,82 @@
         templates:   (JSON[])
         [
             {
-                name:   (string)
-                json:   (JSON[])
-                [
-                    {
-                        exercise_id:    (string)
-                        set_data:       (JSON[])
-                        [
-                            {
-                                duration:   (int)
-                            },
-                            {
-                                reps:   (string)
-                                weight: (string)
-                            },
-                        ]
-                    },
-                ]
+                name:   (string)    workout.name
+                json:   (JSON[])    workout.json
             },
         ]
-        success:    (bool)
+        success:    (boolean)
     }
 
 /api/templates/save
     POST
     X-Token: reqired
     # Save user's template
+
+    request:
+    {
+        name:   (string)    workout.name
+        json:   (JSON[])    workout.json
+    }
+
+    answer:
+    {
+        success:    (boolean)
+    }
+
+/api/workouts/dates
+    POST
+    X-Token: required
+    # Get dates of the month, where the user has workout (finished or planned)
+
+    request:
+    {
+        date:   (string)    calendar.date   "YYYY-MM"
+    }
+
+    answer:
+    {
+        dates:  (string[])  calendar.date
+    }
+
+/api/workouts/data
+    POST
+    X-Token: required
+    # Get data of all workouts on a given date
+
+    request:
+    {
+        date:   (string)    calendar.date
+    }
+
+    answer:
+    {
+        data:   (JSON[])
+        [
+            id:     	(int)       workout.id
+            name:   	(string)    workout.name
+            json:		(JSON[])	workout.json
+			time:		(JSON)		workout.time
+			isFinished	(boolean)	workout.isFinished
+		]
+		success:	(boolean)
+    }
+
+/api/workouts/save
+	POST
+	X-Token: reqired
+	# Save workout for user on given date
+
+	request:
+	{
+		name:	(string)	workout.name
+		time:	(JSON)		workout.time
+		date:	(string)	calendar.date
+		json:	(JSON[])	workout.json
+	}
+
+	answer:
+	{
+		success:	(boolean)
+	}
+

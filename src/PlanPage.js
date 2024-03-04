@@ -21,7 +21,17 @@ import { IoIosCloseCircleOutline } from "react-icons/io"
 import {CallApi} from "./api";
 moment.locale('en-GB');
 
+const eventStyleGetter = (event, start, end, isSelected) => {
+  let classNames = 'rbc-event-content';
 
+  if (event.isFinished) {
+    classNames += ' finished-event'; // Add a class for finished events
+  }
+
+  return {
+    className: classNames
+  };
+};
 
 class PlanPage extends Component {
 
@@ -40,7 +50,6 @@ class PlanPage extends Component {
   }
   async getSavedTemplates() {
     var r = await CallApi("templates", {token: localStorage.getItem('loginToken')})
-    console.log(r)
     if (r.success) {
       this.setState({ savedTemplates: r.templates })
     } else {
@@ -48,16 +57,30 @@ class PlanPage extends Component {
     }
   }
   async getWorkouts(date) {
-    var r = await CallApi("workouts/dates", {token: localStorage.getItem('loginToken'), date: date})
+    var updatedLoaded = {}
+    var r = await CallApi("workouts/dates", {token: localStorage.getItem('loginToken'), date: `${date.getFullYear()}-${(date.getMonth()+1)}`})
     if (r.success) {
-      var updatedLoaded = {}
+      
       r.dates.forEach(date => {
         updatedLoaded[date] = {}
       });
-      this.setState({ loaded: updatedLoaded, events: [] });
-    } else {
-
+      
     }
+    r = await CallApi("workouts/dates", {token: localStorage.getItem('loginToken'), date: `${date.getFullYear()}-${(date.getMonth()+2)}`})
+    if (r.success) {
+      r.dates.forEach(date => {
+        updatedLoaded[date] = {}
+      });
+      
+    }
+    r = await CallApi("workouts/dates", {token: localStorage.getItem('loginToken'), date: `${date.getFullYear()}-${(date.getMonth())}`})
+    if (r.success) {
+      r.dates.forEach(date => {
+        updatedLoaded[date] = {}
+      });
+      
+    }
+    this.setState({ loaded: updatedLoaded, events: [] });
   }  
   async getWorkoutsData(date) {
     var r = await CallApi("workouts/data", {token: localStorage.getItem('loginToken'), date: date})
@@ -86,43 +109,37 @@ class PlanPage extends Component {
             "title": d.name,
             "start": start,
             "end": end,
-            data: JSON.stringify(d)
+            data: JSON.stringify(d),
+            isFinished: d.isFinished == 1
         });
         return { events: updatedEvents };
     });
   });
 }
 
-  addEvent(data, date) {
-    this.setState((prevState) => {
-      var updatedEvents = [...prevState.events];
-      var ids = [...prevState.idsInEvents]
-      var d = date.split("-")
-      var day = new Date(data[0].date)
-      const [hours, minutes, seconds] = data[0].duration.split(':').map(Number);
-
-      const newDate = new Date(day.getTime() + hours * 3600 * 1000 + minutes * 60 * 1000 + seconds * 1000);
-      if (!this.state.idsInEvents.includes(data[0].id)) {
-        updatedEvents.push({
-          "title": data[0].workout_name, 'start': day,
-          'end': newDate
-        })
-        ids.push(data[0].id)
-      }
-
-      return { events: updatedEvents, idsInEvents: ids };
-    });
+  padNumber(num){
+    if(num.length < 2){
+      return `0${num}`
+    }
+    else{
+      return num
+    }
   }
   async saveWorkout(data, time){
-    var r = await CallApi("workouts/save", {token: localStorage.getItem('loginToken'), name: data.name, time: JSON.stringify(time), json: JSON.stringify(data.json)})
+    var date = new Date(time.start)
+    var r = await CallApi("workouts/save", 
+    {token: localStorage.getItem('loginToken'), name: data.name, time: JSON.stringify(time), json: JSON.stringify(data.json), 
+    date: `${date.getFullYear()}-${this.padNumber(date.getMonth()+1)}-${this.padNumber(date.getDate())}`})
     if (r.success) {
       swal("Success!", `${data.name} was saved!`, "success")
+      return r.id
+      
     } else {
-
+      return null
     }
   }
   componentDidMount() {
-    this.getWorkouts(new Date().getFullYear() + '-' + (new Date().getMonth() + 1));
+    this.getWorkouts(new Date());
     this.getSavedTemplates();
   }
 
@@ -226,36 +243,42 @@ class PlanPage extends Component {
     }
   }
   navigate(e) {
-    this.getWorkouts(e.getFullYear() + '-' + (e.getMonth() + 1))
+    this.getWorkouts(e)
   }
   selectTime(e) {
     console.log(e)
     this.setState({ addWorkoutPopUp: true, newEvent: e })
   }
-  addWorkout(template) {
+  async addWorkout(template) {
+    var id = await this.saveWorkout(template, {start:  new Date(this.state.newEvent.start).toString(), end: new Date(this.state.newEvent.end).toString()})
+    var updatedData = template
+    updatedData.id = id
     this.setState((prevState) => {
       var updatedEvents = [...prevState.events];
+      
       updatedEvents.push({
         "title": template.name, 'start': this.state.newEvent.start,
-        'end': this.state.newEvent.end, "data": JSON.stringify(template)
+        'end': this.state.newEvent.end, "data": JSON.stringify(updatedData)
       })
-      this.saveWorkout(template, {start:  new Date(this.state.newEvent.start).toString(), end: new Date(this.state.newEvent.end).toString()})
+      
       return { events: updatedEvents, addWorkoutPopUp: false, newEvent: null };
     });
   }
   handleEventClick(e) {
-    console.log(e)
-    swal({
-      title: `Wanna start ${e.title}?`,
-      buttons: ["Cancel", "Start"],
-      icon: 'warning'
-    }).then((result) => {
-      if (result) {
-        localStorage.setItem("started-workout", e.data)
-        console.log(window.location)
-        window.location.href = `${window.location.origin}/workout`
-      }
-    });
+      if(!e.isFinished){
+        swal({
+          title: `Wanna start ${e.title}?`,
+          buttons: ["Cancel", "Start"],
+          icon: 'warning'
+        }).then((result) => {
+          if (result) {
+            localStorage.setItem("started-workout", e.data)
+            localStorage.setItem("workout-isCalendar", true)
+            console.log(window.location)
+            window.location.href = `${window.location.origin}/workout`
+          }
+        });
+    }
   }
   render() {
     return (
@@ -275,6 +298,7 @@ class PlanPage extends Component {
           onRangeChange={range => {
             this.setState({currentRange: range})
         }}
+        eventPropGetter={eventStyleGetter}
         />
 
         {this.state.addWorkoutPopUp && <div className='calendar-add-popup'>

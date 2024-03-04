@@ -29,6 +29,7 @@ import { GiWeight } from "react-icons/gi";
 import { PiArrowsCounterClockwise } from "react-icons/pi";
 import { PiClockCountdown } from "react-icons/pi";
 import { CallApi } from './api';
+import swal from 'sweetalert';
 
 class SavedPage extends Component {
   state = {
@@ -82,6 +83,29 @@ class SavedPage extends Component {
       this.setState({selectedCard: index})
     }
   }
+  startWorkout(template){
+    localStorage.setItem("started-workout", JSON.stringify(template)); 
+    localStorage.setItem("workout-isCalendar", false)
+    window.location.href = `${window.location.origin}/workout`
+  }
+  async callDelete(id){
+    var r = await CallApi("templates/delete", {token: localStorage.getItem('loginToken'), id: id})
+  }
+  deleteTemplate(template,index){
+    swal({
+      title: `Are you sure you wanna delete ${template.name}?`,
+      buttons: ["Cancel", "Delete"],
+      icon: 'warning'
+    }).then((result) => {
+      if (result) {
+        console.log(template)
+        this.callDelete(template.id)
+        var updatedTemplates = this.state.savedTemplates;
+        updatedTemplates.pop(index)
+        this.setState({savedTemplates: updatedTemplates})
+      }
+    });
+  }
   render() {
     return (
       <div className='page'>
@@ -106,8 +130,8 @@ class SavedPage extends Component {
                   </div>}
                 </div>
                 {this.state.details == false && <div>
-                <Link to={"/workout"} onClick={()=> localStorage.setItem("started-workout", JSON.stringify(template))}><FaPlay className='control-btn interactable'/></Link>
-                  <MdDelete className='control-btn interactable'/>
+                <FaPlay onClick={()=> this.startWorkout(template)} className='control-btn interactable'/>
+                  <MdDelete className='control-btn interactable' onClick={()=> this.deleteTemplate(template, index)}/>
                   </div>}
                   
             </Card>

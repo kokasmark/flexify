@@ -31,14 +31,15 @@ class WorkoutPage extends Component {
     durationSeconds: 0,
     paused: false,
     muscles: [],
-    templates: []
+    templates: [],
+    start: new Date()
   }
   async getExerciseTemplates() {
     var r = await CallApi("exercises", { token: localStorage.getItem("loginToken"), location: 'web' })
     this.setState({ templates: Object.values(r.json) });
   }
   getMusclesTrained(e) {
-    var id = this.state.workout.json[e].name
+    var id = this.parseJson(this.state.workout.json)[e].name
     this.state.templates.forEach(exercise => {
       if(exercise.name == id){
         this.setState({muscles: exercise.muscles})
@@ -50,17 +51,45 @@ class WorkoutPage extends Component {
     const { navigate } = this.props;
     navigate('/');
   }
-  next() {
-    if (this.state.currentSet + 1 < this.parseJson(this.state.workout.json[this.state.currentExercise].set_data).length) {
+  async saveWorkout(data, time){
+    var date = new Date(time.start)
+    var r = await CallApi("workouts/save", 
+    {token: localStorage.getItem('loginToken'), name: data.name, time: JSON.stringify(time), json: JSON.stringify(data.json), 
+    date: `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`})
+    if (r.success) {
+      return r.id;
+    } else {
+      return null
+    }
+  }
+  async next() {
+    if (this.state.currentSet + 1 < this.parseJson(this.state.workout.json)[this.state.currentExercise].set_data.length) {
       this.setState({ currentSet: this.state.currentSet + 1,durationSeconds: this.state.seconds })
     }
     else {
-      if (this.state.currentExercise + 1 < this.state.workout.json.length) {
+      console.log(this.state.currentExercise + 1 , this.state.workout.json.length)
+      if (this.state.currentExercise + 1 < this.parseJson(this.state.workout.json).length) {
         this.setState({ currentSet: 0, currentExercise: this.state.currentExercise + 1})
         this.getMusclesTrained(this.state.currentExercise + 1)
       } else {
-        swal("Nice!", `You finished ${this.state.workout.name} in ${new Date(this.state.seconds * 1000).toISOString().slice(11, 19)}!`, "success")
-        this.back()
+        var id;
+        console.log(typeof localStorage.getItem("workout-isCalendar"))
+        if(localStorage.getItem("workout-isCalendar")==="true"){
+          id = this.state.workout.id
+        }else{
+          var endDate = new Date(this.state.start.getTime() + this.state.seconds * 1000);
+
+          // Convert dates to string format
+          var startDateString = this.state.start.toString();
+          var endDateString = endDate.toString();
+
+          id = await this.saveWorkout(this.state.workout, {start: startDateString, end: endDateString});
+        }
+          var r = await CallApi("workouts/finish", {token: localStorage.getItem('loginToken'), id: id})
+          if (r.success) {
+              swal("Nice!", `You finished ${this.state.workout.name} in ${new Date(this.state.seconds * 1000).toISOString().slice(11, 19)}!`, "success")
+              this.back()
+          }
       }
     }
   }
@@ -140,7 +169,7 @@ class WorkoutPage extends Component {
 
             <div className={'workout-right-panel' + (this.state.paused ? ' workout-paused' : '')}>
               <h4 className='current-set'>{this.state.currentSet + 1} / {this.parseJson(this.state.workout.json)[this.state.currentExercise].set_data.length} Set</h4>
-              <h3>{this.state.workout.json[this.state.currentExercise].comment}</h3>
+              <h3>{this.parseJson(this.state.workout.json)[this.state.currentExercise].name}</h3>
               <div className='workout-settings'>
 
                 {this.parseJson(this.state.workout.json)[this.state.currentExercise].set_data[this.state.currentSet].reps > 0 ?

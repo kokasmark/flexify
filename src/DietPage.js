@@ -9,6 +9,17 @@ import AuthRedirect from './authRedirect';
 import NavBarWrapper from './NavBar';
 import { host } from './constants'
 import swal from 'sweetalert';
+import { CallApi } from './api';
+import { GrFormNext } from "react-icons/gr";
+import { GrFormPrevious } from "react-icons/gr";
+
+
+Date.prototype.addDays = function(days) {
+  var date = new Date(this.valueOf());
+  date.setDate(date.getDate() + days);
+  return date;
+}
+
 class DietPage extends Component {
   state = {
     carbs: 0,
@@ -17,14 +28,28 @@ class DietPage extends Component {
     calories: 3000,
     selectedMeal: null,
     meals: {
-      Breakfast: {totalCalories: 0, average: 300, icons: ["icon-apple", "icon-croissant", "icon-egg", "icon-sausage"],foods: []},
-      Lunch:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
-      Dinner:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
-      Snacks:  {totalCalories: 0, average: 300, icons: ["icon-chips", "icon-cupcake", "icon-popcorn", "icon-apple"],foods: []}
+      breakfast: {totalCalories: 0, average: 300, icons: ["icon-apple", "icon-croissant", "icon-egg", "icon-sausage"],foods: []},
+      lunch:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
+      dinner:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
+      snacks:  {totalCalories: 0, average: 300, icons: ["icon-chips", "icon-cupcake", "icon-popcorn", "icon-apple"],foods: []}
     },
-    animation: ''
+    animation: '',
+    dateForApi: new Date()
   }
+  async dietUpdate(updatedMeals){
+    let json = {}
+    Object.keys(updatedMeals).forEach(meal => {
+      var foods = []
+      for(var i = 0; i < updatedMeals[meal].foods.length; i++){
+        foods.push(updatedMeals[meal].foods[i])
+      }
+      json[meal] = foods
+    });
+    var r = await CallApi("diet/add",  {token: localStorage.getItem("loginToken"),json: json})
+    if(r.success){
 
+    }
+  }
   addFood = (meal) => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -55,10 +80,12 @@ class DietPage extends Component {
         var d = data[0];
         console.log(d)
         if(d != undefined){
+
         this.setState((prevState) => {
           var updatedMeals = { ...prevState.meals };
           updatedMeals[meal].totalCalories = updatedMeals[meal].totalCalories + Math.ceil(d.calories);
-          updatedMeals[meal].foods.push({name: foodName, amount: Number(d.serving_size_g), calories:  Math.ceil(d.calories)})
+          updatedMeals[meal].foods.push({name: foodName, calories:  Math.ceil(d.calories)})
+          this.dietUpdate(updatedMeals)
           this.manageParticles(meal, updatedMeals[meal].totalCalories)
           return { meals: updatedMeals };
         });
@@ -140,6 +167,7 @@ class DietPage extends Component {
       var updatedMeals = { ...prevState.meals };
       updatedMeals[meal].totalCalories -= updatedMeals[meal].foods[index].calories
       updatedMeals[meal].foods.splice(index,1)
+      this.dietUpdate(updatedMeals)
       this.manageParticles(meal, updatedMeals[meal].totalCalories)
       return { meals: updatedMeals };
     });
@@ -149,68 +177,101 @@ class DietPage extends Component {
     await new Promise(res => setTimeout(res, 490))
     this.setState({selectedMeal: null, animation: ''})
   }
+  async getDiet(date){
+    this.setState({meals: {
+      breakfast: {totalCalories: 0, average: 300, icons: ["icon-apple", "icon-croissant", "icon-egg", "icon-sausage"],foods: []},
+      lunch:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
+      dinner:  {totalCalories: 0, average: 300, icons: ["icon-steak", "icon-hamburger", "icon-pizza", "icon-sandwich"],foods: []},
+      snacks:  {totalCalories: 0, average: 300, icons: ["icon-chips", "icon-cupcake", "icon-popcorn", "icon-apple"],foods: []}
+    }})//RESET
+
+    var r = await CallApi("diet",  {token: localStorage.getItem("loginToken"), date: `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`})
+    if(r.success){
+      console.log(r.json)
+      var meals = r.json;
+      var updatedMeals = this.state.meals;
+      Object.keys(meals).forEach(meal => {
+        var calorie = 0;
+        for(var i = 0; i < meals[meal].length; i++){
+          calorie += meals[meal][i].calories
+          updatedMeals[meal].foods.push({name: meals[meal][i].name, calories:  meals[meal][i].calories})
+        }
+        updatedMeals[meal].totalCalories = calorie
+        this.manageParticles(meal, calorie)
+      });
+      this.setState({meals: updatedMeals})
+    }
+  }
+  componentDidMount(){
+    this.getDiet(new Date())
+  }
   render() {
     return (
       <div className='page'>
+        <div className='diet-date'  style={{filter: this.state.selectedMeal != null ? 'blur(3px)' : ''}}>
+          <GrFormPrevious className='icon interactable' onClick={()=> {this.setState({dateForApi: this.state.dateForApi.addDays(-1) }); this.getDiet(this.state.dateForApi.addDays(-1))}} />
+          <h1>{`${this.state.dateForApi.getFullYear()}-${this.state.dateForApi.getMonth()+1}-${this.state.dateForApi.getDate()}`}</h1>
+          <GrFormNext className='icon interactable' onClick={()=> {this.setState({dateForApi: this.state.dateForApi.addDays(1) }); this.getDiet(this.state.dateForApi.addDays(1))}} />
+        </div>
         <div className='plate-container' style={{filter: this.state.selectedMeal != null ? 'blur(3px)' : ''}}>
-          <div className='diet-plate interactable' style={{animation: `card-load-${2 % 2 == 0 ? 'up': 'down'} ${2/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'Breakfast', icon: require('./assets/foods/icon-croissant.png')}})}>
+          <div className='diet-plate interactable' style={{animation: `card-load-${2 % 2 == 0 ? 'up': 'down'} ${2/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'breakfast', icon: require('./assets/foods/icon-croissant.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Breakfast</h1>
             
-            <div className='food-particles' id="particle-container-Breakfast">
+            <div className='food-particles' id="particle-container-breakfast">
 
             </div>
             <div className='hide'></div>
             
-            <h1 id="kcal-Breakfast">{this.state.meals["Breakfast"].totalCalories}kcal</h1>
+            <h1 id="kcal-breakfast">{this.state.meals["breakfast"].totalCalories}kcal</h1>
           </div>
-          <div className='diet-plate interactable' style={{animation: `card-load-${3 % 2 == 0 ? 'up': 'down'} ${3/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'Lunch', icon: require('./assets/foods/icon-hamburger.png')}})}>
+          <div className='diet-plate interactable' style={{animation: `card-load-${3 % 2 == 0 ? 'up': 'down'} ${3/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'lunch', icon: require('./assets/foods/icon-hamburger.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Lunch</h1>
             
-            <div className='food-particles' id="particle-container-Lunch">
+            <div className='food-particles' id="particle-container-lunch">
 
             </div>
             <div className='hide'></div>
             
-            <h1 id="kcal-Lunch">{this.state.meals["Lunch"].totalCalories}kcal</h1>
+            <h1 id="kcal-lunch">{this.state.meals["lunch"].totalCalories}kcal</h1>
           </div>
-          <div className='diet-plate interactable' style={{animation: `card-load-${4 % 2 == 0 ? 'up': 'down'} ${4/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'Dinner', icon: require('./assets/foods/icon-steak.png')}})}>
+          <div className='diet-plate interactable' style={{animation: `card-load-${4 % 2 == 0 ? 'up': 'down'} ${4/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'dinner', icon: require('./assets/foods/icon-steak.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Dinner</h1>
             
-            <div className='food-particles' id="particle-container-Dinner">
+            <div className='food-particles' id="particle-container-dinner">
 
             </div>
             <div className='hide'></div>
             
-            <h1 id="kcal-Dinner">{this.state.meals["Dinner"].totalCalories}kcal</h1>
+            <h1 id="kcal-dinner">{this.state.meals["dinner"].totalCalories}kcal</h1>
           </div>
-          <div className='diet-plate interactable' style={{animation: `card-load-${5 % 2 == 0 ? 'up': 'down'} ${5/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'Snacks', icon: require('./assets/foods/icon-cupcake.png')}})}>
+          <div className='diet-plate interactable' style={{animation: `card-load-${5 % 2 == 0 ? 'up': 'down'} ${5/2}s`}} onClick={()=>this.setState({selectedMeal: {name: 'snacks', icon: require('./assets/foods/icon-cupcake.png')}})}>
             <img src={require("./assets/foods/icon-plate.png")}></img>
             <h1>Snacks</h1>
             
-            <div className='food-particles' id="particle-container-Snacks">
+            <div className='food-particles' id="particle-container-snacks">
 
             </div>
             <div className='hide'></div>
             
-            <h1 id="kcal-Snacks">{this.state.meals["Snacks"].totalCalories}kcal</h1>
+            <h1 id="kcal-snacks">{this.state.meals["snacks"].totalCalories}kcal</h1>
           </div>
         </div>
 
         {this.state.selectedMeal != null && <div className={'diet-add-popup highlight'+this.state.animation}>
           <h2 className='interactable' onClick={()=>this.closePopUp()}>x</h2>
           <img src={this.state.selectedMeal.icon} style={{marginTop: 50}}/>
-          <h1>{this.state.selectedMeal.name}</h1>
+          <h1>{this.state.selectedMeal.name.charAt(0).toUpperCase() + this.state.selectedMeal.name.slice(1)}</h1>
           <div style={{width: '100%', marginLeft: '7.5%'}}>
             <input style={{width: '60%', marginLeft: '-14%'}} placeholder='What did you eat?' id='food-name'></input>
             <input style={{width: '10%', marginLeft: '1%'}} placeholder='100g' id='food-amount'></input>
           </div>
           <div className='foods-added-container'>
           {this.state.meals[this.state.selectedMeal.name].foods.map((food, index) => (
-            <div key={index} className='foods-added'>
-              <p style={{ display: 'inline' }}>{food.name} {food.amount}g</p>
+            <div key={index} className='foods-added' style={{animation: `grow ${(index+1)/5}s ease-out`}}>
+              <p style={{ display: 'inline' }}>{food.name} {food.calories}kcal</p>
               <Icon_remove className='interactable remove' onClick={()=> this.removeFood(this.state.selectedMeal.name,index)}/>
             </div>
           ))}

@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt")
 const crypto = require('crypto')
-const moment = require('moment');
+const moment = require('moment')
 
 
 class User{
@@ -12,7 +12,7 @@ class User{
 
         this.loggedIn = this.getUserId()
         this.admin = this.getAdmin()
-        this.alreadyRes = false
+        this.alreadyResponded = false
     }
 
     async getUserId(){
@@ -31,19 +31,19 @@ class User{
     }
 
     async getAdmin(){
-        if (!await this.isLoggedIn()) return false
+        if (!await this.loggedIn) return false
+        
         let result = await this.db.query('SELECT is_admin FROM user WHERE id = ?', [this.id], true)
         return !!result.is_admin
     }
     async isAdmin(){
-        await this.admin
-        if (await this.admin){
-            await this.db.initStructure()
-            return true
-        }
+        if (!await this.isLoggedIn() || !await this.admin){
+            this.respond(401, {reason: 'Unauthorized'})
+            return false
+        } 
 
-        this.respond(401, {reason: 'Unauthorized'})
-        return false
+        await this.db.initStructure()
+        return true
     }
 
     validateFields(fieldList){
@@ -72,9 +72,14 @@ class User{
         let reqFields = this.req.body
         let toReturn = {}
         for (const field of fieldList){
-            if (!reqFields.hasOwnProperty(field)) return false
-
-            if (regex.hasOwnProperty(field) && !regex[field].test(reqFields[field])) return false
+            if (!reqFields.hasOwnProperty(field)) {
+                this.log(0, `Missing POST field: ${field}`)
+                return false
+            }
+            if (regex.hasOwnProperty(field) && !regex[field].test(reqFields[field])) {
+                this.log(0, `Regex for field [${field}] failed with: ${reqFields[field]}`)
+                return false
+            }
             toReturn[field] = reqFields[field]
         }
         return toReturn
@@ -99,7 +104,7 @@ class User{
         if (!post) return false
         if (!(await this.isLoggedIn())) return false
 
-        let sql = 'SELECT workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN workout ON calendar_workout.workout_id = workout.id WHERE calendar.user_id = ? AND calendar.date >= DATE_SUB(CURDATE(), INTERVAL ? DAY) AND workout.isTemplate = 0'
+        let sql = 'SELECT workout.json FROM calendar_workout INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id INNER JOIN workout ON calendar_workout.workout_id = workout.id WHERE calendar.user_id = ? AND calendar.date >= DATE_SUB(CURDATE(), INTERVAL ? DAY) AND workout.isTemplate = 0 AND workout.isFinished=1'
         let result = await this.db.query(sql, [this.id, post.timespan])
         let workouts = result.map(row => {
             row.json = JSON.parse(row.json)
@@ -112,7 +117,7 @@ class User{
     async userDetails(){
         if (!(await this.isLoggedIn())) return false
         
-        let sql = 'SELECT username, email FROM user WHERE id=?'
+        let sql = 'SELECT username, email, is_admin FROM user WHERE id=?'
         
         return this.db.query(sql, [this.id], true)
     }
@@ -122,19 +127,19 @@ class User{
         if (!post) return false
         if (!(await this.isLoggedIn())) return false
 
-        let sql = 'SELECT workout.id, workout.name, workout.json, workout.time FROM calendar_workout INNER JOIN workout ON calendar_workout.workout_id = workout.id INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT(calendar.date, "%Y-%m-%d") = ? AND workout.user_id = ? AND workout.isTemplate = 0'
+        let sql = 'SELECT workout.id, workout.name, workout.json, workout.time, workout.isFinished FROM calendar_workout INNER JOIN workout ON calendar_workout.workout_id = workout.id INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT(calendar.date, "%Y-%m-%d") = ? AND workout.user_id = ? AND workout.isTemplate = 0'
         let result = await this.db.query(sql, [post.date, this.id])
         
-        return result.map((x) => x)
+        return result
     }
 
     async userTemplates(){
         if (!(await this.isLoggedIn())) return false
 
-        let sql = 'SELECT workout.name, workout.json FROM workout WHERE workout.isTemplate = 1 AND workout.user_id = ?'
+        let sql = 'SELECT workout.name, workout.json, workout.id FROM workout WHERE workout.isTemplate = 1 AND workout.user_id = ?'
         let result = await this.db.query(sql, [this.id])
         const templates = result.map(template => {
-            return {name:template.name, json:template.json}
+            return {id: template.id, name:template.name, json:template.json}
         })
 
         return templates
@@ -248,15 +253,35 @@ class User{
         sql = "SELECT id FROM calendar WHERE user_id=? AND date=?"
         result = await this.db.query(sql, [this.id, post.date])
         if (!result.length){
-            sql ="INSERT INTO calendar (user_id, date, protein, carbs, fat) VALUES (?, ?, 0, 0, 0)"
+            sql ="INSERT INTO calendar (user_id, date) VALUES (?, ?)"
             result = await this.db.query(sql, [this.id, post.date])
         }
         const calendarId = result.length ? result[0].id : result.insertId
 
         sql = 'INSERT INTO calendar_workout (calendar_id, workout_id) VALUES (?, ?)'
-        this.db.query(sql, [calendarId, workoutId])
+        result = await this.db.query(sql, [calendarId, workoutId])
         
+        return workoutId
+    }
+
+    async finishWorkout(){
+        const post = this.validateFields(["id"])
+        if (!post) return false
+        if (!await this.isLoggedIn()) return false
+
+        let sql = 'UPDATE workout SET isFinished=1 WHERE id=?'
+        this.db.query(sql, [post.id])
+
         return true
+    }
+
+    async workoutFinished(){
+        if (!await this.isLoggedIn()) return false
+
+        let sql = 'SELECT calendar.date from workout INNER JOIN calendar_workout ON calendar_workout.workout_id=workout.id INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE workout.user_id = ? AND workout.isTemplate = 0 AND workout.isFinished=1'
+        let result = await this.db.query(sql, [this.id])
+        
+        return result
     }
 
     async saveTemplate(){
@@ -264,8 +289,19 @@ class User{
         if (!post) return false
         if (!await this.isLoggedIn()) return false
 
-        let sql = 'INSERT INTO workout (user_id, name, time, isTemplate, json ) VALUES (?, ?, "{}", 1, ?)'
+        let sql = 'INSERT INTO workout (user_id, name, time, isTemplate, isFinished,json ) VALUES (?, ?, "{}", 1, 0,?)'
         this.db.query(sql, [this.id, post.name, post.json])
+
+        return true
+    }
+
+    async deleteTemplate(){
+        const post = this.validateFields(["id"])
+        if (!post) return false
+        if (!await this.isLoggedIn()) return false
+
+        let sql = 'DELETE FROM workout WHERE id=? and isTemplate=1'
+        this.db.query(sql, [post.id])
 
         return true
     }
@@ -300,7 +336,8 @@ class User{
 
         const id = result[0].id
         const reset_token = await this.generateToken(16)
-        this.sendRequest('POST', serverUrl, {username: result[0].username, email: result[0].email, token: reset_token})
+        const email_token = await this.generateHash(process.env.EMAIL_TOKEN)
+        this.sendRequest('POST', serverUrl, {username: result[0].username, email: result[0].email, token: reset_token, email_token: email_token})
 
         sql = "INSERT INTO login_reset (user_id, token) VALUES (?, ?)"
         this.db.query(sql, [id, reset_token])
@@ -365,6 +402,29 @@ class User{
         sql += ` WHERE id = ?`
         this.db.query(sql, [post.id])
 
+        if (post.table === "exercise") return 1
+        return true
+    }
+
+    async insertTableData(){
+        const post = this.validateFields(["table", "values"])
+        if (!post) return false
+        if (!await this.isAdmin()) return false
+        if (!this.db.tables.includes(post.table)) return false
+
+        let sql = `INSERT INTO ${post.table} (`
+        Object.keys(post.values).forEach((key) => sql += `${key},`)
+        sql = sql.slice(0, -1) + `) VALUES(`
+        Object.values(post.values).forEach((key) => sql += `'${key}',`)
+        sql = sql.slice(0, -1) + `);`
+        try{
+            this.db.query(sql, [post.id])
+        }
+        catch {
+            return 0
+        }
+
+        if (post.table === "exercise") return 1
         return true
     }
 
@@ -377,6 +437,7 @@ class User{
         let sql = `DELETE FROM ${post.table} WHERE id = ?`
         this.db.query(sql, [post.id])
 
+        if (post.table === "exercise") return 1
         return true
     }
 
@@ -395,9 +456,9 @@ class User{
     respond(response_code, json={}){
         json.success = response_code == 200
 
-        if (!this.alreadyRes){
+        if (!this.alreadyResponded){
             this.res.status(response_code).json(json)
-            this.alreadyRes = true
+            this.alreadyResponded = true
         }
     }
     respondSuccess(json={}){
@@ -417,8 +478,9 @@ class User{
             body: JSON.stringify(body)
         }
 
-        request(options, error => {
+        request(options, (error, response) => {
             if (error) this.log(1, error)
+            console.log(response.statusCode)
         })
     }
 
