@@ -49,6 +49,10 @@
   .download-panel .title{
     font-size: 1em !important;
   }
+  .download-panel .screenshot{
+    width: 80%;
+    margin-left: 10%;
+  }
 }
 
 

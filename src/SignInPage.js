@@ -15,6 +15,7 @@ import GetString from "./language";
 import { TypeAnimation } from "react-type-animation";
 import Card from "react-bootstrap/Card";
 import { CallApi } from "./api";
+import DownloadPanel from './DownloadPanel'
 
 const SignInWrapper = () => {
   const navigate = useNavigate();
@@ -260,6 +261,7 @@ class SignInPage extends Component {
         </div>
         </div>
         <p style={{color: "white", position: "absolute", bottom: 0, marginLeft:20}}>&copy; Körmendi Dávid Ákos, Muth Márk, Kokas Márk</p>
+        <DownloadPanel />
       </div>
     );
   }
