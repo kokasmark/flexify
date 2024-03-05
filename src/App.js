@@ -10,6 +10,7 @@ import Carousel from 'react-bootstrap/Carousel';
 import { host } from './constants'
 import GetString from './language';
 import { CallApi } from './api';
+import DownloadPanel from './DownloadPanel';
 class App extends Component {
   muscleViewRef = React.createRef();
   calendarRef = React.createRef()
@@ -62,11 +63,12 @@ class App extends Component {
             
 
           <div className='muscle-container-home' style={{ position: 'relative', top: -10 }}>
-            <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles} showTips/>
+            <MusclesView ref={this.muscleViewRef} muscles={this.state.muscles} showTips={true}/>
           </div>
         </div>
 
 
+        <DownloadPanel />
         <NavBarWrapper />
         <Sidebar />
       </div>

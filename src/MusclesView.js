@@ -319,7 +319,7 @@ export default class MusclesView extends Component {
 
           {this.props.autoRotate == null && <Icon_rotate className='interactable' style={{ transform: 'scale(2)', position: 'relative', top: -175, left: 500, fill: '#fff !important' }} onClick={() => this.rotate()} />}
         </div>
-        {this.props.showTips != null && <div className={'tips-container'} style={{ position: 'relative', top: -800, left: 650 }}>
+        {this.props.showTips == true && <div className={'tips-container'} style={{ position: 'relative', top: -800, left: 650 }}>
         {this.state.tips.map((tip, index) => (
     <div 
         key={Math.random()} 
