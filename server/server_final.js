@@ -334,7 +334,7 @@ async function postResetValidate(user){
 }
 
 async function postResetPassword(user){
-    log(2, '/api/reset/validate')
+    log(2, '/api/reset/')
 
     let result = await user.resetPassword()
     if (result === false) return user.respondMissing()
