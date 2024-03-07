@@ -31,33 +31,30 @@ function log(level, message){
 
 
 app.get('/api/user', (req, res) => getUserDetails(new User(req, res, db, log)))
-app.get('/api/diet/all', (req, res) => getDietAll(new User(req, res, db, log)))
-app.get('/api/templates', (req, res) => getUserTemplates(new User(req, res, db, log)))
-app.get('/api/admin/tables', (req, res) => getAdminTables(new User(req, res, db, log)))
-app.get('/api/exercises', (req, res) => getExercises(new User(req, res, db, log)))
-app.get('/api/workouts/finished', (req, res) => getWorkoutsFinished(new User(req, res, db, log)))
-
-
+app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
 app.post('/api/login', (req, res) => postLogin(new User(req, res, db, log)))
 app.post('/api/signup', (req, res) => postUserRegister(new User(req, res, db, log)))
-
-app.post('/api/workouts/dates', (req, res) => postWorkoutsDates(new User(req, res, db, log)))
-app.post('/api/workouts/data', (req, res) => postUserWorkouts(new User(req, res, db, log)))
-app.post('/api/workouts/save', (req, res) => postSaveWorkout(new User(req, res, db, log)))
-app.post('/api/workouts/finish', (req, res) => postFinishWorkout(new User(req, res, db, log)))
-
-app.post('/api/templates/save', (req, res) => postSaveTemplate(new User(req, res, db, log)))
-app.post('/api/templates/delete', (req, res) => postDeleteTemplate(new User(req, res, db, log)))
-
-app.post('/api/user/muscles', (req, res) => postUserMuscles(new User(req, res, db, log)))
 
 app.post('/api/diet', (req, res) => postDietQuery(new User(req, res, db, log)));
 app.post('/api/diet/add', (req, res) => postDietAdd(new User(req, res, db, log)));
 
+app.get('/api/exercises', (req, res) => getExercises(new User(req, res, db, log)))
+
+app.get('/api/templates', (req, res) => getUserTemplates(new User(req, res, db, log)))
+app.post('/api/templates/save', (req, res) => postSaveTemplate(new User(req, res, db, log)))
+app.post('/api/templates/delete', (req, res) => postDeleteTemplate(new User(req, res, db, log)))
+
+app.get('/api/workouts/finished', (req, res) => getWorkoutsFinished(new User(req, res, db, log)))
+app.post('/api/workouts/finish', (req, res) => postFinishWorkout(new User(req, res, db, log)))
+app.post('/api/workouts/dates', (req, res) => postWorkoutsDates(new User(req, res, db, log)))
+app.post('/api/workouts/data', (req, res) => postUserWorkouts(new User(req, res, db, log)))
+app.post('/api/workouts/save', (req, res) => postSaveWorkout(new User(req, res, db, log)))
+
+app.post('/api/reset', (req, res) => postResetPassword(new User(req, res, db, log)));
 app.post('/api/reset/generate', (req, res) => postResetGenerate(new User(req, res, db, log)))
 app.post('/api/reset/validate', (req, res) => postResetValidate(new User(req, res, db, log)))
-app.post('/api/reset', (req, res) => postResetPassword(new User(req, res, db, log)));
 
+app.get('/api/admin/tables', (req, res) => getAdminTables(new User(req, res, db, log)))
 app.post('/api/admin/data', (req, res) => postAdminData(new User(req, res, db, log)));
 app.post('/api/admin/update', (req, res) => postAdminUpdate(new User(req, res, db, log)));
 app.post('/api/admin/delete', (req, res) => postAdminDelete(new User(req, res, db, log)));
@@ -85,16 +82,6 @@ async function getUserDetails(user){
     if (!details) return
 
     user.respondSuccess({username: details.username, email: details.email, isAdmin: details.is_admin})
-}
-
-async function getDietAll(user){
-    log(2, '/api/diet/all')
-
-    return user.respond(500, {reason: "Not implemented"})
-    const diet = await user.dietAll()
-    if (diet === false) return
-
-    user.respondSuccess(diet)
 }
 
 async function getExercises(user){
