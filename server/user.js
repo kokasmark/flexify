@@ -48,25 +48,20 @@ class User{
 
     validateFields(fieldList){
         const regex = {
-            token: /^.*$/,
-            // token: /^([a-f0-9]){64}$/,
+            token: /^[a-f0-9]+$/,
+            reset_token: /^[a-f0-9]+$/,
+
             email: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+            username: /^[a-zA-Z0-9._-]{5,}$/,
+            login: /^(([\w-.]+@([\w-]+\.)+[\w-]{2,4})|([a-zA-Z0-9._-]{5,}))$/,
             //TODO: uncomment when done testing 
             //password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
-            password: /.*/,
-            username: /^[a-zA-Z0-9._-]{5,}$/,
+            
             date: /^[0-9]{4}(-[0-9]{1,2}){1,2}$/,
-            carbs: /^[0-9]+((.|,)[0-9]+)?$/,
-            fat: /^[0-9]+((.|,)[0-9]+)?$/,
-            protein: /^[0-9]+((.|,)[0-9]+)?$/,
-            //reset_token: /^([a-f0-9]){32}$/,
-            reset_token: /^.*$/,
-            login: /^(([\w-.]+@([\w-]+\.)+[\w-]{2,4})|([a-zA-Z0-9._-]{5,}))$/,
-            id: /^[0-9]+$/,
             timespan: /^[0-9]+$/,
+
+            id: /^[0-9]+$/,
             location: /^(web)|(mobile)$/,
-            time: /^.*$/,
-            json: /^.*$/,
         }
 
         let reqFields = this.req.body
