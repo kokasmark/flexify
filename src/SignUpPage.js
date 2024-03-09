@@ -32,7 +32,7 @@ class SignUpPage extends Component {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
-    var r = await CallApi('register',{ "username": document.getElementById('username').value, "email": document.getElementById('email').value,
+    var r = await CallApi('signup',{ "username": document.getElementById('username').value, "email": document.getElementById('email').value,
     "password": document.getElementById('password').value})
     if(r.success){
       console.log('Validating');

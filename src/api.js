@@ -35,7 +35,7 @@ export function login(args){
 
     return requestOptions;
 }
-export function register(args){
+export function signup(args){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
@@ -337,7 +337,7 @@ export function templates_delete(args){
 export async function CallApi(route, args) {
     const apiFunctions = 
     {   login,
-        register,
+        signup,
         user,
 
         user_muscles,
