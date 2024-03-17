@@ -1253,12 +1253,12 @@ margin-top: 10px;
 }
 .finished-event::after {
   content: url('./assets/icon-progress.png'); /* Use the path to your icon */
-  transform: scale(0.1);
-  width: 40px; /* Adjust size as needed */
+  transform: scale(0.08);
+  width: 50%; /* Adjust size as needed */
   height: 40px; /* Adjust size as needed */
   padding: 5px; /* Adjust spacing as needed */
-  left: 20%;
-  top: 30px;
+  left:15%;
+  top: 15px;
   filter: invert(1);
   position: absolute;
 }
