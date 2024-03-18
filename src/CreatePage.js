@@ -19,6 +19,7 @@ import { useLocation } from 'react-router-dom';
 import GetString from './language';
 import { host } from './constants';
 import { CallApi } from './api';
+import DownloadPanel from './DownloadPanel';
 
 const CreatePageWrapper = () => {
   const location = useLocation();
@@ -295,6 +296,7 @@ class CreatePage extends Component {
           </div>
 
         </div>
+        <DownloadPanel />
         <NavBarWrapper />
         <Sidebar />
       </div>

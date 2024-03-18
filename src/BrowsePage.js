@@ -11,6 +11,7 @@ import NavBarWrapper from './NavBar';
 import { host } from './constants'
 import GetString from './language';
 import { CallApi } from './api';
+import DownloadPanel from './DownloadPanel';
 
 class BrowsePage extends Component {
   muscleRef = React.createRef();
@@ -98,7 +99,7 @@ class BrowsePage extends Component {
 
 
 
-
+        <DownloadPanel />
         <Sidebar />
         <NavBarWrapper />
 

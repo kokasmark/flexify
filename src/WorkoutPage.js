@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import MusclesView from './MusclesView';
 import GetString from './language';
 import { CallApi } from './api';
+import DownloadPanel from './DownloadPanel';
 
 const WorkoutPageWrapper = () => {
   const navigate = useNavigate();
@@ -189,6 +190,8 @@ class WorkoutPage extends Component {
             </div>
 
           </div>
+
+          <DownloadPanel />
           <NavBarWrapper />
           <Sidebar />
         </div>

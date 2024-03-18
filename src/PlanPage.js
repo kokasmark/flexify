@@ -19,6 +19,7 @@ import { host } from './constants';
 import swal from 'sweetalert';
 import { IoIosCloseCircleOutline } from "react-icons/io"
 import {CallApi} from "./api";
+import DownloadPanel from './DownloadPanel';
 moment.locale('en-GB');
 
 const eventStyleGetter = (event, start, end, isSelected) => {
@@ -319,6 +320,8 @@ class PlanPage extends Component {
             
           </div>
         </div>}
+        
+        <DownloadPanel />
         <NavBarWrapper />
         <Sidebar />
       </div>

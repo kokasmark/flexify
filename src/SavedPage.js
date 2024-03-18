@@ -30,6 +30,7 @@ import { PiArrowsCounterClockwise } from "react-icons/pi";
 import { PiClockCountdown } from "react-icons/pi";
 import { CallApi } from './api';
 import swal from 'sweetalert';
+import DownloadPanel from './DownloadPanel';
 
 class SavedPage extends Component {
   state = {
@@ -139,6 +140,8 @@ class SavedPage extends Component {
           )
           )}
         </div>
+
+        <DownloadPanel />
         <NavBarWrapper />
         <Sidebar />
       </div>

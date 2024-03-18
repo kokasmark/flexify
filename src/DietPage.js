@@ -12,6 +12,7 @@ import swal from 'sweetalert';
 import { CallApi } from './api';
 import { GrFormNext } from "react-icons/gr";
 import { GrFormPrevious } from "react-icons/gr";
+import DownloadPanel from './DownloadPanel';
 
 
 Date.prototype.addDays = function(days) {
@@ -280,6 +281,8 @@ class DietPage extends Component {
           <button className='interactable' onClick={()=> this.addFood(this.state.selectedMeal.name)}><Icon_add/> Add to {this.state.selectedMeal.name}</button>
           
         </div>}
+
+        <DownloadPanel/>
         <NavBarWrapper />
         <Sidebar />
       </div>
