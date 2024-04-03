@@ -103,7 +103,7 @@ async function postLogin(user){
 }
 
 async function postUserRegister(user){
-    log('/api/signup', 2)
+    log(2, '/api/signup')
 
     const token = await user.register()
     if (token === false) return user.respondMissing()
@@ -200,11 +200,6 @@ async function getUserTemplates(user){
     let result = await user.userTemplates()
     if(result === false) return user.respondMissing()
     
-    result = result.map(template => { 
-        template.json = JSON.parse(template.json)
-        return template
-    })
-
     for (let workout of result){
         for (let exercise of workout.json){
             exercise.name = await exercises.getName(exercise.exercise_id)

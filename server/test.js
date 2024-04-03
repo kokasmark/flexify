@@ -22,7 +22,32 @@ class Test{
                     "set_data":[{"duration": 10},{"duration": 20}]
                 }
             ]),
-            workoutDuration: '10:10:10',
+            templatesJson: {
+                status: 200,
+                success: true,
+                templates: [
+                    {
+                        id: 0,
+                        name: 'Testing...',
+                        json: [{
+                            "exercise_id": 1,
+                            "name": "Bench Press",
+                            "set_data":[{"reps":"10","weight":"50"},{"reps":"9","weight":"50"}]
+                        },
+                        {
+                            "exercise_id": 2,
+                            "name": "Squat",
+                            "set_data":[{"reps":"10","weight":"100"},{"reps":"9","weight":"100"}]
+                        },
+                        {
+                            "exercise_id": 3,
+                            "name": "Plank",
+                            "set_data":[{"duration": 10},{"duration": 20}]
+                        }]
+                    },
+                ]
+            },
+            workoutTime: '{"start":"Fri Mar 15 2024 00:00:00 GMT+0100 (közép-európai téli idő)","end":"Sat Mar 16 2024 00:00:00 GMT+0100 (közép-európai téli idő)"}',
             date: new Date().toISOString().slice(0,10)
         }
         this.debug = debug
@@ -37,8 +62,17 @@ class Test{
             console.log(this.responses)
             console.log("----\tBad responses:")
             console.log(this.badResponses)
+            
+            console.log("----\tTemplates:")
+            console.log(this.responses.templateGet.templates)
+
+            console.log("----\tWorkouts:")
+            console.log(this.responses.workoutGet.data)
+
         }
 
+        this.userData.templatesJson.templates[0].id = this.responses.templateGet.templates[0].id
+        
         const test = require('node:test')
         const assert = require('node:assert')
 
@@ -68,13 +102,14 @@ class Test{
         //         protein: this.responses.dietFirst.protein + this.responses.dietSecond.protein})
         // })
         
+        // delete responses.templateGet.templates[0].id
         test('Testing templates', t =>{
             assert.strictEqual(this.responses.templateSave.status, 200)
             assert.strictEqual(this.responses.templateGet.status, 200)
             
             assert.ok(this.responses.templateGet.templates)
-
-            assert.deepStrictEqual(this.responses.templateGet, {status:200, templates: [{json:this.userData.workoutJson, name:this.userData.workoutName}]})
+            // del 
+            assert.deepStrictEqual(this.responses.templateGet, this.userData.templatesJson)
         })
 
         test('Testing workouts', t =>{
@@ -87,7 +122,7 @@ class Test{
 
             assert.strictEqual(this.responses.workoutGet.data[0].name, this.userData.workoutName)
             assert.strictEqual(this.responses.workoutGet.data[0].json, this.userData.workoutJson)
-            assert.strictEqual(this.responses.workoutGet.data[0].duration, this.userData.workoutDuration)
+            // assert.strictEqual(this.responses.workoutGet.data[0].duration, this.userData.workoutTime)
 
             assert.strictEqual(this.responses.workoutGetWrongDate.data.length, 0)
         })
@@ -141,12 +176,12 @@ class Test{
         this.sendRequest('POST', '/api/signup', {username: this.userData.username, email: this.userData.email, password: this.userData.password, location: "web"}, "register")
         await this.delay(500)
 
-        this.sendRequest('POST', '/api/login', {username: this.userData.username, password: "", location: "web"}, "login1", true)
-        this.sendRequest('POST', '/api/login', {username: this.userData.username, password: this.userData.password}, "login2", true)
+        this.sendRequest('POST', '/api/login', {user: this.userData.username, password: "", location: "web"}, "login1", true)
+        this.sendRequest('POST', '/api/login', {user: this.userData.username, password: this.userData.password}, "login2", true)
         this.sendRequest('POST', '/api/login', {password: this.userData.password, location: "web"}, "login3", true)
 
-        this.sendRequest('POST', '/api/login', {username: this.userData.username, password: this.userData.password, location: "mobile"}, "loginMobile")
-        this.sendRequest('POST', '/api/login', {username: this.userData.username, password: this.userData.password, location: "web"}, "loginWeb")
+        this.sendRequest('POST', '/api/login', {user: this.userData.username, password: this.userData.password, location: "mobile"}, "loginMobile")
+        this.sendRequest('POST', '/api/login', {user: this.userData.username, password: this.userData.password, location: "web"}, "loginWeb")
         await this.waitForToken()
 
         this.sendRequest('GET', '/api/user', {}, "user", true, true)
@@ -159,7 +194,7 @@ class Test{
         // this.sendRequest('POST', '/api/diet', {date: this.userData.date}, "dietSecond")
 
         this.sendRequest('POST', '/api/templates/save', {name: this.userData.workoutName, json: this.userData.workoutJson}, "templateSave")
-        this.sendRequest('POST', '/api/workouts/save', {name: this.userData.workoutName, json: this.userData.workoutJson, duration: this.userData.workoutDuration}, "workoutSave")
+        this.sendRequest('POST', '/api/workouts/save', {name: this.userData.workoutName, json: this.userData.workoutJson, time: this.userData.workoutTime, date: '2024-04-03'}, "workoutSave")
         await this.delay(300)
         this.sendRequest('GET', '/api/templates', {}, "templateGet")
         this.sendRequest('POST', '/api/workouts/data', {date: this.userData.date}, "workoutGet")

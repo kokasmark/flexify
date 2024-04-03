@@ -122,9 +122,8 @@ class User{
         if (!post) return false
         if (!(await this.isLoggedIn())) return false
 
-        let sql = 'SELECT workout.id, workout.name, workout.json, workout.time, workout.is_finished AS isFinished FROM calendar_workout INNER JOIN workout ON calendar_workout.workout_id = workout.id INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE DATE_FORMAT(calendar.date, "%Y-%m-%d") = ? AND workout.user_id = ? AND workout.is_template = 0'
+        let sql = 'SELECT workout.id, workout.name, workout.json, workout.time, workout.is_finished AS isFinished FROM calendar_workout INNER JOIN workout ON calendar_workout.workout_id = workout.id INNER JOIN calendar ON calendar_workout.calendar_id = calendar.id WHERE calendar.date = ? AND workout.user_id = ? AND workout.is_template = 0'
         let result = await this.db.query(sql, [post.date, this.id])
-        
         return result
     }
 
@@ -134,8 +133,9 @@ class User{
         let sql = 'SELECT workout.name, workout.json, workout.id FROM workout WHERE workout.is_template = 1 AND workout.user_id = ?'
         let result = await this.db.query(sql, [this.id])
         const templates = result.map(template => {
-            return {id: template.id, name:template.name, json:template.json}
+            return {id: template.id, name:template.name, json:JSON.parse(template.json)}
         })
+        
 
         return templates
     }
@@ -241,6 +241,7 @@ class User{
         if (!post) return false
         if (!await this.isLoggedIn()) return false
 
+        if (typeof post.time == 'object') post.time = JSON.stringify(post.time)
         let sql = 'INSERT INTO workout (user_id, name, json, time, is_template) VALUES (?, ?, ?, ?, 0)'
         let result = await this.db.query(sql, [this.id, post.name, post.json, post.time])
 
@@ -308,7 +309,6 @@ class User{
     }
 
     async validateResetToken(){
-        this.log(-1, this.req.body)
         let post = this.validateFields(["token"])
         if (!post) return false
 
