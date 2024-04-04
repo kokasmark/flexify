@@ -34,6 +34,7 @@
     "react-widgets": "^5.8.4",
     "request": "^2.88.2",
     "require": "^2.4.20",
+    "selenium-webdriver": "^4.19.0",
     "sweetalert": "^2.1.2",
     "web-vitals": "^2.1.4"
   },
