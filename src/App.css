@@ -1286,6 +1286,10 @@ margin-top: 10px;
   width: 100px;
   height: 100px;
 }
+.rbc-allday-cell{
+  max-height: 100px;
+  overflow-y: auto;
+}
 @keyframes home-phone-animation{
   0%{
     transform: translateX(0%);

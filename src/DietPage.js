@@ -46,7 +46,7 @@ class DietPage extends Component {
       }
       json[meal] = foods
     });
-    var r = await CallApi("diet/add",  {token: localStorage.getItem("loginToken"),json: json})
+    var r = await CallApi("diet/add",  {token: localStorage.getItem("loginToken"),json: json, date: `${this.state.dateForApi.getFullYear()}-${this.state.dateForApi.getMonth()+1}-${this.state.dateForApi.getDate()}`})
     if(r.success){
 
     }

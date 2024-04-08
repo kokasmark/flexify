@@ -306,6 +306,7 @@ export function diet_add(args){
   myHeaders.append("X-Token", args.token)
   var raw = JSON.stringify({
     json: args.json,
+    date: args.date
   });
 
   var requestOptions = {
