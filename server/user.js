@@ -212,11 +212,11 @@ class User{
     }
 
     async dietAdd(){
-        const post = this.validateFields(["json"])
+        const post = this.validateFields(["json", "date"])
         if (!post) return false
         if (!await this.isLoggedIn()) return false
 
-        let result = await this.getDiet(moment().format('YYYY-MM-DD'))
+        let result = await this.getDiet(post.date)
         if (result.id === -1){
             let sql ="INSERT INTO calendar (user_id, date, diet) VALUES (?, CURDATE(), ?)"
             this.db.query(sql, [this.id, JSON.stringify(post.json)])
