@@ -172,7 +172,7 @@ class SignUpPage extends Component {
             style={{ width: "50%", marginLeft: "8%", backgroundColor: "var(--heat-orange)" }}
             onClick={()=>this.validate()}
           >
-            Sign In
+            Sign Up
           </Button>
           <Link
             className="interactable"
