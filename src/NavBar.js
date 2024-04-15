@@ -81,6 +81,7 @@ class Navbar extends Component {
     }
   }
   async getUserInformation(){
+    if(localStorage.getItem('loginToken') != "" && localStorage.getItem('loginToken') != null){
     var r = await CallApi("user", {token: localStorage.getItem('loginToken')})
     if(r.success){
       this.setState({username: r.username, email: r.email});
@@ -88,6 +89,7 @@ class Navbar extends Component {
        swal(GetString("alert-logged-out")[0],GetString("alert-logged-out")[1], "error");
        this.props.navigate('/login');
      }
+    }
   }
   componentDidMount(){
     this.getUserInformation();
